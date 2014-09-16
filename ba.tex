@@ -67,9 +67,7 @@ write (usually, the ones that have more content).
   \ldots{}
 \end{itemize}
 
-\section{Static walking}\label{static-walking}
-
-\section{Dynamic walking}\label{dynamic-walking}
+\section{Static and dynamic walking}\label{static-and-dynamic-walking}
 
 \section{The linear inverted pendulum
 model}\label{the-linear-inverted-pendulum-model}
@@ -211,7 +209,7 @@ z = k_x \cdot x + k_y \cdot y + z_c
 Subsequently the second derivative of $z$ can be described by:
 
 \begin{equation} \label{eq:lip-z-div}
-\ddot{z} = k_x \cdot \ddot{x} + k_y \cdot \ddot{y} + z_c
+\ddot{z} = k_x \cdot \ddot{x} + k_y \cdot \ddot{y}
 \end{equation}
 
 Substituing \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the
@@ -246,12 +244,12 @@ by substituting with the following \emph{virtual inputs}:
 
 Which yields our final description of the dynamics:
 
-\begin{equation}
-\ddot{y} = \frac{g}{z_c} y - m z_c \cdot u_R
+\begin{equation} \label{eq:lip-y}
+\ddot{y} = \frac{g}{z_c} y - \frac{u_R}{m z_c}
 \end{equation}
 
-\begin{equation}
-\ddot{x} = \frac{g}{z_c} x + m z_c \cdot u_P
+\begin{equation} \label{eq:lip-x}
+\ddot{x} = \frac{g}{z_c} x + \frac{u_R}{m z_c}
 \end{equation}
 
 \todo{include pattern generation just based on 3D-LIPM, I don't understand how they derived the controller}
@@ -259,18 +257,12 @@ Which yields our final description of the dynamics:
 \section{The Zero Moment Point}\label{the-zero-moment-point}
 
 A very popular approach to humanoid walking are schemes based on the
-Zero Momement Point. One reason for that might be that it is very simple
-to describe constrains for dynamic stability using this reference point:
-As long as the following conditions are met we will have dynamically
-stable walking:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  The support foot has flat, non-sliding ground contact.
-\item
-  The ZMP is strictly inside the support polygone of the support foot.
-\end{enumerate}
+Zero Moment Point. One reason for that might be that it is very simple
+to describe constrains for dynamic stability using this reference point.
+As long as the following condition is met we will have full ground
+contact of our support foot and thus can realize dynamically stable
+walking: \emph{The ZMP is strictly inside the support polygone of the
+support foot.}
 
 For flat ground contact of our support foot with the floor the ZMP
 corresponds with the position of the center of pressure (CoP). Indeed,
@@ -322,17 +314,53 @@ Furthermore we can use the corresponding components $p_x$ and $p_y$ from
 the definition of the ZMP \ref{eq:zmp-definition} and substitude in the
 equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
 
-This will yieal: $\tau_x = \tau_y = 0$.
+This will yield: $\tau_x = \tau_y = 0$.
 
 Please note that $\tau_z$ will in general not be zero, nonetheless in
 case of straight walking it is often assumed to be zero as well.
 
-\section{The table-cart model}\label{the-table-cart-model}
+\subsection{The table-cart model}\label{the-table-cart-model}
 
-explain the inverted pendulum model maybe the ZMP theory also can go
-here. And include here the challenges of dynamic simulators, whatever
-you want to add here about simulators (although you can also talk about
-our particular problems in the next section, in the simulation results).
+The table-cart model is equivalent to the 3D-LIPM model discussed
+before, but somewhat more intuitive for computing the resulting ZMP from
+an CoM motion.
+
+The model consists of an (infinitely) large mass-less table of height
+$z_c$, while the foot of the table has the shape of the support
+polygone. Given a frictionless cart with mass $m$ that moves on the
+table we can compute the resulting ZMP in the support foot.
+
+First of all, lets compute the torque $\tau_x$ and $\tau_y$ around the
+x-axis and y-axis at the ZMP on the support foot.
+
+\begin{equation}
+\tau_y = \overbrace{-m g (c_x - p_x)}^{\text{torque due to gravity}} + \overbrace{m \ddot{x} \cdot z_c}^{\text{torque due to acceleration of cart}}
+\end{equation}
+
+\begin{equation}
+\tau_x = -m g (c_y - p_y) + m \ddot{y} \cdot z_c
+\end{equation}
+
+Please note the similarity to the equations \ref{eq:lip-y} and
+\ref{eq:lip-x} when assuming the base of the pendulum is located at $p$.
+
+If we now use the property of the ZMP that the torque around the $x$ and
+$y$-axis is zero, we can solve for the ZMP position $p$:
+
+\begin{equation} \label{eq:zmp-x}
+p_x = c_x - \frac{z_c}{g} \ddot{c_x}
+\end{equation}
+
+\begin{equation} \label{eq:zmp-y}
+p_y = c_y - \frac{z_c}{g} \ddot{c_y}
+\end{equation}
+
+\todo{Maybe describe the full-body methode to compute the ZMP}
+
+\section{Simulating rigid body
+dynamics}\label{simulating-rigid-body-dynamics}
+
+\todo{short introduction how that works and some problems with the approach}
 
 \chapter{Pattern generator}\label{pattern-generator}
 
