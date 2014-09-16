@@ -7,7 +7,7 @@ ba.pdf: ba.tex
 	bibtex ba || true
 	pdflatex ba.tex
 
-ba.tex: ba.tex.in
+ba.tex: ba.tex.in ba.md
 	pandoc --chapters --template ba.tex.in ba.md -o ba.tex
 
 clean:
