@@ -21,7 +21,7 @@
 
 \renewcommand{\myname}{Patrick Niklaus}
 \renewcommand{\mythesis}{\bachelorsthesis} %\mastersthesis, \bachelorsthesis, \protocol, \studienarbeit, \diplomarbeit
-\renewcommand{\mytitle}{ Walking pattern generation for humanoid bipedal robots }
+\renewcommand{\mytitle}{ Dynamically Stable Walking For Humanoid Bipedal Robots Based On Walking Patterns }
 %\renewcommand{\myshorttitle}{Die offizielle \LaTeX-Vorlage des HIS}
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
@@ -33,6 +33,7 @@
 
 \newcommand{\clr}[2]{{\color{#1}{#2}}}
 \newcommand{\todo}[1]{\marginpar{\clr{red}{#1}}}
+\newcommand{\slpy}[1]{{\sloppy #1}}
 
 \graphicspath{{./images/}}
 

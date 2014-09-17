@@ -211,7 +211,7 @@ This will yield: $\tau_x = \tau_y = 0$.
 
 Please note that $\tau_z$ will in general not be zero, nonetheless in case of straight walking it is often assumed to be zero as well.
 
-### The table-cart model
+### The table-cart model {#section:table-cart}
 
 The table-cart model is equivalent to the 3D-LIPM model discussed before,
 but somewhat more intuitive for computing the resulting ZMP from an CoM motion.
@@ -219,6 +219,8 @@ but somewhat more intuitive for computing the resulting ZMP from an CoM motion.
 The model consists of an (infinitely) large mass-less table of height $z_c$, while the foot of the table has the shape of the support polygone.
 Given a frictionless cart with mass $m$ that moves on the table we can compute the resulting ZMP in the support foot.
 
+Please note that the 3D-dimensional model is equivalent to having two independent tables
+with two carts each in the $xz$ and $yz$-plane respectively.
 First of all, lets compute the torque $\tau_x$ and $\tau_y$ around the x-axis and y-axis at the ZMP on the support foot.
 
 \begin{equation}
@@ -256,6 +258,130 @@ And include here the challenges of dynamic simulators, whatever you want to add 
 -->
 
 # Pattern generator
+
+To generate a walking pattern for a bipedal robot two basic approaches are common:
+
+1. Generate (or modify) foot trajectories that realize a prescribed trajectory of the CoM
+
+2. Generate a CoM trajectory for prescribed foot trajectories
+
+The first approach is generally used for implementing pattern generators soley based
+on the 3D-LIPM model. \todo{citation needed}
+
+The second approach is the more versatile one, since it is easy to incorporate constrains
+of our environment (e.g. only limited foot holds) in the input of the pattern generator.
+However care must be taken while chosing adequate step width and step length parameters for the foot trajectory,
+so that they can actually be realized by the robot.
+
+The pattern generator proposed by Kajita et al. \todo{add citation} based on Preview Control
+realizes the second approach.
+We will discuss the theoretical background of this pattern generator here in more detail,
+since all pattern that we used where generated that way.
+
+## Computing the CoM as a dynamic system
+
+As we saw in the section \ref{section:table-cart} it is easy to compute the resulting
+ZMP given the CoM and its acceleration. However for generating the walking
+pattern, we want to compute the CoM trajectory from a given ZMP.
+If you rearange the equations \ref{eq:zmp-x} and \ref{eq:zmp-y} you see that we have to solve a second order differential equations:
+
+\begin{equation} \label{eq:com-x}
+c_x = \frac{z_c}{g} \cdot \ddot{c_x} + p_x
+\end{equation}
+
+\begin{equation} \label{eq:com-y}
+c_y = \frac{z_c}{g} \cdot \ddot{c_y} + p_y
+\end{equation}
+
+There are several ways to solve this differential equations, for example by transforming
+them to the frequency-domain. This however would mean, the ZMP trajectory needs to be transformed
+to the frequency domain as well, e.g. using Fast Fourier Transformation. This has two main
+problems:
+
+1. It has a significant computational overhead. (For FFT the additional runtime would be in $O(n \log n)$)
+
+2. We need to know the whole ZMP trajectory in advance.
+
+\todo{maybe do a formal introduction into dynamic system and the state space approach}
+
+Instead Kajita et. al. chose to define a dynamic system in the time domain that describes the CoM movement.
+For simplicity we will only focus on the dynamic description of one dimension, as the other one is analogous.
+To transform the equations to a strictly proper dynamical system, we need to determine the state vector of our system.
+For the table-cart model it suffices to know the position, velocity and acceleration of our cart.
+Thus the state-vector is defined as $x = (c_x, \dot{c_x}, \ddot{c_x})$. We can define the evolution of our state vecotr as follows:
+
+\begin{equation} \label{eq:dyn-system}
+\frac{d}{dt} \left(\begin{array}{c}
+c_x \\
+\dot{c_x} \\
+\ddot{c_x} \\
+\end{array} \right)
+=
+\overbrace{
+\left(\begin{array}{ccc}
+0 & 1 & 0\\
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+\end{array}\right)
+}^{ =: A_0}
+\cdot
+\left(\begin{array}{c}
+c_x \\
+\dot{c_x} \\
+\ddot{c_x} \\
+\end{array}\right)
++
+\overbrace{
+\left(\begin{array}{c}
+0 \\
+0 \\
+u_x \\
+\end{array}\right)
+}^{ =: B_0}
+\end{equation}
+
+As you can see the jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
+
+To calculate the actual output the dynamic system that should be controlled, we use equation \ref{eq:zmp-x}:
+
+\begin{equation}
+p_x =
+\left(\begin{array}{ccc}
+1 & 0 & \frac{-z_c}{g} \\
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+c_x \\
+\dot{c_x} \\
+\ddot{c_x} \\
+\end{array}\right)
+\end{equation}
+
+Using this formulation of the dynamic system we need to derive the evolution of our state vector using the state-transition matrix.
+Since our input ZMP trajectory will consist of discrete samples at equal time intervals $T$
+we define the discrete state as $x[k] := x(k \cdot T)$.
+Please note that this system is a linear time-invariant system (LTI), and both matrices $A_0$ and $B_0$
+are constant. We can therefore use the standart approach to solve this system.
+
+\slpy{First we will derive the \textit{complementary solution} by solving $\dot{x} = A_0 x$ which is given by ${x[k+1] = e^{A_0 \cdot T} x[k]}$.
+To compute the matrix exponential note that $A_0$ is nilpotent and $A_0^3 = 0$:}
+
+\begin{equation}
+e^{A_0 T} = \sum^{\infty}_{i=0} \frac{(A_0 \cdot T)^i}{i!} = I + A_0 \cdot T + A_0^2 \cdot \frac{T^2}{2} + 0
+=
+\left(\begin{array}{ccc}
+1 & T & \frac{T^2}{2}\\
+0 & 1 & T \\
+0 & 0 & 1 \\
+\end{array}\right)
+\end{equation}
+
+Furthermore we need to compute a *particular solution* for $\dot{x} = A_0 x ü B_0 u$ which is given by:
+
+
+Solving this dynamic system, means to determine an adequate control input $u_x$ to realize the
+reference ZMP trajectory.
+
 Theory
     how to plan a dynamically stable movement 
     preview controller 
