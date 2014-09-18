@@ -477,7 +477,7 @@ The implementation was build on a previous implementation, which was refactored,
 extended and tuned with respect to results from the dynamics simulation.
 
 The pattern generator makes extensive usage of Simoxs VirtualRobot, for providing a model of the robot
-and the associated task of compting the forward- and inverse kinematics.
+and the associated task of computing the forward- and inverse kinematics.
 
 Generating a walking pattern consists of multiple steps:
 
@@ -492,17 +492,49 @@ Generating a walking pattern consists of multiple steps:
 5. Exporting or visualizing the trajectory: ```TrajectoryExporter```
 
 Each step is contained in dedicated modules that can be easily replaced, if needed.
-We will outline the implementation of each module seperately. 
-
+We will outline the implementation of each module seperately.
 
 ### Generating foot trajectories
 
 To generate the foot trajectories several parameters are needed:
 
-* Step length
-* Step width (the distance between booth TCP on the feet)
-* Duration of the single support phase
-* Duration of the dual support phase
+\todo{table with used parameters}
+
+Step height $h$
+  ~  Maximum distance between the foot sole and the floor
+
+Step length $l$
+  ~ Distance in anterior direction ($y$-Axis) between the lift-off point and the touch-down point
+
+Step width $w$
+  ~ Distance in lateral directoin ($x$-Axis) between both TCP on the feet
+
+Single support duration $t_{ss}$
+  ~ Time the weight of the robot is only support by exactly one foot
+
+Dual support duratoin $t_{ds}$
+  ~ Time the weight of the robot is supported by both feet
+
+#### Walking straight
+
+Since the foot trajectories of a humanoid walking have a cyclic nature, we only need three different foot trajectories that can be composed
+to arbitrarily long trajectories:
+Two transient trajectories for the first and last step respectively and a cyclic motion that can be repeated indefinetly.
+We can use the same trajectories for both feet, as they are geometrically identical.
+Each foot trajectory starts with swing phase and a resting phase. The trajectory in $y$ and $z$ direction is computed by a 5th order polynomial
+that assures the velocities and accelerations are approaching zero at the lift-off and touch-down point.
+The first and last step only have half of the normal step length, since the trajectory is starting and ending
+from a dual support stance, where both feet are placed parallel to eachother.
+Each trajectory is encoded as a $6 \times N$ matrix, each column containing cartesian coordinates and roll, pitch and yaw angles.
+
+#### Walking on a circle
+
+Much of the general structure of the foot trajectory remains the same as for walking straight.
+However instead of specifing the step length, it is implicitly given by the segment of the cricle that should be traversed and the number of steps.
+So extra care needs to be taken to specify enough steps so that the generated foot positions are still.
+Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
+\todo{Current implementation does effectively that, but is actually a hack. Needs seperate trajectories for left/right}
+The same polynomial that was previously used for the $y$-direction is now used to compute the angle on the corresponding circle and the $x$ and $y$ coordinates are calculated acordingly.
 
 Implementation
 Dynamic simulation
