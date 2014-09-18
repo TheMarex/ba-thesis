@@ -215,10 +215,8 @@ Please note that $\tau_z$ will in general not be zero, nonetheless in case of st
 
 The table-cart model is equivalent to the 3D-LIPM model discussed before,
 but somewhat more intuitive for computing the resulting ZMP from an CoM motion.
-
 The model consists of an (infinitely) large mass-less table of height $z_c$, while the foot of the table has the shape of the support polygone.
 Given a frictionless cart with mass $m$ that moves on the table we can compute the resulting ZMP in the support foot.
-
 Please note that the 3D-dimensional model is equivalent to having two independent tables
 with two carts each in the $xz$ and $yz$-plane respectively.
 First of all, lets compute the torque $\tau_x$ and $\tau_y$ around the x-axis and y-axis at the ZMP on the support foot.
@@ -233,7 +231,6 @@ First of all, lets compute the torque $\tau_x$ and $\tau_y$ around the x-axis an
 
 Please note the similarity to the equations \ref{eq:lip-y} and \ref{eq:lip-x}
 when assuming the base of the pendulum is located at $p$.
-
 If we now use the property of the ZMP that the torque around the $x$ and $y$-axis is zero,
 we can solve for the ZMP position $p$:
 
@@ -278,7 +275,7 @@ realizes the second approach.
 We will discuss the theoretical background of this pattern generator here in more detail,
 since all pattern that we used where generated that way.
 
-## Computing the CoM as a dynamic system
+## Computing the CoM from a reference ZMP
 
 As we saw in the section \ref{section:table-cart} it is easy to compute the resulting
 ZMP given the CoM and its acceleration. However for generating the walking
@@ -302,13 +299,15 @@ problems:
 
 2. We need to know the whole ZMP trajectory in advance.
 
+Instead Kajita et. al. chose to define a dynamic system in the time domain that describes the CoM movement.
+
+### Pattern generation as dynamic system
 \todo{maybe do a formal introduction into dynamic system and the state space approach}
 
-Instead Kajita et. al. chose to define a dynamic system in the time domain that describes the CoM movement.
 For simplicity we will only focus on the dynamic description of one dimension, as the other one is analogous.
 To transform the equations to a strictly proper dynamical system, we need to determine the state vector of our system.
-For the table-cart model it suffices to know the position, velocity and acceleration of our cart.
-Thus the state-vector is defined as $x = (c_x, \dot{c_x}, \ddot{c_x})$. We can define the evolution of our state vecotr as follows:
+For the table-cart model it suffices to know the position, velocity and acceleration of the cart.
+Thus the state-vector is defined as $x = (c_x, \dot{c_x}, \ddot{c_x})$. We can define the evolution of the state vector as follows:
 
 \begin{equation} \label{eq:dyn-system}
 \frac{d}{dt} \left(\begin{array}{c}
@@ -332,19 +331,20 @@ c_x \\
 \end{array}\right)
 +
 \overbrace{
-\left(\begin{array}{c}
-0 \\
-0 \\
-u_x \\
+\left(\begin{array}{ccc}
+0 & 0 & 0\\
+0 & 0 & 0\\
+1 & 0 & 0\\
 \end{array}\right)
 }^{ =: B_0}
+u
 \end{equation}
 
 As you can see the jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
 
-To calculate the actual output the dynamic system that should be controlled, we use equation \ref{eq:zmp-x}:
+We use equation \ref{eq:zmp-x} to calculate the actual output of the dynamic system the resulting zmp, that will be controlled:
 
-\begin{equation}
+\begin{equation} \label{eq:zmp-x-output}
 p_x =
 \left(\begin{array}{ccc}
 1 & 0 & \frac{-z_c}{g} \\
@@ -361,30 +361,149 @@ Using this formulation of the dynamic system we need to derive the evolution of 
 Since our input ZMP trajectory will consist of discrete samples at equal time intervals $T$
 we define the discrete state as $x[k] := x(k \cdot T)$.
 Please note that this system is a linear time-invariant system (LTI), and both matrices $A_0$ and $B_0$
-are constant. We can therefore use the standart approach to solve this system.
-
-\slpy{First we will derive the \textit{complementary solution} by solving $\dot{x} = A_0 x$ which is given by ${x[k+1] = e^{A_0 \cdot T} x[k]}$.
-To compute the matrix exponential note that $A_0$ is nilpotent and $A_0^3 = 0$:}
+are constant. We can therefore use the standart approach to solve this system using the equation:
 
 \begin{equation}
-e^{A_0 T} = \sum^{\infty}_{i=0} \frac{(A_0 \cdot T)^i}{i!} = I + A_0 \cdot T + A_0^2 \cdot \frac{T^2}{2} + 0
+x(t) = e^{A_0 \cdot (t - \tau)} x(\tau) + \int^t_\tau e^{A_0 \cdot (t - \lambda)} B_0 u(\lambda) d\lambda
+\end{equation}
+
+In our discrete case that becomes:
+\begin{eqnarray} \label{eq:state-transition-discrete}
+x[k+1] & = & e^{A_0 \cdot ((k+1)T - kT)} x[k] + \int^{(k+1)T}_{kT} e^{A_0 \cdot ((k+1)T - \lambda)} B_0 u(\lambda) d\lambda \\
+       & = & e^{A_0 \cdot T} x[k] + \left(\int^{(k+1)T}_{kT} e^{A_0 \cdot ((k+1)T - \lambda)} d\lambda \right) \cdot B_0 u[k]\\
+       & = & e^{A_0 \cdot T} x[k] + \left(\int^{0}_{T} e^{A_0 \cdot \lambda} d\lambda\right) \cdot B_0 u[k]
+\end{eqnarray}
+Keep in mind that $u(\lambda) = u[k], \lambda \in (kT, (k+1)T)$ so we can move it outside of the integral.
+Let us first compute a general solution for the matrix exponential $e^{A_0 \cdot t}$.
+It is easy to see that $A_0$ is nilpotent and $A_0^3 = 0$, thus the computation simpilfies to the following:
+
+\begin{equation}
+e^{A_0 t} := \sum^{\infty}_{i=0} \frac{(A_0 \cdot t)^i}{i!} = I + A_0 \cdot t + A_0^2 \cdot \frac{t^2}{2} + 0
 =
 \left(\begin{array}{ccc}
-1 & T & \frac{T^2}{2}\\
-0 & 1 & T \\
+1 & t & \frac{t^2}{2}\\
+0 & 1 & t \\
 0 & 0 & 1 \\
 \end{array}\right)
 \end{equation}
 
-Furthermore we need to compute a *particular solution* for $\dot{x} = A_0 x ü B_0 u$ which is given by:
+Using that computing the integral in \ref{eq:state-transition-discrete} is quite easily:
+\begin{equation}
+\int^{0}_{T} e^{A_0 \cdot \lambda} d\lambda =  -\int^{T}_{0} \left(\begin{array}{ccc}1 & t & \frac{t^2}{2}\\0 & 1 & t\\ 0 & 0 & 1\end{array}\right) dt
+                                            =  -\left.\left(\begin{array}{ccc} %
+                                                          t & \frac{t^2}{2} & \frac{t^3}{6} \\ %
+                                                          0 & t             & \frac{t^2}{2} \\ %
+                                                          0 & 0             & t %
+                                                 \end{array}\right)\right|_{0}^{T}\\
+                                            =   \left(\begin{array}{ccc} %
+                                                          T & \frac{t^2}{2} & \frac{T^3}{6} \\ %
+                                                          0 & T             & \frac{T^2}{2} \\ %
+                                                          0 & 0             & T %
+                                                \end{array}\right)
+\end{equation}
+
+Substituting the results in \ref{eq:state-transition-discrete} yields:
+
+\begin{eqnarray} \label{eq:state-transition-result}
+x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
+                     T & \frac{t^2}{2} & \frac{T^3}{6} \\ %
+                     0 & T             & \frac{T^2}{2} \\ %
+                     0 & 0             & T %
+               \end{array}\right)}^{=: A} x[k]
+             + \overbrace{\left(\begin{array}{ccc} %
+                      \frac{T^3}{6} \\ %
+                      \frac{T^2}{2} \\ %
+                      T %
+               \end{array}\right)}^{=: B} \cdot u_x[k]
+\end{eqnarray}
+
+### Controlling the dynamic system
+
+To control this dynamic system we need to determine an adequate control input $u_x$ to realize the
+reference ZMP trajectory. A performence index $J_x$ for a given control input $u_x$ is needed to formalize what a "good" control input would be.
+A naive performence index could be:
+\begin{equation}
+J_x[k] := (p^{ref}_x[k] - p_x[k])^2
+\end{equation}
+To minimize it, we need to find $u_x$ for which $p_x = p^{ref}_x$.
+By substituting $p_x[k]$ with \ref{eq:zmp-x-output} and $x[k]$ with \ref{eq:state-transition-result} this yields:
+
+\begin{equation}
+u_x[k] = \frac{p^{ref}_x[k+1] - C \cdot A \cdot x[k]}{C \cdot B} = \frac{p^{ref}_x[k+1] - (1, T, \frac{1}{2} T^2 -\frac{z_c}{g}) \cdot x[k]}{\frac{1}{6}T^3 - \frac{z_c}{g} T}
+= \frac{p^{ref}_x[k+1] - p_x[k] - T \dot{c_x}[k] - \frac{1}{2} T^2 \ddot{c_x}[k]}{\frac{1}{6}T^3 - \frac{z_c}{g} T}
+\end{equation}
+
+To analyse the behaviour of this control law for $u_x$ we simulate the rapid change of reference ZMP when changing the support
+foot. \todo{insert plot}
+
+As you can see the reference ZMP is perfectly tracked. However, the CoM does not behave as expected. To achive the required ZMP position the CoM will be *accelerated indefinietly* in the opposite direction.
+Clearly this is not desired and will lead to falling on a real robot. A more sophisticated performence index is needed.
+To eventually reach a stable state at which the CoM comes to rest, the performence index should include a state feedback.
+Also note the large jerk that is applied to the system when the reference ZMP position changes rappidly.
+In a real mechanical system large jerks will lead to oszillations, which will disturbe the system.
+Thus the performence index should also try to limit the applied jerk.
+
+Another problem becomes apparent when you think about the nature of a controller:
+The controller starts to act *after* we have a deviation from our reference ZMP trajectory.
+Trying make this lag as small as possible can lead to very high velocities, which might not be realizable by motors of a robot.
+However we have at least limited knowledge of the future reference trajectory. This knowledge can be leveraged
+by using Preview Control, which considers the next $N$ timesteps for computing the performence index.
+
+\todo{add citation katayama}
+Kajita et. al. use a performence index proposed by Katayama et. al. to solve all of the problems above:
+
+\begin{equation}
+J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Delta u_x[i]^2
+\end{equation}
+
+$Q_e$ is the error gain, $Q_x$ a symmetric non-negative definite matrix (typically just a diagonal matrix)
+to weight the components of $\Delta x[i]$ differently and $R > 0$.
+Conviently Katayama also derived an optimal controller for this performence index, which is given by:
+
+\begin{equation}
+u[k] = -G_i \sum^k_i=0 e[k] - G_x x[k] - \sum^N_{j=1} G_p p^{ref}_x[k + j]
+\end{equation}
+
+The gains $G_i, G_x, G_p$, can be derived from the parameters of the performence index.
+Since the calculation is quite elaborate we refer to the cited article by Katayama p. 680 for more details.
+
+## Implementation
+
+\todo{block diagramm of architechture}
+To generate walking patterns based on the ZMP preview control methode, the approach from Kajita
+was implemented in a shared library. A front-end was developed to easily change parameters, visualize
+ and subsequently export the trajectory to the MMM format.
+The implementation was build on a previous implementation, which was refactored,
+extended and tuned with respect to results from the dynamics simulation.
+
+The pattern generator makes extensive usage of Simoxs VirtualRobot, for providing a model of the robot
+and the associated task of compting the forward- and inverse kinematics.
+
+Generating a walking pattern consists of multiple steps:
+
+1. Generate foot trajectories: ```FootstepPlaner```
+
+2. Generate reference ZMP trajectory: ```ReferenceZMPPlaner```
+
+3. Compute resulting ZMP and CoM trajectories: ```ZMPPlaner```
+
+4. Compute inverse kinematics: ```WalkingIK```
+
+5. Exporting or visualizing the trajectory: ```TrajectoryExporter```
+
+Each step is contained in dedicated modules that can be easily replaced, if needed.
+We will outline the implementation of each module seperately. 
 
 
-Solving this dynamic system, means to determine an adequate control input $u_x$ to realize the
-reference ZMP trajectory.
+### Generating foot trajectories
 
-Theory
-    how to plan a dynamically stable movement 
-    preview controller 
+To generate the foot trajectories several parameters are needed:
+
+* Step length
+* Step width (the distance between booth TCP on the feet)
+* Duration of the single support phase
+* Duration of the dual support phase
+
 Implementation
 Dynamic simulation
 
