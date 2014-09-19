@@ -26,14 +26,16 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{15. September 2014}
+\renewcommand{\timestart}{1. April 2014}
+\renewcommand{\timeend}{1. Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
-%\newcommand{\advisor}{Name des betreuenden Mitarbeiters}
+\newcommand{\advisor}{Dr. Júlia Borràs Sol}
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
 
 \newcommand{\clr}[2]{{\color{#1}{#2}}}
 \newcommand{\todo}[1]{\marginpar{\clr{red}{#1}}}
 \newcommand{\slpy}[1]{{\sloppy #1}}
+\newcommand{\fixme}[1]{{\color{red}{FIXME: #1}}}
 
 \graphicspath{{./images/}}
 

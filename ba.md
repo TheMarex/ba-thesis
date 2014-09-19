@@ -10,7 +10,7 @@ motivation,  and a bit of overview of humanoid walking.  I recommend to leave it
 
 # Models for humanoid walking
 
-## The linear inverted pendulum model
+## The Linear Inverted Pendulum Model
 
 \todo{Use different name for CoM, $p$ will be rather used for the ZMP, maybe $c$?}
 
@@ -23,7 +23,7 @@ Initially this will yield non-linear equations that will be hard to control.
 Howevery by constraining the movement of the inverted pendulum to a fixed plane, we can derive a linear dynamic system.
 This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 
-## The inverted pendulum
+### The inverted pendulum
 
 To describe the dynamics of the inverted pendulum we are mainly interested in the effect a given actuator torque has on the movement of the pendulum.
 
@@ -100,7 +100,7 @@ m(z\ddot{x} - x\ddot{z}) = \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P} \cdot \tau_P + m
 Observe that the terms of the left-hand side are not linear. To remove that non-linearity
 we are going to use the *linear* inverted pendulum model.
 
-## Linear Inverted Pendulum Model
+### Linearization
 
 In a man-made environment it is fair to assume that the ground a robot will walk on
 can be approximate by a slightly sloped plane. In most cases it can even assumed that there is no slope at all.
@@ -211,7 +211,7 @@ This will yield: $\tau_x = \tau_y = 0$.
 
 Please note that $\tau_z$ will in general not be zero, nonetheless in case of straight walking it is often assumed to be zero as well.
 
-### The table-cart model {#section:table-cart}
+## The table-cart model {#section:table-cart}
 
 The table-cart model is equivalent to the 3D-LIPM model discussed before,
 but somewhat more intuitive for computing the resulting ZMP from an CoM motion.
@@ -387,7 +387,7 @@ e^{A_0 t} := \sum^{\infty}_{i=0} \frac{(A_0 \cdot t)^i}{i!} = I + A_0 \cdot t + 
 \end{array}\right)
 \end{equation}
 
-Using that computing the integral in \ref{eq:state-transition-discrete} is quite easily:
+Using this solution computing the integral in \ref{eq:state-transition-discrete} is quite easy:
 \begin{equation}
 \int^{0}_{T} e^{A_0 \cdot \lambda} d\lambda =  -\int^{T}_{0} \left(\begin{array}{ccc}1 & t & \frac{t^2}{2}\\0 & 1 & t\\ 0 & 0 & 1\end{array}\right) dt
                                             =  -\left.\left(\begin{array}{ccc} %
@@ -443,7 +443,7 @@ Also note the large jerk that is applied to the system when the reference ZMP po
 In a real mechanical system large jerks will lead to oszillations, which will disturbe the system.
 Thus the performence index should also try to limit the applied jerk.
 
-Another problem becomes apparent when you think about the nature of a controller:
+Another problem is caused by the very nature of a controller:
 The controller starts to act *after* we have a deviation from our reference ZMP trajectory.
 Trying make this lag as small as possible can lead to very high velocities, which might not be realizable by motors of a robot.
 However we have at least limited knowledge of the future reference trajectory. This knowledge can be leveraged
@@ -458,10 +458,10 @@ J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Del
 
 $Q_e$ is the error gain, $Q_x$ a symmetric non-negative definite matrix (typically just a diagonal matrix)
 to weight the components of $\Delta x[i]$ differently and $R > 0$.
-Conviently Katayama also derived an optimal controller for this performence index, which is given by:
+Conveniently Katayama also derived an optimal controller for this performence index, which is given by:
 
 \begin{equation}
-u[k] = -G_i \sum^k_i=0 e[k] - G_x x[k] - \sum^N_{j=1} G_p p^{ref}_x[k + j]
+u[k] = -G_i \sum^k_{i=0} e[k] - G_x x[k] - \sum^N_{j=1} G_p p^{ref}_x[k + j]
 \end{equation}
 
 The gains $G_i, G_x, G_p$, can be derived from the parameters of the performence index.
@@ -479,18 +479,9 @@ extended and tuned with respect to results from the dynamics simulation.
 The pattern generator makes extensive usage of Simoxs VirtualRobot, for providing a model of the robot
 and the associated task of computing the forward- and inverse kinematics.
 
-Generating a walking pattern consists of multiple steps:
-
-1. Generate foot trajectories: ```FootstepPlaner```
-
-2. Generate reference ZMP trajectory: ```ReferenceZMPPlaner```
-
-3. Compute resulting ZMP and CoM trajectories: ```ZMPPlaner```
-
-4. Compute inverse kinematics: ```WalkingIK```
-
-5. Exporting or visualizing the trajectory: ```TrajectoryExporter```
-
+Generating a walking pattern consists of multiple steps. First the foot positions are calculated. These are used to derive the reference ZMP
+trajectory which is feed into the zmp preview controller. From that the CoM trajectory is computed. The CoM trajectory and feet trajectories are
+then used to compute the inverse kinematics. The resulting joint trajectory is displayed in the visual front-end and can be exported.
 Each step is contained in dedicated modules that can be easily replaced, if needed.
 We will outline the implementation of each module seperately.
 
@@ -532,12 +523,136 @@ Each trajectory is encoded as a $6 \times N$ matrix, each column containing cart
 Much of the general structure of the foot trajectory remains the same as for walking straight.
 However instead of specifing the step length, it is implicitly given by the segment of the cricle that should be traversed and the number of steps.
 So extra care needs to be taken to specify enough steps so that the generated foot positions are still.
-Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
+Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
 \todo{Current implementation does effectively that, but is actually a hack. Needs seperate trajectories for left/right}
 The same polynomial that was previously used for the $y$-direction is now used to compute the angle on the corresponding circle and the $x$ and $y$ coordinates are calculated acordingly.
+The foot orientation is computed from the tangential (y-Axis) and normal (x-Axis) of circle the foot follows.
 
-Implementation
-Dynamic simulation
+#### Balancing on one foot
+
+To test push recovery from single support stance a special pattern was needed. To generate this
+another footstep planer was implemented that generates a trajectory for standing on one foot.
+Starting from dual support stance, the swing leg is moved in vertical direction until the usual step height is achieved.
+Additionally the foot is moved in lateral direction to half the step width. This reduces the necessary upper body tilt to compensate the inbalance.
+For the last step the inverse movement is performed to get back into dual support stance.
+This methode could be extended to walk by setting the next support foot in a straight line before the current support foot.
+The swing foot would need to be moved in an arc in lateral direction to avoid self-collisions.
+\todo{It is easy to extent this: DO IT.}
+
+
+### ZMP reference generation
+
+As an input for the ZMP preview control, we need a reference ZMP movement that corresponds with the foot trajectory.
+The reference generator receives a list of intervals associated with the desired support stance and foot positions as input.
+In single support phase, the reference generator places the ZMP in the center of the support polygone of the corresponding foot.
+Since the support polygone is convex, the center is the point furthest away from the border of the polygone. Thus it should guarantee a maxium
+of stability with regard to possible ZMP errors.
+In dual support phase, the reference generator shifts the ZMP from the previous support foot to the next support foot.
+Kajita et. al. suggest using a poylnomial to interpolate the ZMP positions between the feet.
+However a simple step function
+$\sigma(t) = \left\{\begin{array}{lr}p_1 & t \leq t_0 \\ p_2 & t > t_0 \end{array}\right.$
+seems to suffice as well.
+Since the the touch-down of the swing foot might have a small lag, it is important that $t_0$ is the middle of the dual support phase.
+This assures we do not start to move the ZMP too early.
+
+### ZMP Preview Control
+
+This module implements the methode described by Kajita et. al. and uses the methode outlined by Katayama et. al. to compute the optimal control
+input $u[k]$. Since it is computational feasable, the preview periode consists of the full reference trajectory.
+For an online usage of this methode, this could be reduced to a much smaller sample size.
+\todo{Add timings, implement configurable preview periode}
+Using the system dynamics described by \ref{eq:state-transition-result} the CoM trajectory, velocity and acceleration can be computed.
+The implementation makes heavy use of Eigen, a high performence linear algebra framework that uses SIMD instructions to speed up calculations.
+Thus thus a calculation time of \fixme{calculation time} could be achieved.
+
+### Inverse Kinematics
+
+Using the foot trajectories and CoM trajectory the actual resulting joint angles need to be calculated.
+Since the kinematic model that is used has a total of \fixme{DOF} degrees of freedom, we need to reduce the number of joints that are used to
+a sensible value.
+For walking only the joints of the legs and both the torso roll and pitch joints are used. All other joints are constrained to static values that will not cause self-collisions (e.g. the arms are slightly extended and do not touch the body).
+For comptuing the IK additional constraints where added, to make sure the robot has a sensible pose: The chest should always have an upright position
+and the pelvis should always be parallel to the floor. To support non-straight walking, the pelvis and chest orientation should also follow the walking direction. Thus the following methode to compute the desired chest and pelvis orientation is used:
+
+1. Compute walking direction $y'$ as normed mean of y-Axis of both feet: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
+
+2. Both should have an upright position $z' := (0, 0, 1)^T$
+
+3. Compute $x'$ as the normal to both vectors: $x' := y' \times z'$
+
+4. Pose $R'$ is given by $R' = (x', y', z')$
+
+A special property of the model that was used for computing the inverse kinematics, is that TCP of the left leg was chosen as root node.
+Since we can specify the root position freely, that removes the need of solving for the left foot pose. Thus the following goals need to be satisfied by the inverse kinematics:
+
+1. Chest orientation
+
+2. Pelvis orientation
+
+3. CoM position
+
+4. Right foot pose
+
+To solve the inverse kinematics a hiearchical solver was used to solve for that goals in the given order. It was observed that specifing a good target height for the CoM is of utmost importance for the quality of the IK. Specifing the CoM height too height or too low can lead to the effective loss of degrees of freedom.
+
+\todo{Maybe a more theoretical explaination?}
+
+### Trajectory Export
+
+The trajectory was exported in open MMM trajectory format. The format was extended to export additional information
+useful for debugging and controlling the generated trajectory.
+That means besides the joint values and velocites the trajectory also includes the CoM and ZMP trajectory that was used to derive them.
+Also information about the current support phase is saved.
+For convinience the pose of chest, pelvis, left and right foot are exported as homogenous matrices as well. This was done to save the additional step of computing them again from the exported joint trajectory for the stabilizer and also reduce an additional error source.
+
+\todo{Maybe doing the FK now would be better and more versatile, since we could feed normal MMM trajectories in the stabilizer}
+
+## Dynamic simulation
+
+To evaluate the generated trajectories a simulator for the dynamics was developed.
+The simulator was build on the SimDynamics framework that is part of Simox.
+SimDynamics uses Bullet Physics as underlying physics framework.
+A big part of the work on the simulator was spend on configuring the parameters and finding flaws in the physics simulation.
+Thus the simulator includes a extensive logging framework that measures all important parameters of the simulation.
+For visulizing and analysing the measurement the Open Source tools IPython, numpy and pandas where used.
+
+### Practical challenges of physics simulation
+
+While walking only the feet of the robot are in contact with the ground. Thus the stability of the whole robots depends on the contact of the feet with the floor. Especially in single support phase that area is very small with regard to the size of the robot.
+For that reason the accuracy of ground contatc forces and friction is of utmost importance for the quality of the simulation.
+In general three classes of errors need to be elimnated to get a good simulation:
+
+1. Incorrectly configured parameters, such as fictions coefficent and contact thresholds
+
+2. Numerical errors
+
+3. Inherent errors of the methode
+
+As outline in the section about discrete time dynamic simulation, the physics of the system
+are formulated as input forces and constrains that need to be solved for the constraint forces.
+Since bullet uses an iterative approach that solves each constraint independently, it is of utmost importance
+to use a sufficient amount of iterations for each simulation step. Another important parameter is the timestep of each simulation step.
+Through experimental evaluation a simulation with 2000 solver iterations and a timestep size of 1ms was sufficiently stable.
+However since the number of iterations is very high and a lot of timesteps are calculated during the simulation, numeric errors become significant.
+That made is neccessary to enable using double precision floating point numbers for the values used during simulation.
+
+To decide which contact constrains are active for which points, Bullet must solve for object collisions. Depending on the objects
+involved different algorithms are used to calculate the contact points. Major gains in accuracy could be observed by replacing
+the feet and the floor with simple box shapes, instead using mesh based models.
+
+### Simulating walking patterns
+
+The simulator was designed to load arbitrary motions in the MMM format and replay them. Additional stabilization algorithms can be applied
+depending on additional information provided in the MMM motions.
+\todo{Make sure you can really load vanilla MMM trajectories without crashing}
+
+Even during simple playback of a trajectory, the dynamics need to be taken into account. Simply applying the joint values
+at the given point in time, will lead to large velocity impulses, which will in turn cause large accelerations and jerks.
+This will cause large oscillations, which in turn result in destabilizing disturbances.
+Thus interpolation between the joint angles of two frames is needed. This was implemented using cubic splines,
+that also ensure that the velocity is continous.
+Disturbances due to the simulation will cause position errors in the joints.
+To fix that PID based motor controllers were added to SimDynamics that control the motor velocites to compensate position errors.
 
 # Controllers to stabilize a trajectory
 Theory
