@@ -423,10 +423,10 @@ To control this dynamic system we need to determine an adequate control input $u
 reference ZMP trajectory. A performence index $J_x$ for a given control input $u_x$ is needed to formalize what a "good" control input would be.
 A naive performence index could be:
 \begin{equation}
-J_x[k] := (p^{ref}_x[k] - p_x[k])^2
+J_x[k+1] := (p^{ref}_x[k+1] - p_x[k+1])^2
 \end{equation}
 To minimize it, we need to find $u_x$ for which $p_x = p^{ref}_x$.
-By substituting $p_x[k]$ with \ref{eq:zmp-x-output} and $x[k]$ with \ref{eq:state-transition-result} this yields:
+By substituting $p_x[k+1]$ with \ref{eq:zmp-x-output} and $x[k+1]$ with \ref{eq:state-transition-result} this yields:
 
 \begin{equation}
 u_x[k] = \frac{p^{ref}_x[k+1] - C \cdot A \cdot x[k]}{C \cdot B} = \frac{p^{ref}_x[k+1] - (1, T, \frac{1}{2} T^2 -\frac{z_c}{g}) \cdot x[k]}{\frac{1}{6}T^3 - \frac{z_c}{g} T}
@@ -472,11 +472,11 @@ Since the calculation is quite elaborate we refer to the cited article by Kataya
 \todo{block diagramm of architechture}
 To generate walking patterns based on the ZMP preview control methode, the approach from Kajita
 was implemented in a shared library. A front-end was developed to easily change parameters, visualize
- and subsequently export the trajectory to the MMM format.
+ and subsequently export the trajectory to the \name{MMM} format.
 The implementation was build on a previous implementation, which was refactored,
 extended and tuned with respect to results from the dynamics simulation.
 
-The pattern generator makes extensive usage of Simoxs VirtualRobot, for providing a model of the robot
+The pattern generator makes extensive usage of \name{Simox VirtualRobot}, for providing a model of the robot
 and the associated task of computing the forward- and inverse kinematics.
 
 Generating a walking pattern consists of multiple steps. First the foot positions are calculated. These are used to derive the reference ZMP
@@ -599,22 +599,22 @@ To solve the inverse kinematics a hiearchical solver was used to solve for that 
 
 ### Trajectory Export
 
-The trajectory was exported in open MMM trajectory format. The format was extended to export additional information
+The trajectory was exported in open \name{MMM} trajectory format. The format was extended to export additional information
 useful for debugging and controlling the generated trajectory.
 That means besides the joint values and velocites the trajectory also includes the CoM and ZMP trajectory that was used to derive them.
 Also information about the current support phase is saved.
 For convinience the pose of chest, pelvis, left and right foot are exported as homogenous matrices as well. This was done to save the additional step of computing them again from the exported joint trajectory for the stabilizer and also reduce an additional error source.
 
-\todo{Maybe doing the FK now would be better and more versatile, since we could feed normal MMM trajectories in the stabilizer}
+\todo{Maybe doing the FK now would be better and more versatile, since we could feed normal \name{MMM} trajectories in the stabilizer}
 
 ## Dynamic simulation
 
 To evaluate the generated trajectories a simulator for the dynamics was developed.
-The simulator was build on the SimDynamics framework that is part of Simox.
-SimDynamics uses Bullet Physics as underlying physics framework.
+The simulator was build on the \name{SimDynamics} framework that is part of \name{Simox}.
+\name{SimDynamics} uses Bullet Physics as underlying physics framework.
 A big part of the work on the simulator was spend on configuring the parameters and finding flaws in the physics simulation.
 Thus the simulator includes a extensive logging framework that measures all important parameters of the simulation.
-For visulizing and analysing the measurement the Open Source tools IPython, numpy and pandas where used.
+For visulizing and analysing the measurement the Open Source tools \name{IPython}, numpy and \name{pandas} where used.
 
 ### Practical challenges of physics simulation
 
@@ -642,19 +642,73 @@ the feet and the floor with simple box shapes, instead using mesh based models.
 
 ### Simulating walking patterns
 
-The simulator was designed to load arbitrary motions in the MMM format and replay them. Additional stabilization algorithms can be applied
-depending on additional information provided in the MMM motions.
-\todo{Make sure you can really load vanilla MMM trajectories without crashing}
+The simulator was designed to load arbitrary motions in the \name{MMM} format and replay them. Additional stabilization algorithms can be applied
+depending on additional information provided in the \name{MMM} motions.
+\todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
 
-Even during simple playback of a trajectory, the dynamics need to be taken into account. Simply applying the joint values
-at the given point in time, will lead to large velocity impulses, which will in turn cause large accelerations and jerks.
+Even during simple playback of a trajectory, a number of conisderations due to the dynamics need to be taken into account.
+We will outline some of the problems and how they where resolved.
+
+Simply applying the joint values at the given point in time, will lead to large jumps in velocity, acceleration and jerk.
 This will cause large oscillations, which in turn result in destabilizing disturbances.
-Thus interpolation between the joint angles of two frames is needed. This was implemented using cubic splines,
-that also ensure that the velocity is continous.
-Disturbances due to the simulation will cause position errors in the joints.
-To fix that PID based motor controllers were added to SimDynamics that control the motor velocites to compensate position errors.
+Interpolation between the joint angles of two frames can mitigate this. To implement this cubic splines where used instead of linear interpolation, as they also ensure that the velocity is continous.
 
-# Controllers to stabilize a trajectory
+Disturbances due to the simulation will cause position errors in the joints.
+To fix that PID based motor controllers were added to \name{SimDynamics}. They control the motor velocites to compensate position errors.
+
+Since the motors used by the simulation framework are velocity controlled, their acceleration is not limited.
+This is not consistent with real motors, thus limits for velocites and acceleration where introduced to \name{SimDynamics},
+that can be configured on a per-joint basis.
+
+An important part of the simulation is the generation of measurements that can saved to be carefully evaluted offline or displayed in the visualization.
+For this purpose a modular measuremt component was added to the simulator.
+An important design goal was to keep the measurement component as simple to extend and maintain as possible.
+Each module meassures a specific set of values and writes them, indexed by the corresponding timestamp, to its log file.
+As output format the well know plaintext format CSV was used.
+The visualization can query the measurement components directly to get the newest values to be displayed.
+For example the ZMP module measures the actual ZMP and also provides an interface to query the trajectory ZMP and the reference ZMP that was provided as input for the pattern generator.
+Thus all three values can be displayed in the visualization and easily compared later by analysing the log file.
+Since the goal was to keep the component as simple as possible, we use exsistening well known tools for analysing the generated log files.
+Some small helper scripts are provied to make it easier to load the data into the time series analysis framework \name{pandas}.
+\name{Pandas} interfaces with the popular plotting framework \name{matplotlib} to diplay plots of the data.
+\name{IPython} is used to easily run the analysis and display the results in a browser window.
+All plots of simulated patterns found in this thesis can be generated automatically for very simulation.
+
+\todo{Screenshot of analysis software}
+
+# Stabilizing a trajectory
+
+While executing a trajectory there are several sources of errors that will make it neccessary to correct the trajectory.
+We can devide them in about three main classes:
+
+Disturbances of the environment:
+  ~ Pattern generator make some assumptions about the environment they operate in.
+    Most prominently the 3D-LIMP assumes the floor is completely flat and has no slope.
+    Also we assume we can navigate without colliding with other object.
+    Any environment that deviates from this assumption can be seen as a disturbance.
+
+Disturbances due to simulation errors:
+  ~ Physical simulations often make a tradeoff between speed and simulation accuracy.
+    Thus the simulation might not always behave as it was modeled during calculating the pattern, or as it would behave in reality.
+
+Disturbances due to errors of the methode:
+  ~ Often pattern generators use simplified models of the dynamics involved to derive generation scheme.
+    For example the pattern generator that was used here assumes the ZMP behaves as the cart-table-model predicts.
+    However the real ZMP calculated from the multi-body dynamics can substantially deviate.
+
+## Detecting a deviation
+
+When using a ZMP based control scheme to derive a walking pattern it seems natural to check for deviations
+of the actual ZMP from the goal ZMP. However a deviation from the reference ZMP does not neccessarily mean we will see any disturbance.
+As long a the ZMP remains inside the support polygone the trajectory can be executed as planed.
+Also we saw before, it is entirely possible to realize the reference ZMP while being in an overall state that deviates significantly from the
+state we assumed while generating the pattern.
+Thus it seems more viable to check for a diviation in the trajectory of our CoM. A common approach to correct for CoM position
+is to control the pose of the chest frame of the robot. This only works if the majority of the mass of a robot is located in the upper body and arms.
+Luckily for most humanoid robots this is the case.
+
+## Stabilizer
+
 Theory
 Implementation
 Evaluation

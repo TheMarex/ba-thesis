@@ -36,6 +36,7 @@
 \newcommand{\todo}[1]{\marginpar{\clr{red}{#1}}}
 \newcommand{\slpy}[1]{{\sloppy #1}}
 \newcommand{\fixme}[1]{{\color{red}{FIXME: #1}}}
+\newcommand{\name}[1]{\textsc{#1}}
 
 \graphicspath{{./images/}}
 
