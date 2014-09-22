@@ -368,7 +368,73 @@ p_x = c_x - \frac{z_c}{g} \ddot{c_x}
 p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 \end{equation}
 
-\todo{Maybe describe the full-body methode to compute the ZMP}
+\section{Multi-Body methode to calculate the
+ZMP}\label{multi-body-methode-to-calculate-the-zmp}
+
+Besides the simplified table-cart model, there also exsists an exact
+methode to calculate the resulting ZMP from the movement from serveral
+connected rigid bodies.
+
+Let $c_i$ be the CoM position and $m_i$ the mass of the $i$-th body
+($i \in \{1, ..., k\}$). Then the total linear momentum $\mathcal{P}$
+can be calculated by:
+
+\begin{equation}
+\mathcal{P} = \sum^k_{j=1} m_j \cdot \dot{c}_j
+\end{equation}
+
+If $\omega_i$ the angular momentum and $R_i$ is the rotational part of
+the reference frame of the $i$-th body and $I_i$ the inertia tensor in
+that reference frame, the total angular momentum $\mathcal{L}$ can be
+calculated by:
+
+\begin{equation}
+\mathcal{L} = \sum^k_{j=1} c_j \times (m_j \dot{c}_j) + R_j I_j R^T_j \omega_j
+\end{equation}
+
+If we denote the total mass of the robot with $M$ and the gravity vector
+with $g$ we can express the change of linear momentum if a force $f$ is
+applied to the body as:
+
+\begin{equation} \label{eq:change-lin-momentum}
+\dot{\mathcal{P}} = M g + f
+\end{equation}
+
+And subsequently the change in angular momentum if a torque $\tau$ is
+applied:
+
+\begin{equation} \label{eq:change-ang-momentum}
+\dot{\mathcal{L}} = c \times Mg + \tau
+\end{equation}
+
+To calculate the resulting torque $\tau_{ZMP}$ around the ZMP located at
+$p$ we can use:
+
+\begin{equation} \label{eq:multi-body-zmp}
+\tau_{ZMP} = \tau + (0 - p) \times f = \tau - p \times f
+\end{equation}
+
+If solve equation \ref{eq:change-lin-momentum} for $f$ and
+\ref{eq:change-ang-momentum} for $\tau$ and substitute them in
+\ref{eq:multi-body-zmp} this yields the following equation:
+
+\begin{equation}
+\tau_{ZMP} = \dot{\mathcal{L}} - c \times M g - p \times (\dot{\mathcal{P}} - Mg)
+\end{equation}
+
+Since we know that the torque around the ZMP is zero around the $x$ and
+$y$ axis we can apply the definition of the cross product and solve for
+the ZMP position:
+
+\begin{equation}
+p_x = \frac{Mgx + p_z \dot{\mathcal{P}}_x - \dot{\mathcal{L}}_y}{Mg + \dot{\mathcal{P}}_z}
+\end{equation}
+
+\begin{equation}
+p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\mathcal{P}}_z}
+\end{equation}
+
+\todo{plot of difference in multi-body zmp and cart table zmp while walking}
 
 \section{Simulating rigid body
 dynamics}\label{simulating-rigid-body-dynamics}
@@ -1059,12 +1125,11 @@ mean we will see any disturbance. As long a the ZMP remains inside the
 support polygone the trajectory can be executed as planed. Also we saw
 before, it is entirely possible to realize the reference ZMP while being
 in an overall state that deviates significantly from the state we
-assumed while generating the pattern. Thus it seems more viable to check
-for a diviation in the trajectory of our CoM. A common approach to
-correct for CoM position is to control the pose of the chest frame of
-the robot. This only works if the majority of the mass of a robot is
-located in the upper body and arms. Luckily for most humanoid robots
-this is the case.
+assumed while generating the pattern. Thus we also need to check for a
+diviation in the trajectory of our CoM. A common approach to correct for
+CoM position is to control the pose of the chest frame of the robot.
+This only works if the majority of the mass of a robot is located in the
+upper body and arms. Luckily for most humanoid robots this is the case.
 
 \section{Stabilizer}\label{stabilizer}
 
