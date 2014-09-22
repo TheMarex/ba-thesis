@@ -246,13 +246,56 @@ p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 
 ## Simulating rigid body dynamics
 
-\todo{short introduction how that works and some problems with the approach}
+For physical simulation in general can be devided into discrete methodes and continous methodes.
+Discrete simulators only compute the state of the system at specific points in time, while
+continous simulators are able to compute the state of the system at any point in time.
+While contious simulation is the more flexible approach, it quickly becomes impractical
+with the number of constrains involved. Typically a large amount of differential equations
+need to be solved. Since it is hard to obtain analytical solutions for most differential equations,
+numerical methodes need to be used, which often have a large runtime.
+On contrast discrete simulation methodes only compute simulation values for specific time steps.
+This exploits the observation that we will typically query the state of the physics engine only
+at a fixed rate anyway, e.g. at each iteration of our control loop).
+Rather than solving the differntial equations that describe the physical system in each step,
+a solution is derived from the previous simulation state.
 
-<!--
-explain the inverted pendulum model
-maybe the ZMP theory also can go here.
-And include here the challenges of dynamic simulators, whatever you want to add here about simulators (although you can also talk about our particular problems in the next section, in the simulation results).
--->
+A physical system we can typically find two kind of forces: Applied forces and constraint forces.
+Applied forces are the input forces of the system. Source of applied forces are for example objects like springs or gravity.
+Constraint forces are fictious forces that arrise from contrains we impose on the system:
+Non-penetration constraints, friction constraints, position constrains of joints or velocity constrains
+for motors.
+Mathematically we can express such constrains in the form: $C(x) = 0$ or $\dot{C}(x) = 0$ in the case of equality constrains,
+or as $C(x) \geq 0$ or $\dot{C(x)} \geq 0$ in the case of inequality constrains.
+For example the position constraint of a joint $p$ connected to a base $p_0$ with distance $r_0 = ||p-p_0||$
+would be: $C(p) = || p - p_0 ||^2 - r_0^2$
+If $p$ is moving with a linear velocity $v$ a constraint force $F_c$ is applied to $p$ to maintain this constraint.
+We can view $C$ as a transformation from our cartesian space to the constraint space. Thus by computing the jacobian
+$J$ of $C$ we can relate velocities in both spaces. Furthermore we can realte constraint space forces $\lambda$ with cartesian space forces using the transpose of the Jacobian.
+Thus if we can find the constraint space force $\lambda$ that is needed to maintain this constraint we can compute $F_c$ using $F_c = J^T \lambda$.
+Computing this constraint space forces is the task of the constraint solver.
+
+The constrained solver used by \name{Bullet} and thus the constraint solver used for simulating the
+patterns here is a sequential impulse solver.
+To make some calculations easier, a SI solver works with impulses and velocities rather than forces and accelerations.
+Impulses and forces can be easily transformed in eachother as $P = F \cdot T$ where $P$ is the impulse and $T$ the timestep size.
+A sequential impulse solver tries to compute the constraint force (in this case rather impulse) $\lambda$ for each costraint *seperately*.
+For each constraint the following steps are executed:
+
+1. Compute the velocity that results from *applied forces* on the body
+2. Calculate constraint force to satisfy the velocity constraint
+3. Compute new velocity resulting from constraint force *and* applied force on the body
+4. Update position of the body by integrating velocity: $p[n+1] = p[n] + v \cdot T$
+
+Of course this might not lead to a global solution, as satisfying a constraint might violate a previously solved one.
+The idea is to repeadidetly loop over all constraints, so that a global solution will be reached.
+Obviously the quality of this methode relies on how often this loop is executed. Consider the case of a kinematic
+chain where a movement of a link always violates at least one constraint. It is clear that this methode needs a lot of iterations
+to yield good results in this case.
+It becomes even worse in the case of a parallel kinematic that is in contact with the ground, as is the case for a bipedal robot in dual support stance.
+Solving a non-penetration constrain on either end, will invalidate the position constraint of the next link.
+In turn, the position constraint of each link needs to be updated until the other end of the kinematic chain is reached. If the non-penetration
+constraint is violated again for this end, the whole process starts again in reverse direction. This leads to oscillations that need a lot more
+iterations to level off to an acceptable level.
 
 # Pattern generator
 
