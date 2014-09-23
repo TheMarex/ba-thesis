@@ -295,6 +295,9 @@ p_x = \frac{Mgx + p_z \dot{\mathcal{P}}_x - \dot{\mathcal{L}}_y}{Mg + \dot{\math
 p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\mathcal{P}}_z}
 \end{equation}
 
+Both equations are dependent on $p_z$. If we assume the robot walks on a flat
+floor, we can set $p_z = 0$.
+
 \todo{plot of difference in multi-body zmp and cart table zmp while walking}
 
 ## Simulating rigid body dynamics
@@ -768,7 +771,7 @@ Since the goal was to keep the component as simple as possible, we use exsisteni
 Some small helper scripts are provied to make it easier to load the data into the time series analysis framework \name{pandas}.
 \name{Pandas} interfaces with the popular plotting framework \name{matplotlib} to diplay plots of the data.
 \name{IPython} is used to easily run the analysis and display the results in a browser window.
-All plots of simulated patterns found in this thesis can be generated automatically for very simulation.
+All plots of simulated patterns found in this thesis can be generated automatically for every simulation.
 
 \todo{Screenshot of analysis software}
 
@@ -792,7 +795,7 @@ Disturbances due to errors of the methode:
     For example the pattern generator that was used here assumes the ZMP behaves as the cart-table-model predicts.
     However the real ZMP calculated from the multi-body dynamics can substantially deviate.
 
-## Detecting a deviation
+## Controlling a deviation
 
 When using a ZMP based control scheme to derive a walking pattern it seems natural to check for deviations
 of the actual ZMP from the goal ZMP. However a deviation from the reference ZMP does not neccessarily mean we will see any disturbance.
@@ -804,6 +807,110 @@ is to control the pose of the chest frame of the robot. This only works if the m
 Luckily for most humanoid robots this is the case.
 
 ## Stabilizer
+
+We chose a stabilizer proposed by Kajita et. al. in their 2010 paper. \todo{add reference}.
+The stabilizer only needs a joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
+This allows the stabilizer to use patterns that where generated synthetically, e.g. by a pattern generator, or patterns that are
+the results of (adapted) motion capturing.
+The methode proposed by Kajita does not need a torque controlled robot, but works with position control.
+This was very important for the selection of this stabilizer as, the motors in \name{Bullet} are velocity controlled.
+
+The controller works by attaching control frames to specific points on the robot.
+The reference position of this frames can be calculated from the input trajectory using forwards kinematics.
+To compensate a disturbance the orientation of a reference frame is modified.
+The modified reference frames are then converted to the modified joint angles by the inverse kinematics.
+
+\todo{include block digramm of controller}
+
+In the remainder of this chapter we will use the superscript $d$ to denote reference values and the subscript $*$
+to denote modified values.
+
+For this approach four control frames where selected. The chest to modify the body posture,
+the feet to modify the ankle torque, and the pelvis to modify the difference between contact forces of the two feet.
+
+### Controlling the body posture
+
+The control strategy of the chest pose is straight forward: Given the reference roll angle $\phi^d$ and reference pitch angle $\theta^d$
+compute the differences to the actual angles $\phi$ and $\theta$.
+The main problem in a real robot is to obtain the actual global pose of this frame.
+The proposed methode is to use a Kalman filter to estimate the pose from the joint position and accelerometers.
+We did not implement this methode in simulation, as it is easy to obtain the exact pose from the simulator.
+To prevent rapid movements of the chest that cause large accelerations, a dampening controller is used.
+The angles $\Delta \phi$ and $\Delta \theta$ can be calculated by the following equations:
+
+\begin{equation}
+\Delta \dot{\phi} = \frac{1}{D_c} (\phi^d - \phi) - \frac{1}{T_c} \cdot \Delta \phi
+\end{equation}
+
+\begin{equation}
+\Delta \dot{\theta} = \frac{1}{D_c} (\theta^d - \theta) - \frac{1}{T_c} \cdot \Delta \theta
+\end{equation}
+
+$D_c$ describes the dampening gain. $T_c$ is constant that describes how long it will take to reach the normal positions $\Delta \phi = 0$ and
+$\Delta \theta = 0$ respectively if there is no error.
+
+The modified reference frame $R^{d*}_c$ can the be calculated by rotating the reference frame by the additional angles:
+
+\begin{equation}
+R^{d*}_c = R^d \cdot R_{RPY}(\Delta \phi, \Delta \theta, 0)
+\end{equation}
+
+To get an idea how this controller compensates CoM inaccuracies consider the case where the upper body is bent forward.
+Since our reference trajectory specifies an upright upper body pose we can assume that $\phi^d = 0$.
+Since the upper body is bent forward the roll angle $\phi$ will be below zero.
+Depending on $D_c$ we will eventually reach $\Delta \phi \approx |\phi|$, thus the reference frame will be modified to bent backwards
+to compensate the wrong pose.
+
+### Controlling the ankle torques
+
+Since the stabilizer only has the joint trajectory and desired ZMP trajectory as input,
+we need a way to compute the desired actuation torques on the ankles.
+The canonical way to do this, would be to solve the inverse dynamics of the robot.
+However for this we need an acurate model of the robot, including correct masses and moments of intertia for each link.
+This model is not always easy to obtain and calculating the inverse dynamics of a robot with many degrees
+of freedom is rather slow.
+For this reason a simple heuristic is proposed to yield approximate torques given a reference ZMP position.
+However in the single support phase it is easy to calculate the *exact* actuation torque on the ankle, if we assume the desired ZMP
+is realized. Note that this assumption does not neccessarily hold, as the desired ZMP can assume approximate dynamics such as the cart-table model.
+First we need to caluclate the force applied on the foot at the ankle $p_{ankle}$ by the gravity $f_g$ by:
+
+\begin{equation}
+f_g = M \cdot g
+\end{equation}
+
+Where $g$ is the gravity vector and $M$ the mass of the robot.
+Given $f_g$ acting on the ankle position $p_{ankle}$ we can obtain the ankle torque in single support phase easily using the fact,
+that the torque around the ZMP is zero:
+
+\begin{equation}
+\begin{array}{lcccr}
+\tau_{zmp} & = & (p_{ankle} - p^d_{zmp}) \times f_g & + & \tau^d_{ankle} \\
+0 & = & (p_{ankle} - p^d_{zmp}) \times f_g & + & \tau^d_{ankle} \\
+\tau^d_{ankle} & = & -(p_{ankle} - p^d_{zmp}) \times f_g & & \\
+\end{array}
+\end{equation}
+
+In dual support phase however that matter is more complicated. Since both
+feet are in contact with the ground, the weight of the robot is distributed between them.
+If we take the forces $f_R$ and $f_L$ which act on the right ankle $p_R$ and left ankle $p_L$ respectively
+we know that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
+$f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$.
+A heuristic for computing this alpha is the *ZMP distributor*.
+
+The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from the ZMP to the support polygones of the feet.
+The ZMP then is projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
+
+We can then define $\alpha$ as:
+
+\begin{equation}
+\alpha = \frac{|p_{\alpha} - p_{L\#}|}{|p_{R\#} - p_{L\#}|}
+\end{equation}
+
+Using that we can calculate the torque around the ZMP as:
+
+\begin{equation}
+\tau_{ZMP} = (p_R)
+\end{equation}
 
 Theory
 Implementation
