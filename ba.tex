@@ -1242,19 +1242,125 @@ around the ZMP is zero:
 In dual support phase however that matter is more complicated. Since
 both feet are in contact with the ground, the weight of the robot is
 distributed between them. If we take the forces $f_R$ and $f_L$ which
-act on the right and left ankle respectively we know that
-$f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
+act on the right ankle $p_R$ and left ankle $p_L$ respectively we know
+that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
 $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$. A heuristic
 for computing this alpha is the \emph{ZMP distributor}.
 
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from
 the ZMP to the support polygones of the feet. The ZMP then is projected
 onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
+
 We can then define $\alpha$ as:
 
 \begin{equation}
 \alpha = \frac{|p_{\alpha} - p_{L\#}|}{|p_{R\#} - p_{L\#}|}
 \end{equation}
+
+If $\tau_L$ and $\tau_R$ are the torques in the left and right ankle
+respectively, we can calculate the torque around the ZMP as:
+
+\begin{equation} \label{eq:ds-torque}
+\tau_{zmp} = (p_R - p^d_{zmp}) \times f_R + (p_L - p^d_{zmp}) \times f_L + \tau^d_L + \tau^d_R
+\end{equation}
+
+As before, we assume that $\tau_{zmp} = 0$ which lets us solve
+\ref{eq:ds-torque} for $\tau_0 := \tau^d_L + \tau^d_R$:
+
+\begin{equation} \label{eq:tau0-torque}
+\tau_0 = (p_R - p^d_{zmp}) \times f_R + (p_L - p^d_{zmp}) \times f_L
+\end{equation}
+
+\todo{define ground frame} We now again apply a heurstic using the
+$\alpha$ computed before to distribute $\tau_0$ to each ankle. First we
+need to transform $\tau_0$ from the global coordinate system to a local
+coordinate system described by the \emph{ground frame}. We mark all
+vectors in the local coordinate system with $'$. The heuristic we apply
+is: The torque around the $x$-Axis in each ankle is approximately
+proportional to the force applied at that ankle. Thus:
+
+\begin{equation} \label{eq:torque-right-x}
+\tau^{d'}_{Rx} = \alpha \tau_{0x}'
+\end{equation}
+
+\begin{equation} \label{eq:torque-left-x}
+\tau^{d'}_{Lx} = (1-\alpha) \tau_{0x}'
+\end{equation}
+
+The torque around the $y$-Axis depends on the direction of the total
+torque $\tau_{0y}'$. If the total torque acts in clockwise direction
+(negative sign), we can assume it will only be applied to the left foot.
+If the torque acts in anti-clockwise direction (positive sign), we
+assumte it will only be applied to the right foot.
+
+\begin{equation} \label{eq:torque-right-x}
+\tau^{d'}_{Ry} = \left\{
+\begin{array}{lr}
+\tau_{0y}', & \tau_{0y'} > 0 \\
+0, & else
+\end{array}
+\right.
+\end{equation}
+
+\begin{equation} \label{eq:torque-left-x}
+\tau^{d'}_{Ly} = \left\{
+\begin{array}{lr}
+\tau_{0y}', & \tau_{0y'} < 0 \\
+0, & else
+\end{array}
+\right.
+\end{equation}
+
+We can now transform the torques form our local coordinate system back
+to the global coordinate system yielding $\tau^d_L$ and $\tau^d_R$.
+
+\todo{Cite kajita paper from 2005 that outlines the motivation for doing pose control}
+
+Now that we have calculated the reference torques, we can try to control
+the torque in each angle using the measured torques $\tau_R$ and
+$\tau_L$. However since we assume a position controlled robot, we need
+to translate torque differences into pose changes. There are three
+primary cases we need to consider if we change the reference pose of a
+foot:
+
+\todo{image with springs}
+
+\begin{description}
+\item[The foot is not in contact with the ground:]
+Changing the reference pose will just affect the foot
+\item[The foot is in contact with the ground, but the contact is
+non-solid:]
+If the foot has a soft contact surface (e.g.~rubber) we can model the
+contact with the ground as springs that connect the ground with the
+contact points on the foot. Changing the pose of the foot will
+relax/compress the springs and change the contact forces acoordingly.
+\item[The foot is in solid contact with the ground:]
+Changing the reference foot pose \emph{will not change the foot pose at
+all}. Instead, the pose of the rest of the robot is changed. If the foot
+pose is changed by the angles $\Delta \phi$ and $\Delta \theta$ all
+other frames of the robot will be changed by $-\Delta \phi$ and
+$-\Delta \theta$.
+\end{description}
+
+\todo{IK model <-> real robot}
+
+For a foot with a rubber surface we will start with a non-solid contact
+and transition to a solid contact, once the rubber is sufficiently
+compressed. To get an idea how changing the pose on such a foot with
+rubber surface affects the torque, consider the case of rotating the
+foot around its lateral axis (x-Axis) in anti-clockwise direction. Since
+the contact with the ground is at first non-solid, we can employ the
+spring model. The springs at the front of the foot are compressed thus
+the force applied at the corresponding contact points increases.
+Accordingly the springs at the back are compressed less, thus the force
+applied to the corresponding contact points decreases. Resulting we see
+a increase in torque around the $x$-Axsis. If the springs are compressed
+sufficiently, we can assume the contact with the floor is solid. Since
+the pose of the foot does not change, the increase in the joint angle in
+the ankle will rotate the upper body backwards. If we recall the 3D-LIMP
+model for a moment, this basically means our pendulum swings backwards.
+This will lead to an increase of the torque around the $x$-Axsis in the
+base of the pendulum, the ankle joint.
 
 Theory Implementation Evaluation
 
