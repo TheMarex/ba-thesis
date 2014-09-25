@@ -777,6 +777,8 @@ All plots of simulated patterns found in this thesis can be generated automatica
 
 # Stabilizing a trajectory
 
+\todo{More introduction: Most stabilizers are propritary and very robot specific.}
+
 While executing a trajectory there are several sources of errors that will make it neccessary to correct the trajectory.
 We can devide them in about three main classes:
 
@@ -1058,7 +1060,7 @@ p^{d*}_L = p^d_L - 0.5 \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right
 
 This can lead to singularities if both legs are already fully streched, as the edge of their workspace is reached.
 The second methode relies on an additional rotating the pelvis link. For this approach to work, the robot needs
-a joint that allows roations around the anterior axis ($y$-Axis) to keep the upper body uprigt.
+a joint that allows rotations around the anterior axis ($y$-Axis) to keep the upper body uprigt.
 Since the robot model we used does not have this DOF, we only implemented the first approach.
 
 ### Interaction between controllers
@@ -1072,6 +1074,83 @@ compensates that and keeps the body upright.
 This tight coupling makes tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as their performence depends on the other controllers.
 Best results where observed when the chest posture controller was tuned independently first, disabling the other controllers.
 Then the foot force controllers was enabled and tuned and finally the ankle torque controller was added and tuned.
+
+### CoM and ZMP control
+
+The controllers specified in the previous sections can make sure,
+that the ZMP that is realized tracks the ZMP that would result from a perfect execution of the input pattern.
+However depending on how the reference ZMP was predicted, that prediction might have already been wrong.
+For example the ZMP Preview Control approach uses the Table-Cart model to predict the ZMP. That prediction
+can deviate significantly from the real ZMP as the model simplifies the dynamics.
+Thus to make sure the desired ZMP is tracked acurately, the reference ZMP needs to be adapted as well.
+
+Kajita et. al. propose a dynamic system that describes the 3D-LIMP dynamics. To model mechanical lag they introduce a
+parameter $T_p$ that should specify the ZMP delay. The state-space description of the dynamic system for the $x$-direction is given below.
+As before, the description of the dynamic system for the $y$-direction is analogous.
+
+\begin{equation} \label{eq:dyn-system-adaption}
+\frac{d}{dt} \left(\begin{array}{c}
+c_x \\
+\dot{c}_x \\
+p_{zmp_x} \\
+\end{array} \right)
+=
+\overbrace{
+\left(\begin{array}{ccc}
+0 & 1 & 0\\
+\frac{g}{z_c} & 0 & -\frac{g}{z_c} \\
+0 & 0 & -\frac{1}{T_p} \\
+\end{array}\right)
+}^{ =: A}
+\cdot
+\left(\begin{array}{c}
+c_x \\
+\dot{c}_x \\
+p_{zmp_x} \\
+\end{array}\right)
++
+\overbrace{
+\left(\begin{array}{c}
+0 \\
+0 \\
+\frac{1}{T_p} \\
+\end{array}\right)
+}^{ =: B}
+u
+\end{equation}
+
+As controller a feedback controller is proposed:
+
+\begin{equation}
+p^{d*}_x = u = (k_1, k_2, k_3) \cdot
+\left[
+\left(\begin{array}{c}
+c^d_x \\
+\dot{c}^d_x \\
+p^d_{zmp_x} \\
+\end{array}\right)
+-
+\left(\begin{array}{c}
+c_x \\
+\dot{c_x} \\
+p_{zmp_x} \\
+\end{array}\right)
+\right]
++ p^d_{zmp_x}
+\end{equation}
+
+\todo{fix gains in software.}
+
+To derive the corresponding gains $(k_1, k_2, k_3)$ pole-placement with the poles
+$(-13, -3, \sqrt{\frac{g}{c_z}})$ was proposed. The gains can be easily computed from
+the poles, $A$ and $B$ using predefined functions in \name{MATLAB} or similar software.
+
+## Implementation
+
+* Replacable IK component
+* Change of root during computation
+* Measuring force + torques in bullet did not work out
+* Replacement for foot force and foot torque controller
 
 Theory
 Implementation
