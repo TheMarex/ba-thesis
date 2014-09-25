@@ -813,7 +813,8 @@ The stabilizer only needs a joint trajectory of the walking pattern augmented wi
 This allows the stabilizer to use patterns that where generated synthetically, e.g. by a pattern generator, or patterns that are
 the results of (adapted) motion capturing.
 The methode proposed by Kajita does not need a torque controlled robot, but works with position control.
-This was very important for the selection of this stabilizer as, the motors in \name{Bullet} are velocity controlled.
+This was very important for the selection of this stabilizer as, the motors in \name{Bullet} are velocity controlled, thus we can not controll
+the torque directly.
 
 The controller works by attaching control frames to specific points on the robot.
 The reference position of this frames can be calculated from the input trajectory using forwards kinematics.
@@ -870,9 +871,9 @@ However for this we need an acurate model of the robot, including correct masses
 This model is not always easy to obtain and calculating the inverse dynamics of a robot with many degrees
 of freedom is rather slow.
 For this reason a simple heuristic is proposed to yield approximate torques given a reference ZMP position.
-However in the single support phase it is easy to calculate the *exact* actuation torque on the ankle, if we assume the desired ZMP
-is realized. Note that this assumption does not neccessarily hold, as the desired ZMP can assume approximate dynamics such as the cart-table model.
-First we need to caluclate the force applied on the foot at the ankle $p_{ankle}$ by the gravity $f_g$ by:
+However in the single support phase it is easy to calculate the *exact* actuation torque on the ankle, that is required to realize the given reference ZMP.
+
+First we need to calculate the force in $z$-direction applied on the foot at the ankle $p_{ankle}$ which we name $f_g$ by:
 
 \begin{equation}
 f_g = M \cdot g
@@ -897,10 +898,13 @@ we know that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
 $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$.
 A heuristic for computing this alpha is the *ZMP distributor*.
 
-The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from the ZMP to the support polygones of the feet.
-The ZMP then is projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
+\todo{For some reason I named the class ForceDistributor, I should fix that}
 
-We can then define $\alpha$ as:
+The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from the ZMP to the support polygones of the feet.
+If the ZMP falls inside one of the support polygones set $\alpha = 1$ or $\alpha = 0$ respectively.
+If it is outside of bothe support polygones the ZMP is projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
+
+We can then set $\alpha$ to:
 
 \begin{equation}
 \alpha = \frac{|p_{\alpha} - p_{L\#}|}{|p_{R\#} - p_{L\#}|}
@@ -922,7 +926,7 @@ As before, we assume that $\tau_{zmp} = 0$ which lets us solve \ref{eq:ds-torque
 We now again apply a heurstic using the $\alpha$ computed before to distribute $\tau_0$ to each ankle.
 First we need to transform $\tau_0$ from the global coordinate system to a local coordinate system
 described by the *ground frame*. We mark all vectors in the local coordinate system with $'$.
-The heuristic we apply is: The torque around the $x$-Axis in each ankle is approximately proportional to
+The heuristic applied is: The torque around the $x$-Axis in each ankle is approximately proportional to
 the force applied at that ankle. Thus:
 
 \begin{equation} \label{eq:torque-right-x}
@@ -953,15 +957,15 @@ If the torque acts in anti-clockwise direction (positive sign), we assumte it wi
 \right.
 \end{equation}
 
-We can now transform the torques form our local coordinate system back to the global coordinate system
+We can now transform the torques form our local coordinate system to the coordinate system of the corresponding foot
 yielding $\tau^d_L$ and $\tau^d_R$.
 
 \todo{Cite kajita paper from 2005 that outlines the motivation for doing pose control}
 
-Now that we have calculated the reference torques, we can try to control the torque in each angle
+Now that we have obtained the reference torques, we can try to control the torque in each angle
 using the measured torques $\tau_R$ and $\tau_L$. However since we assume a position controlled robot,
-we need to translate torque differences into pose changes.
-There are three primary cases we need to consider if we change the reference pose of a foot:
+the torque differences need to be translated into pose changes.
+There are three primary cases that need to be considered if we change the reference pose of a foot:
 
 \todo{image with springs}
 
@@ -981,15 +985,93 @@ The foot is in solid contact with the ground:
 \todo{IK model <-> real robot}
 
 For a foot with a rubber surface we will start with a non-solid contact and transition to a solid contact, once the rubber is sufficiently compressed.
+
 To get an idea how changing the pose on such a foot with rubber surface affects the torque,
 consider the case of rotating the foot around its lateral axis (x-Axis) in anti-clockwise direction.
 Since the contact with the ground is at first non-solid, we can employ the spring model. The springs at the front of the foot are compressed
 thus the force applied at the corresponding contact points increases.
 Accordingly the springs at the back are compressed less, thus the force applied to the corresponding contact points decreases.
 Resulting we see a increase in torque around the $x$-Axsis.
+
 If the springs are compressed sufficiently, we can assume the contact with the floor is solid. Since the pose of the foot does not change,
-the increase in the joint angle in the ankle will rotate the upper body backwards. If we recall the 3D-LIMP model for a moment,
-this basically means our pendulum swings backwards. This will lead to an increase of the torque around the $x$-Axsis in the base of the pendulum, the ankle joint.
+the increase in the joint angle in the ankle will rotate the upper body backwards. Recall the 3D-LIMP model for a moment,
+in that model this means our pendulum swings backwards. This will lead to an increase of the torque around the $x$-Axis in the base of the pendulum, the ankle joint.
+
+For rotating the foot around the $y$-axis the same ideas hold.
+
+As a result we see that additional foot rotation long the $x$- and $y$-Axis have a proportional relationship with the torque
+around that axis. This motivates the definition of the controller proposed by Kajita et. al. The additional rotation angles
+are can be calculated by the following equations:
+
+\todo{Maybe add a step response to the controller}
+
+\begin{equation}
+\Delta \dot{\phi_i} = \frac{1}{D_{ix}} (\tau^d_{ix} - \tau_{ix}) - \frac{1}{T_{ix}} \cdot \Delta \phi_i
+\end{equation}
+\begin{equation}
+\Delta \dot{\theta_i} = \frac{1}{D_{ix}} (\tau^d_{iy} - \tau_{iy}) - \frac{1}{T_{ix}} \cdot \Delta \theta_i
+\end{equation}
+
+Where $i \in \{R, L\}$. This again utilizes the same concept of a dampening controller
+that was used previously for controlling the chest frame orientation.
+We can use the obtained angles $\Delta \phi_i$ and $\Delta \theta_i$ to compute the modified reference frames for the feet:
+
+\begin{equation}
+R^{d*}_i = R^d_i \cdot R_{RPY}(\Delta \phi_i, \Delta \theta_i, 0)
+\end{equation}
+
+### Foot force difference controller
+
+In the previous section only the ankle torque were controlled to match the reference values that were derived using the ZMP distributer.
+However reference values for the gravitational force that each foot exerts on the ground were also obtained.
+These forces are not necessarily realized. Consider the case of slightly uneven ground. If the pattern assumed a flat ground,
+the ankle of both feet will have the same altitude. Depending on variation of floor height, that might lead to one foot not touching the ground at all.
+In the case of feet with rubber soles, slight variations in floor height lead to a different compression of the soles. Both cases cause a different force acting on each foot.
+
+If we assume the mass $M$ of the robot and the gravity vector $g$ are correct, we know that the reference force $f^d_g = M \cdot g$
+will exactly match the force in $z$-direction $f_g$ exerted by the support foot in single support.
+Thus in single support we can guarantee that we realize our reference force.
+In dual support we know that $f^d_L + f^d_R = M \cdot g$. If we apply the same reasoning as above we know that $f^d_L + f^d_R = f_L + f_R$.
+If we can additionally make sure that $f^d_L - f^d_R = f_L - f_R$ we can deduce that $f^d_L = f_L$ and $f^d_R = f_R$.
+Equation \ref{eq:ds-torque} can be used to calculate the ZMP position from the applied forces and torques on the foot. If both reference torques and reference forces on the feet are realized, that will guarantee the reference ZMP is also realized.
+
+\todo{The code of that part was broken: Fix it.}
+Since the $x$ and $y$ components of both $f^d_L - f^d_R$ and $f_L = f_R$ are zero we only need to control the $z$
+components. As we motivated in the beginning of this section, differences in floor height are the main cause of deviation in the force.
+To compensate that, the height of the ankle needs to be changed.
+Thus the difference in ankle height $z_{ctl}$ was chosen to compensate the difference in forces
+exerted by the foot. The description of the controller again uses the concept of a dampening controller, that was used in the previous sections.
+
+\begin{equation}
+\dot{z}_{ctl} = \frac{1}{D_z} [(f^d_L - f^d_R) - (f_L - f_R)] - \frac{1}{T_z} z_{ctl}
+\end{equation}
+
+Two methodes were proposed to realize this difference in ankle height.
+The first methode is straight forward change the reference position of the feet in $z$-direction:
+
+\begin{equation}
+p^{d*}_R = p^d_R + 0.5 \cdot \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right)
+\end{equation}
+\begin{equation}
+p^{d*}_L = p^d_L - 0.5 \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right)
+\end{equation}
+
+This can lead to singularities if both legs are already fully streched, as the edge of their workspace is reached.
+The second methode relies on an additional rotating the pelvis link. For this approach to work, the robot needs
+a joint that allows roations around the anterior axis ($y$-Axis) to keep the upper body uprigt.
+Since the robot model we used does not have this DOF, we only implemented the first approach.
+
+### Interaction between controllers
+
+While each controller operate independently, their effects are highly coupled.
+The most important coupling exists between the chest posture controller and the ankle torque controller.
+Recall that in case of a solid contact with the ground the ankle torque controller will not rotate the supporting foot
+but rather the body of the robot. This will however change the posture of chest frame. The chest posture controller
+compensates that and keeps the body upright.
+\todo{relationship between foot force controller and other controllers}
+This tight coupling makes tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as their performence depends on the other controllers.
+Best results where observed when the chest posture controller was tuned independently first, disabling the other controllers.
+Then the foot force controllers was enabled and tuned and finally the ankle torque controller was added and tuned.
 
 Theory
 Implementation
