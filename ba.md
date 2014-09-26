@@ -300,7 +300,7 @@ floor, we can set $p_z = 0$.
 
 \todo{plot of difference in multi-body zmp and cart table zmp while walking}
 
-## Simulating rigid body dynamics
+## Simulating rigid body dynamics {#section:rigid-body-simulation}
 
 For physical simulation in general can be devided into discrete methodes and continous methodes.
 Discrete simulators only compute the state of the system at specific points in time, while
@@ -570,7 +570,7 @@ Since the calculation is quite elaborate we refer to the cited article by Kataya
 
 \todo{block diagramm of architechture}
 To generate walking patterns based on the ZMP preview control methode, the approach from Kajita
-was implemented in a shared library. A front-end was developed to easily change parameters, visualize
+was implemented in \name{libBipedal} a shared library. A front-end was developed to easily change parameters, visualize
  and subsequently export the trajectory to the \name{MMM} format.
 The implementation was build on a previous implementation, which was refactored,
 extended and tuned with respect to results from the dynamics simulation.
@@ -808,7 +808,7 @@ Thus we also need to check for a diviation in the trajectory of our CoM. A commo
 is to control the pose of the chest frame of the robot. This only works if the majority of the mass of a robot is located in the upper body and arms.
 Luckily for most humanoid robots this is the case.
 
-## Stabilizer
+## Stabilizer {#section:stabilizer}
 
 We chose a stabilizer proposed by Kajita et. al. in their 2010 paper. \todo{add reference}.
 The stabilizer only needs a joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
@@ -1178,28 +1178,56 @@ as the constraint solver used for the simulation will only amplify this jitter.
 
 ### Integration into the simulator
 
-* Controller can be activated and changed during runtime
-* Several controller: Kajita, Cartesian, Player
+As was the case with the components of the pattern generator, the core of the stabilizer
+is implemented as part of \name{libBipedal}.
+To integrate the stabilizer into the simulation, each stabilizer is implements the ```TrajectoryController```
+interface. \todo{block diagramm of simulator}
+Currently three controllers are implemented. A controller based on the stabilizer propose by Kajita above,
+a simple heuristic stabilizer \todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position} and 
+a controller that just plays back the specified walking pattern.
+After each simulation cycle the physics engine invokes a callback in the simulator that calls the actived controllers and measurement units.
+The actual stabilizer loop runs with the same cycle-time as the specified reference trajectory. The computed reference joint angles and velocites
+are then interpolated using cubic splines.
+The joint values are then send to the motor controllers in \name{SimDynamics} which controlls
+the motors in \name{Bullet}.
 
 ### Problems
 
-* Measured torque does not correspond with predicted torque
-* Contact forces have a lot of jitter
+Some problems became immediately clear when testing the stabilizer proposed by Kajita.
+The ground reaction forces in dual support are oscillating widly. Instead of a continous force at about $0.5 \cdot f_g$
+the forces on both feet oscillate between $0$ and $f_g$, the support foot changes in rapid successions.
+As outlines in section \ref{section:rigid-body-simulation} this is a result of the constraint solver methode employed by \name{Bullet}.
+Subsequently the measured torques on the ankles did not follow the prediction as well.
+Pleae note that this is not merely sensor noise, these are the actual values used by the simulator.
+Even when adding mean-filters to smoothen the measured torques it was not possible to extract a meaningful control signal.
+Besides the sequential impulse solver newer versions of \name{Bullet} support a solver based on the Featherstone algorithm.
+Given the scope of this thesis, integrating that solver was out of question, thus an alternative approach to stabilizing
+had to be found.
 
 ### Alternative approach
 
-* No ZMP, CoM correction
-* Just guards against simple disturbences
-* Cannot adapt to changed environment (slope, small step)
+A a simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
+feedback with the pose error of pelvis and feet frames respectively.
+The chest controller Kajita et. al. proposed for controlling the body posture where adapted to
+all control frames to provide a feedback on the pose error.
 
-* Replacable IK component
-* Change of root during computation
-* Measuring force + torques in bullet did not work out
-* Replacement for foot force and foot torque controller
+This yields a controller that keeps the feet pose parallel to the ground, which is important when the swing foot touches the ground.
+Controlling the pelvis and chest pose to follow the reference also keeps the robot upright.
+It should be noted that it is probably not feasible to implement this stabilizer in practice. As mentioned in section \ref{section:stabilizer}
+precisely estimating the pose of a robot is not easy. While the dampening controllers can be configured to smoothen a noisy sensor signal,
+a high level of precision is required to ensure a correct foot posture.
 
-Theory
-Implementation
-Evaluation
+Since the ZMP and CoM trajectory is not adaped, the compensation of environment disturbences is only based on a fast controller raction
+to leave the reference trajectory a little as possible and the stability margins the ZMP provides.
+However as we will discuss in the evaluation section, this simple approach is already supprisingly resilient.
+
+### Evaluation
+
+* Can only compare cartesian stabilizer and player
+* Football experiment
+* Walking straight (with ball, without ball)
+* Walking in a circle (with ball, without ball)
+* Plot all the things.
 
 # Push recovery
 Theory
