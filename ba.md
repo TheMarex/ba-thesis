@@ -1147,6 +1147,51 @@ the poles, $A$ and $B$ using predefined functions in \name{MATLAB} or similar so
 
 ## Implementation
 
+\fixme{Needs introduction}
+
+### Computing the inverse kinematics
+While implementing the stabilizer above, a number of problems has to be solved.
+For one, computing the inverse kinematics proofed challenging. During walking the base of support
+depends on which foot is in contact with the ground. Thus the left foot will act as base and the right foot as TCP
+if the left foot is the support foot. The reverse is true if the right foot is the support foot.
+In dual support phase, we actually have two bases of support, which yields a parallel kinematic chain.
+\name{Simox}, the framework used to compute the inverse kinematics, describes the kinematic structure of a robot
+as a directed tree. Solving the inverse kinematics was initially only possible for sub-trees of that tree.
+That means it was not possible to chose base and TCP freely, but it was determined by the structure in which the kinematic model
+was initially described.
+
+As a first approximation, a kinematic model with the left foot as root node was used.
+In the case of the right foot being the support foot, this approach leads to an increased error.
+Consider solving the inverse kinematics for both legs using a differential solver in two steps:
+First from the base (the left foot) to the pelvis, then from the pelvis to the right foot.
+Lets assume the IK computes a perfect solution to place the pevlis link and only achieves a small pose error of $e_{\alpha} = 0.1°$ in the pitch angle of the right foot.
+If the trajectory is execute, the right foot will achieve its target pose, since it is constrained by the ground contact.
+However the error in the right foot pose will effect all other frames of the robot. Assuming a offset of $v = (-0.5, 0, 1)^T m$ from the right foot
+to the pelvis link, we can compute the realized pelvis offset as $v' = R_y(-e_{\alpha}) \cdot v = (-0.49825, 0,  1.00087)^T m$
+Which yields $1.76mm$ error in x-direction and $0.87mm$ error in y-direction.
+
+To solve this \name{Simox} was extented by a function ```cloneInversed``` that can compute a kinematic structure with abitrary root placement from an existing description.
+To solve the parallel kinematic chain, it proofed sufficient to approximate it as a normal kinematic chain and constrain the base and TCP
+targets acordingly. However since the position of one foot will have small positioning errors, there will be some jitter introduced
+into the system. Integrating a solver for parallel kinematics might decrease some of the jitter observed in foot contact forces during dual support,
+as the constraint solver used for the simulation will only amplify this jitter.
+
+### Integration into the simulator
+
+* Controller can be activated and changed during runtime
+* Several controller: Kajita, Cartesian, Player
+
+### Problems
+
+* Measured torque does not correspond with predicted torque
+* Contact forces have a lot of jitter
+
+### Alternative approach
+
+* No ZMP, CoM correction
+* Just guards against simple disturbences
+* Cannot adapt to changed environment (slope, small step)
+
 * Replacable IK component
 * Change of root during computation
 * Measuring force + torques in bullet did not work out
