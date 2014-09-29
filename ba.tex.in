@@ -33,10 +33,45 @@
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
 
 \newcommand{\clr}[2]{{\color{#1}{#2}}}
-\newcommand{\todo}[1]{\marginpar{\clr{red}{#1}}}
+%\newcommand{\todo}[1]{\marginpar{\clr{red}{#1}}}
+%\newcommand{\todo}[1]{%
+%    \addcontentsline{tdo}{todo}{\protect{#1}}
+%    \marginpar{\clr{red}{#1}}
+%}
+
+% Command for inserting a todo item
+\newcommand{\todo}[1]{%
+% Add to todo list
+\addcontentsline{tdo}{todo}{\protect{#1}}%
+%
+\begin{tikzpicture}[remember picture, baseline=-0.75ex]%
+\node [coordinate] (inText) {};
+\end{tikzpicture}%
+%
+% Make the margin par
+\marginpar{%
+\begin{tikzpicture}[remember picture]%
+\definecolor{orange}{rgb}{1,0.5,0}
+\draw node[draw=black, fill=orange, text width = 2.5cm] (inNote)
+{#1};%
+\end{tikzpicture}%
+}%
+%
+\begin{tikzpicture}[remember picture, overlay]%
+\draw[draw = orange, thick]
+([yshift=-0.2cm] inText)
+-| ([xshift=-0.2cm] inNote.west)
+-| (inNote.west);
+\end{tikzpicture}%
+%
+}% 
+
 \newcommand{\slpy}[1]{{\sloppy #1}}
 \newcommand{\fixme}[1]{{\color{red}{FIXME: #1}}}
 \newcommand{\name}[1]{\textsc{#1}}
+\makeatletter \newcommand \listoftodos{\section*{Todo list} \@starttoc{tdo}}
+\newcommand\l@todo[2]
+    {\par\noindent \textit{#2}, \parbox{10cm}{#1}\par} \makeatother
 
 \graphicspath{{./images/}}
 
