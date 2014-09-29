@@ -1139,8 +1139,6 @@ p_{zmp_x} \\
 + p^d_{zmp_x}
 \end{equation}
 
-\todo{fix gains in software.}
-
 To derive the corresponding gains $(k_1, k_2, k_3)$ pole-placement with the poles
 $(-13, -3, \sqrt{\frac{g}{c_z}})$ was proposed. The gains can be easily computed from
 the poles, $A$ and $B$ using predefined functions in \name{MATLAB} or similar software.
