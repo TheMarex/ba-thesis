@@ -1,15 +1,15 @@
 .PHONY: clean
 
-CHAPTERS=$(ls text/*.md | sort)
+CHAPTERS=./text/*.md
 
 all: ba.pdf
 
-ba.pdf: text/*.md
+ba.pdf: ba.tex
 	pdflatex ba.tex
 	bibtex ba || true
 	pdflatex ba.tex
 
-ba.tex: ba.tex.in ba.md
+ba.tex: ba.tex.in text/*.md
 	pandoc --chapters --template ba.tex.in ${CHAPTERS} -o ba.tex
 
 clean:
