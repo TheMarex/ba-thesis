@@ -404,7 +404,7 @@ p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 \end{equation}
 
 \section{Multi-Body methode to calculate the
-ZMP}\label{multi-body-methode-to-calculate-the-zmp}
+ZMP}\label{section:multi-body-zmp}
 
 Besides the simplified table-cart model, there also exsists an exact
 methode to calculate the resulting ZMP from the movement from serveral
@@ -556,7 +556,14 @@ the position constraint of each link needs to be updated until the other
 end of the kinematic chain is reached. If the non-penetration constraint
 is violated again for this end, the whole process starts again in
 reverse direction. This leads to oscillations that need a lot more
-iterations to level off to an acceptable level.
+iterations to level off to an acceptable level. Dispite these
+inaccuracies using enought solver iteration this still yields an overall
+usable systems. However the velocities still will have a small random
+error in each simulation step. This poses a major problem when trying to
+measure accelerations, as the random error acauses them to accelerate
+wildly. This circumstance needs to be taken into account when dealing
+with values derived from the acceleration (e.g.~the ZMP), as
+mean-filters might be neccessary.
 
 \chapter{Pattern generator}\label{pattern-generator}
 
@@ -1675,7 +1682,7 @@ support a solver based on the Featherstone algorithm. Given the scope of
 this thesis, integrating that solver was out of question, thus an
 alternative approach to stabilizing had to be found.
 
-\subsection{Alternative approach}\label{alternative-approach}
+\subsection{Alternative approach}\label{section:alternative-approach}
 
 A a simple heuristic, we used the controllers proposed by Kajita as
 inspiration and replaced the force and torque feedback with the pose
@@ -1698,22 +1705,6 @@ environment disturbences is only based on a fast controller raction to
 leave the reference trajectory a little as possible and the stability
 margins the ZMP provides. However as we will discuss in the evaluation
 section, this simple approach is already supprisingly resilient.
-
-\subsection{Evaluation}\label{evaluation}
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Can only compare cartesian stabilizer and player
-\item
-  Football experiment
-\item
-  Walking straight (with ball, without ball)
-\item
-  Walking in a circle (with ball, without ball)
-\item
-  Plot all the things.
-\end{itemize}
 
 \chapter{Push recovery}\label{push-recovery}
 
@@ -1746,13 +1737,74 @@ based on the 3D-LIPM.
   Immediate Capture Point
 \end{itemize}
 
-Theory Implementation Evaluation
+\section{Implementation}\label{implementation-2}
 
 \chapter{Results}\label{results}
 
-Make sure that somewhere, either here or in the evaluation sections, you
-show how you plotted the desired vs.~real zmp, even the phantom robot if
-you want, and the graphics that you generated.
+\todo{Write small introduction}
+
+\section{Unstabilized walking}\label{unstabilized-walking}
+
+In this section the results of just playing back the patterns generated
+by the pattern generator are presented. In short, all patterns generated
+by the Pattern Generate are dynamically stable and realize walking
+without falling. However for some trajectories like walking in a circle,
+significant deviations can be observed.
+
+\subsection{Walking straight}\label{walking-straight-1}
+
+Figure \fixme{ref} shows the simulation of walking straight for 10
+steps. The pattern is \fixme{ref} seconds long.
+
+Figure \fixme{ref} shows the desired ZMP, CoM and foot TCP positions.
+The actual realized ZMP, CoM and are shown in figure \fixme{ref}. The
+ZMP shown is derived using the Cart-Table model, for a comparison of
+different methodes to derive the actual ZMP see
+\ref{section:multi-body-zmp}. As you can see the realized ZMP roughly
+follows the desired trajectory, while the signal is rather noisy. To get
+an idea why the ZMP oscillates so much, consider figure \fixme{ref}. The
+acceleration of the CoM oscillates wildly. We believe this is caused by
+the the problems outlined in section \ref{section:rigid-body-simulation}
+about rigid body simulation. In single support the ZMP oscillates near
+the boarder of the support polygone, but overall stays inside.
+
+\todo{desired-zmp} \todo{actual-zmp}
+\todo{image-series walking straight (maybe with phantom?)}
+
+\subsection{Walking in a circle}\label{walking-in-a-circle}
+
+Figure \fixme{ref} shows the simulation of walking in a circle. The
+robot walks in \fixme{Number of steps} in an arc of 180° and 0.5 m
+radius. As you can see the desired 180° turn is not realized completely.
+Due to the chest rotation to follow the trajectory, a torque around the
+yaw-axis is excerted on the foot. Recall that during pattern generation
+we assumed that this torque is zero. Since we do not correct this
+disturbance the trajectory deviates significantly in this case.
+\todo{read paper about yaw compensation} However stable walking is still
+realized as you can see from the desired and actual ZMP and CoM
+trajectories in the figures \fixme{ref} and \fixme{ref}.
+
+\todo{desired-zmp} \todo{actual-zmp}
+\todo{image-series walking in a circle}
+
+\section{Stabilized walking}\label{stabilized-walking}
+
+In this section we present the results of using the alternative
+stabilizer derived from the Kajita Stabilizer. As was the case with
+unstabilized walking, a stable walking trajectory is realized. Smaller
+disturbances can be corrected to remain stable.
+
+\section{Undisturbed walking}\label{undisturbed-walking}
+
+Figure \fixme{ref} and \fixme{ref} show the realized ZMP and CoM
+trajectory of the same for walking straight and in a circle. As input
+trajectories for the stabilizer the trajectorie tested in the previous
+section are used.
+
+The trajectory deviates a little more than it was the case for
+unstabilized walking. This is somewhat expected, since the stabilizer
+modifies the reference trajectory to ensure the constrains outlined in
+\ref{section:alternative-approach}.
 
 \chapter{Conclusions}\label{conclusions}
 

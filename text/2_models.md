@@ -232,7 +232,7 @@ p_x = c_x - \frac{z_c}{g} \ddot{c_x}
 p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 \end{equation}
 
-## Multi-Body methode to calculate the ZMP
+## Multi-Body methode to calculate the ZMP {#section:multi-body-zmp}
 
 Besides the simplified table-cart model, there also exsists an exact methode
 to calculate the resulting ZMP from the movement from serveral connected rigid bodies.
@@ -342,4 +342,9 @@ Solving a non-penetration constrain on either end, will invalidate the position 
 In turn, the position constraint of each link needs to be updated until the other end of the kinematic chain is reached. If the non-penetration
 constraint is violated again for this end, the whole process starts again in reverse direction. This leads to oscillations that need a lot more
 iterations to level off to an acceptable level.
+Dispite these inaccuracies using enought solver iteration this still yields an overall usable systems. However the velocities still will have
+a small random error in each simulation step.
+This poses a major problem when trying to measure accelerations, as the random error acauses them to accelerate wildly.
+This circumstance needs to be taken into account when dealing with values derived from the acceleration (e.g. the ZMP),
+as mean-filters might be neccessary.
 

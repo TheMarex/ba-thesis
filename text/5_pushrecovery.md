@@ -18,7 +18,5 @@ Pratt \todo{Add citation} derives the Capture Point for multiple models based on
 * Capturebility <-> capture region
 * Immediate Capture Point
 
-Theory
-Implementation
-Evaluation
+## Implementation
 

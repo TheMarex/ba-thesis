@@ -425,7 +425,7 @@ Besides the sequential impulse solver newer versions of \name{Bullet} support a 
 Given the scope of this thesis, integrating that solver was out of question, thus an alternative approach to stabilizing
 had to be found.
 
-### Alternative approach
+### Alternative approach {#section:alternative-approach}
 
 A a simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
 feedback with the pose error of pelvis and feet frames respectively.
@@ -441,12 +441,4 @@ a high level of precision is required to ensure a correct foot posture.
 Since the ZMP and CoM trajectory is not adaped, the compensation of environment disturbences is only based on a fast controller raction
 to leave the reference trajectory a little as possible and the stability margins the ZMP provides.
 However as we will discuss in the evaluation section, this simple approach is already supprisingly resilient.
-
-### Evaluation
-
-* Can only compare cartesian stabilizer and player
-* Football experiment
-* Walking straight (with ball, without ball)
-* Walking in a circle (with ball, without ball)
-* Plot all the things.
 
