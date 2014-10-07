@@ -1,14 +1,16 @@
 .PHONY: clean
 
+CHAPTERS=$(ls text/*.md | sort)
+
 all: ba.pdf
 
-ba.pdf: ba.tex
+ba.pdf: text/*.md
 	pdflatex ba.tex
 	bibtex ba || true
 	pdflatex ba.tex
 
 ba.tex: ba.tex.in ba.md
-	pandoc --chapters --template ba.tex.in ba.md -o ba.tex
+	pandoc --chapters --template ba.tex.in ${CHAPTERS} -o ba.tex
 
 clean:
 	rm -f *.aux
