@@ -2,10 +2,6 @@
 
 ## The Linear Inverted Pendulum Model
 
-\todo{Use different name for CoM, $p$ will be rather used for the ZMP, maybe $c$?}
-
-\todo{picture of 3D-LIPM}
-
 A simple model for describing the dynamics of a bipedal robot during single support phase is the 3D inverted pendulum.
 We reduce the body of the robot to a point-mass at the center of mass and replace the support leg
 by a mass-less telescopic leg which is fixed at a point on the supporting foot.
@@ -13,16 +9,22 @@ Initially this will yield non-linear equations that will be hard to control.
 Howevery by constraining the movement of the inverted pendulum to a fixed plane, we can derive a linear dynamic system.
 This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 
+\begin{wrapfigure}{R}{0.4\textwidth}
+  \begin{center}
+     \includegraphics[width=0.4\textwidth]{images/3dlimp.png}
+  \end{center}
+  \caption{The 3D-LIMP}
+\end{wrapfigure}
+
 ### The inverted pendulum
 
 To describe the dynamics of the inverted pendulum we are mainly interested in the effect a given actuator torque has on the movement of the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the origin of the current cartesian coordinate system.
-Thus we can describe the position inverted pendulum by a vector $p = (x, y, z)$.
+Thus we can describe the position inverted pendulum by a vector $c = (x, y, z)$.
 We are going to introduce an appropriate (generalized) coordinate system $q = (\theta_R, \theta_P, r)$ to get an easy description of our actuator torques:
 Let $m$ be the mass of the pendulum and $r$ the length of the telescopic leg.
 $\theta_P$ and $\theta_R$ describe the corresponding roll and pitch angles of the pose of the pendulum.
-\todo{add image with angles here}
 
 Now we need to find a mapping between forces in the cartesian coordinate system and the generalized forces (the actuator torques).
 Let $\Phi: \mathbb{R}^3 \longrightarrow \mathbb{R}^3, (\theta_R, \theta_P, r) \mapsto (x, y, z)$ be a function that maps the generalized coordinates to the cartesian coordinates.
@@ -30,8 +32,8 @@ Then the jacobian $J_\Phi = \frac{\partial p}{\partial q}$ maps the *generalized
 Furthermore we know that the transpose $J_\Phi^T$ maps *cartesian forces* $F = m (\ddot x, \ddot y, \ddot z)$ to *generalized forces* $(\tau_r, \tau_p, f)$.
 
 We write $x$, $y$ and $z$ in terms of our generalized coordinates to compute the corresponding jacobian $J_\Phi$.
-From the fact that the $\theta_P$ is the angle between the projection of $p$ onto the $xz$-plane and $p$
-and $\theta_R$ the angle between $p$ and the projection onto the $yz$ plane we can derive the following equations \todo{reference paper}:
+From the fact that the $\theta_P$ is the angle between the projection of $c$ onto the $xz$-plane and $c$
+and $\theta_R$ the angle between $c$ and the projection onto the $yz$ plane we can derive the following equations \todo{reference paper}:
 
 \begin{equation}
 \begin{array}{lcll} \label{eq:lip-xyz}

@@ -3,6 +3,7 @@
 
 \documentclass[english,ngerman]{KITreprt}
 
+\usepackage{wrapfig}
 
 %% -------------------------------
 %% |  Information for PDF file   |

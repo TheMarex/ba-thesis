@@ -3,6 +3,7 @@
 
 \documentclass[english,ngerman]{KITreprt}
 
+\usepackage{wrapfig}
 
 %% -------------------------------
 %% |  Information for PDF file   |
@@ -125,8 +126,6 @@ Model}\label{the-linear-inverted-pendulum-model}
 
 \todo{Use different name for CoM, $p$ will be rather used for the ZMP, maybe $c$?}
 
-\todo{picture of 3D-LIPM}
-
 A simple model for describing the dynamics of a bipedal robot during
 single support phase is the 3D inverted pendulum. We reduce the body of
 the robot to a point-mass at the center of mass and replace the support
@@ -137,6 +136,13 @@ inverted pendulum to a fixed plane, we can derive a linear dynamic
 system. This model called the 3D \emph{linear} inverted pendulum model
 (short \emph{3D-LIPM}).
 
+\begin{wrapfigure}{R}{0.4\textwidth}
+  \begin{center}
+     \includegraphics[width=0.4\textwidth]{images/3dlimp.png}
+  \end{center}
+  \caption{The 3D-LIMP}
+\end{wrapfigure}
+
 \subsection{The inverted pendulum}\label{the-inverted-pendulum}
 
 To describe the dynamics of the inverted pendulum we are mainly
@@ -145,13 +151,12 @@ the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the
 origin of the current cartesian coordinate system. Thus we can describe
-the position inverted pendulum by a vector $p = (x, y, z)$. We are going
+the position inverted pendulum by a vector $c = (x, y, z)$. We are going
 to introduce an appropriate (generalized) coordinate system
 $q = (\theta_R, \theta_P, r)$ to get an easy description of our actuator
 torques: Let $m$ be the mass of the pendulum and $r$ the length of the
 telescopic leg. $\theta_P$ and $\theta_R$ describe the corresponding
 roll and pitch angles of the pose of the pendulum.
-\todo{add image with angles here}
 
 Now we need to find a mapping between forces in the cartesian coordinate
 system and the generalized forces (the actuator torques). Let
@@ -165,8 +170,8 @@ $(\tau_r, \tau_p, f)$.
 
 We write $x$, $y$ and $z$ in terms of our generalized coordinates to
 compute the corresponding jacobian $J_\Phi$. From the fact that the
-$\theta_P$ is the angle between the projection of $p$ onto the
-$xz$-plane and $p$ and $\theta_R$ the angle between $p$ and the
+$\theta_P$ is the angle between the projection of $c$ onto the
+$xz$-plane and $c$ and $\theta_R$ the angle between $c$ and the
 projection onto the $yz$ plane we can derive the following equations
 \todo{reference paper}:
 
