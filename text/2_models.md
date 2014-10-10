@@ -288,7 +288,14 @@ p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\math
 Both equations are dependent on $p_z$. If we assume the robot walks on a flat
 floor, we can set $p_z = 0$.
 
-\todo{plot of difference in multi-body zmp and cart table zmp while walking}
+See figure \ref{zmp-comparision} to get an idea how much the Multi-Body ZMP
+derives from the estimation using the Cart-Table model.
+
+\begin{figure*}[tb]
+\includegraphics[width=\textwidth,resolution=300]{images/zmp_comparison.png}
+\caption{Comparision of the Cart-Table and Multi-Body to estimate the realized ZMP during walking.}
+\label{img:zmp-comparison}
+\end{figure*}
 
 ## Simulating rigid body dynamics {#section:rigid-body-simulation}
 

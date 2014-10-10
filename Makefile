@@ -4,7 +4,7 @@ CHAPTERS=./text/*.md
 
 all: ba.pdf
 
-ba.pdf: ba.tex
+ba.pdf: ba.tex images/*.png
 	pdflatex ba.tex
 	bibtex ba || true
 	pdflatex ba.tex
