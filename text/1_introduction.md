@@ -8,3 +8,5 @@ motivation,  and a bit of overview of humanoid walking.  I recommend to leave it
 - static vs. dynamic walking
 - overview of models used for dynamic walking
 
+- Overview of the software
+

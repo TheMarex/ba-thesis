@@ -2,7 +2,7 @@
 
 To evaluate the generated trajectories a simulator for the dynamics was developed.
 The simulator was build on the \name{SimDynamics} framework that is part of \name{Simox}.
-\name{SimDynamics} uses Bullet Physics as underlying physics framework.
+\name{SimDynamics} uses \name{Bullet Physics} as underlying physics framework.
 A big part of the work on the simulator was spend on configuring the parameters and finding flaws in the physics simulation.
 Thus the simulator includes a extensive logging framework that measures all important parameters of the simulation.
 For visulizing and analysing the measurement the Open Source tools \name{IPython}, numpy and \name{pandas} where used.
@@ -65,7 +65,7 @@ This poses a major problem when trying to measure accelerations, as the random e
 This circumstance needs to be taken into account when dealing with values derived from the acceleration (e.g. the ZMP),
 as mean-filters might be neccessary.
 
-### Practical challenges of physics simulation
+## Practical challenges of physics simulation
 
 While walking only the feet of the robot are in contact with the ground. Thus the stability of the whole robots depends on the contact of the feet with the floor. Especially in single support phase that area is very small with regard to the size of the robot.
 For that reason the accuracy of ground contatc forces and friction is of utmost importance for the quality of the simulation.
@@ -79,17 +79,17 @@ In general three classes of errors need to be elimnated to get a good simulation
 
 As outline in the section about discrete time dynamic simulation, the physics of the system
 are formulated as input forces and constrains that need to be solved for the constraint forces.
-Since bullet uses an iterative approach that solves each constraint independently, it is of utmost importance
+Since \name{Bullet} uses the iterative apporach described in section \ref{section:rigid-body-simulation}. Thus it is important
 to use a sufficient amount of iterations for each simulation step. Another important parameter is the timestep of each simulation step.
 Through experimental evaluation a simulation with 2000 solver iterations and a timestep size of 1ms was sufficiently stable.
 However since the number of iterations is very high and a lot of timesteps are calculated during the simulation, numeric errors become significant.
 That made is neccessary to enable using double precision floating point numbers for the values used during simulation.
 
-To decide which contact constrains are active for which points, Bullet must solve for object collisions. Depending on the objects
+To decide which contact constrains are active for which points, \name{Bullet} must solve for object collisions. Depending on the objects
 involved different algorithms are used to calculate the contact points. Major gains in accuracy could be observed by replacing
 the feet and the floor with simple box shapes, instead using mesh based models.
 
-### Simulating walking patterns
+## Simulating walking patterns
 
 The simulator was designed to load arbitrary motions in the \name{MMM} format and replay them. Additional stabilization algorithms can be applied
 depending on additional information provided in the \name{MMM} motions.

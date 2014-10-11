@@ -8,15 +8,86 @@ will be defeated. Thus we focus on short but severe disturbences, pushes.
 
 The most prominent methode to recover from pushes is the Capture Point. The idea is to find
 a point, that will guarantee that the CoM comes to a rest, if the support foot is instantanously placed there.
+The push recovery implemented here uses a simplistic methode based on the Capture Point.
 
 ## Capture Point
 
 Pratt \todo{Add citation} derives the Capture Point for multiple models based on the 3D-LIPM.
+The simplest model is the 3D Linear Inverted Pendulum with a point contact and a massless
+telescopic rod.
+If we use the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with zero input torque,
+we can derive that so called *orbital energy* of the pendulum.
+As we did in the section about the pattern generator, we will derive the equations
+only for one dimension. The other dimension follows analogous.
+
+The base of the pendulum is assumed to be at the origin of the reference
+frame in \ref{eq:lip-x}. Since we want to specify the location freely,
+we need to substitude $x$ with $x - p$ to yield:
+
+\begin{equation} \label{eq:lip-x-general}
+\ddot{x} = \frac{g}{z_c} (x - p)
+\end{equation}
+
+The orbital energy $E_x$ can be derived by integrating \ref{eq:lip-x-general}:
+
+\todo{Ask Julia how this was integrated. I don't see it.}
+
+\begin{equation} \label{eq:orbital-x}
+E_x = \frac{1}{2} \dot{x}^2 - \frac{g}{2 \cdot z_c} (x - p)^2
+\end{equation}
+
+For the CoM to come to a rest the orbital energy $E_x$ must be zero.
+Thus we can solve \ref{eq:orbital-x} to yield the point $p$ that will achieve this.
+Since it is a quaratic equation there are two solutions:
+
+\begin{equation}
+p = x - \sqrt{\frac{z_c}{g}} \dot{x} \:\:\:\:\text{ or }\:\:\:\: p = x + \sqrt{\frac{z_c}{g}} \dot{x}
+\end{equation}
+
+Since it is generally desireable to chose a point that lies in the direction of the CoM motion
+we define the *Immediate Capture Point* as:
+
+\begin{equation} \label{eq:icp}
+p_{ic} := x + \sqrt{\frac{z_c}{g}} \dot{x}
+\end{equation}
+
+Placing the base of the pendulum (the ankle) there *instentaniously* will cause
+an orbital energy of zero, thus the head of the pendulum (the CoM) will stop at $p_{ic}$.
+In most cases we will not be able to move the base of the pendulum instentaniously.
+So we are more interested in the Immediate Capture Point in $\Delta t$ seconds from now.
+This point can be obtained by \ref{eq:future-icp}.
+For a detailed derivation, we recommend the paper by Pratt et al. \todo{Add reference}
+
+\begin{equation} \label{eq:future-icp}
+p_{ic}(\Delta t) = p_{ankle} + (p_{ic}(0) - p_{ankle}) \cdot e^{\frac{g}{z_c} \cdot \Delta t}
+\end{equation}
+
+Where $p_{ankle}$ is the current position of ankle of the support foot (the current base of the pendulum).
+and $p_{ic}(0)$ is the current Immediate Capture Point as calculated by equation \ref{eq:icp}.
+
+## Fall detection
+
+The first important step to recover from a large disturbence is to detect it.
+That means we need to detect if we reached a unstable state, from which it is unlikely that we can
+recover only by means of the stabilizer.
+We can use the measured ZMP to obtain a heuristic for such states. If the ZMP is
+outside or on the edge of the support polygone, the Cart-Table model does not guarantee stability.
+However in normal operations it is likely that the ZMP will touch (or leave) the border of the support polygone
+for short periods of time. A simple methode to filter out this noise is to define a minium duration the ZMP
+as to be in an unstable state.
+Chosing a small value will let us react faster to disturbences, but make the methode error prone.
+Chosing a large value will add an additional detail until we can react, but is much less prone to be triggered by
+mistake. An experimental evaluation yielded good results with a duration of $t = $ \fixme{add real time here}.
+
+## Recovery
+
+If a fall is detected, a recovery maneuver needs to be executed.
+In single support phase, that means we need to place the swing foot at the capture point.
+In dual support we try to move the support foot that is closest to the capture point.
+Recall that the base of the pendulum coincides with the ZMP in our model view.
+This if the resulting support polygone includes the capture point, the position will be stable.
 
 * Read paper again
 * Definition of capture point
 * Capturebility <-> capture region
 * Immediate Capture Point
-
-## Implementation
-

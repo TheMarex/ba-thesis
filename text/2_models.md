@@ -122,10 +122,10 @@ Substituing \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the equations \ref{
 yields the following equations:
 
 \begin{equation}
-\ddot{y} = \frac{g}{z_c} y - \frac{k_x}{z_c} (x\ddot{y} - \ddot{x}y) - m z_c \cdot \tau_R \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R}
+\ddot{x} = \frac{g}{z_c} x + \frac{k_y}{z_c} (x\ddot{y} - \ddot{x}y) + m z_c \cdot \tau_P \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P}
 \end{equation}
 \begin{equation}
-\ddot{x} = \frac{g}{z_c} x + \frac{k_y}{z_c} (x\ddot{y} - \ddot{x}y) + m z_c \cdot \tau_P \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P}
+\ddot{y} = \frac{g}{z_c} y - \frac{k_x}{z_c} (x\ddot{y} - \ddot{x}y) - m z_c \cdot \tau_R \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R}
 \end{equation}
 
 The term $x\ddot{y} - \ddot{x}y$ that is part of both equations is still causing the equations to be non-linear.
@@ -134,19 +134,24 @@ To make this equations linear we will assume that our ground plane has no slope,
 Another problem is that the actuator torques $\tau_R$ and $\tau_P$ both have non-linear factors $\frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R}$ and $\frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P}$ respectively. This can be solved by substituting with the following *virtual inputs*:
 
 \begin{equation}
-\tau_P \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P} = u_P
+\tau_R \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R} = u_R
 \end{equation}
 \begin{equation}
-\tau_R \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R} = u_R
+\tau_P \cdot \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_P} = u_P
 \end{equation}
 
 Which yields our final description of the dynamics:
-\begin{equation} \label{eq:lip-y}
-\ddot{y} = \frac{g}{z_c} y - \frac{u_R}{m z_c}
-\end{equation}
 \begin{equation} \label{eq:lip-x}
 \ddot{x} = \frac{g}{z_c} x + \frac{u_R}{m z_c}
 \end{equation}
+\begin{equation} \label{eq:lip-y}
+\ddot{y} = \frac{g}{z_c} y - \frac{u_R}{m z_c}
+\end{equation}
+
+As outlined in \todo{cite kajita 1991} the inputs $u_P$ and $u_R$ are generally set to zero.
+Thus the 3D-LIMP has no input torque. This is desireable, as the torque
+that can be applied on the ankle joints is limited. Thus it makes sense to reserve the torque
+for correcting disturbences.
 
 \todo{include pattern generation just based on 3D-LIPM, I don't understand how they derived the controller}
 
