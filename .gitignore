@@ -7,3 +7,7 @@
 *.bbl
 *.blg
 *.brf
+*.tdo
+*.swp
+__pycache__
+.ipynb_checkpoints
