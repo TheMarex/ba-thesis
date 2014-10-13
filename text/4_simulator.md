@@ -89,27 +89,43 @@ To decide which contact constrains are active for which points, \name{Bullet} mu
 involved different algorithms are used to calculate the contact points. Major gains in accuracy could be observed by replacing
 the feet and the floor with simple box shapes, instead using mesh based models.
 
-## Simulating walking patterns
+## Implementatoin
+
+\begin{figure*}[htb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/architechture.png}
+\caption{Achitechture of the stabilizer}
+\label{img:stabilitzer-achitechture}
+\end{figure*}
 
 The simulator was designed to load arbitrary motions in the \name{MMM} format and replay them. Additional stabilization algorithms can be applied
 depending on additional information provided in the \name{MMM} motions.
+These stabilization algorithms are called by real-time plugins called ```TrajectoryController```, that get invoked in each simulation step.
+
+\todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position}
+
+Currently three controllers are implemented. A controller based on the stabilizer proposed by Kajita (as outlined in section \ref{section:stabilizer}),
+a simple heuristic stabilizer (outlined in section \ref{section:alternative-approach})
+and a controller that just plays back the specified walking pattern.
+Each control algorithm is invoked in the same cycle time as the reference walking pattern.
+
 \todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
 
-Even during simple playback of a trajectory, a number of conisderations due to the dynamics need to be taken into account.
-We will outline some of the problems and how they where resolved.
+The resulting, possibily modified, joint angles are then interpolated using cubic splines.
+This ensures a smooth velocity profile and mitigates destabilizing oscillations caused by large velocity changes.
 
-Simply applying the joint values at the given point in time, will lead to large jumps in velocity, acceleration and jerk.
-This will cause large oscillations, which in turn result in destabilizing disturbances.
-Interpolation between the joint angles of two frames can mitigate this. To implement this cubic splines where used instead of linear interpolation, as they also ensure that the velocity is continous.
+The interpolated angles are send via \name{SimDynamics} to the corresponding motors.
+Since the motor implemented in \name{Bullet} are velocity controlled,
+PID based motor controllers were added to \name{SimDynamics}.
+They control the motor velocites to compensate position errors.
 
-Disturbances due to the simulation will cause position errors in the joints.
-To fix that PID based motor controllers were added to \name{SimDynamics}. They control the motor velocites to compensate position errors.
-
-Since the motors used by the simulation framework are velocity controlled, their acceleration is not limited.
+The motors implemented \name{Bullet} do not limit the motor velocity and acceleration.
 This is not consistent with real motors, thus limits for velocites and acceleration where introduced to \name{SimDynamics},
 that can be configured on a per-joint basis.
 
-An important part of the simulation is the generation of measurements that can saved to be carefully evaluted offline or displayed in the visualization.
+## Simulation analysis
+
+An important part of the simulation is the generation of measurements that can be carefully evaluted offline or displayed in the visualization.
 For this purpose a modular measuremt component was added to the simulator.
 An important design goal was to keep the measurement component as simple to extend and maintain as possible.
 Each module meassures a specific set of values and writes them, indexed by the corresponding timestamp, to its log file.

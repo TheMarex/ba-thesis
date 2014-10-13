@@ -401,16 +401,6 @@ as the constraint solver used for the simulation will only amplify this jitter.
 
 As was the case with the components of the pattern generator, the core of the stabilizer
 is implemented as part of \name{libBipedal}.
-To integrate the stabilizer into the simulation, each stabilizer is implements the ```TrajectoryController```
-interface. \todo{block diagramm of simulator}
-Currently three controllers are implemented. A controller based on the stabilizer propose by Kajita above,
-a simple heuristic stabilizer \todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position} and 
-a controller that just plays back the specified walking pattern.
-After each simulation cycle the physics engine invokes a callback in the simulator that calls the actived controllers and measurement units.
-The actual stabilizer loop runs with the same cycle-time as the specified reference trajectory. The computed reference joint angles and velocites
-are then interpolated using cubic splines.
-The joint values are then send to the motor controllers in \name{SimDynamics} which controlls
-the motors in \name{Bullet}.
 
 ### Problems
 

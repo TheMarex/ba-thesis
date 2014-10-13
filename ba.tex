@@ -91,34 +91,54 @@
 
 \chapter{Introduction}\label{introduction}
 
-motivation, and a bit of overview of humanoid walking. I recommend to
-leave it for later, start with the sections that you feel its easier to
-write (usually, the ones that have more content).
+Nearly one hundret years of Sci-Fiction have estabilished the firm image
+of a mechanical humanoid servant with super humand capabilities, with
+the term \emph{Robot}. Today we live in a world where large parts of our
+production circles are already governed by robots. Yet, widespread
+adoption of humanoid robots is still nowhere in evidence. One core
+problem of humanoid robots is their inherent complexity. Vison,
+cognition, manipulation and locomotion all need to be combined in one
+mechanism. While every of these problems is under active research, one
+has been especially resilient: Locomotion. Some robots, e.g.~the
+\name{Armar III} robots, solve it by replacing the legs with a stable
+base on wheels. While this yields convinient research platform, the
+navigation in human environments is not as natural as for full humanoid
+robots.
 
-\begin{itemize}
+Over the last two decades a lot of progress has been made in humanoid
+walking. Every one is familiar with the famous ASIMO robot developed by
+Honda or the HRP robots developed by AIST which demostrate stable
+walking. More recently ATLAS by Boston Dynamics shows great stability
+even under disturbances. Sadly most of these platforms are closed and it
+is not known exactly which models are used in each robot to derive
+stable walking.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  motivation:
+  Motivation why walking is important. (drop a few names of humanoid
+  bipedals)
+\item
+  Approaches to make robots walk: Synthetic \textless{}-\textgreater{}
+  Motion Capture
+\item
+  Walking in humans:
 
   \begin{itemize}
   \itemsep1pt\parskip0pt\parsep0pt
   \item
-    navigating in human environments
-  \end{itemize}
-\item
-  walking in humans:
-
-  \begin{itemize}
-  \itemsep1pt\parskip0pt\parsep0pt
+    Gait phases
   \item
-    CoM movement, gait phases, differences to what we do here
+    CoM movement \todo{I mentioned that somewhere else, move it here.}
   \end{itemize}
 \item
-  static vs.~dynamic walking
+  Static stability vs.~dynamic stability
 \item
-  overview of models used for dynamic walking
+  Overview of models for dynamic stability: Details later
 \item
-  Overview of the software
-\end{itemize}
+  Overview of the software created
+\end{enumerate}
 
 \chapter{Models for humanoid walking}\label{models-for-humanoid-walking}
 
@@ -1098,38 +1118,52 @@ involved different algorithms are used to calculate the contact points.
 Major gains in accuracy could be observed by replacing the feet and the
 floor with simple box shapes, instead using mesh based models.
 
-\section{Simulating walking patterns}\label{simulating-walking-patterns}
+\section{Implementatoin}\label{implementatoin}
+
+\begin{figure*}[htb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/architechture.png}
+\caption{Achitechture of the stabilizer}
+\label{img:stabilitzer-achitechture}
+\end{figure*}
 
 The simulator was designed to load arbitrary motions in the \name{MMM}
 format and replay them. Additional stabilization algorithms can be
 applied depending on additional information provided in the \name{MMM}
-motions.
+motions. These stabilization algorithms are called by real-time plugins
+called \texttt{TrajectoryController}, that get invoked in each
+simulation step.
+
+\todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position}
+
+Currently three controllers are implemented. A controller based on the
+stabilizer proposed by Kajita (as outlined in section
+\ref{section:stabilizer}), a simple heuristic stabilizer (outlined in
+section \ref{section:alternative-approach}) and a controller that just
+plays back the specified walking pattern. Each control algorithm is
+invoked in the same cycle time as the reference walking pattern.
+
 \todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
 
-Even during simple playback of a trajectory, a number of conisderations
-due to the dynamics need to be taken into account. We will outline some
-of the problems and how they where resolved.
+The resulting, possibily modified, joint angles are then interpolated
+using cubic splines. This ensures a smooth velocity profile and
+mitigates destabilizing oscillations caused by large velocity changes.
 
-Simply applying the joint values at the given point in time, will lead
-to large jumps in velocity, acceleration and jerk. This will cause large
-oscillations, which in turn result in destabilizing disturbances.
-Interpolation between the joint angles of two frames can mitigate this.
-To implement this cubic splines where used instead of linear
-interpolation, as they also ensure that the velocity is continous.
-
-Disturbances due to the simulation will cause position errors in the
-joints. To fix that PID based motor controllers were added to
+The interpolated angles are send via \name{SimDynamics} to the
+corresponding motors. Since the motor implemented in \name{Bullet} are
+velocity controlled, PID based motor controllers were added to
 \name{SimDynamics}. They control the motor velocites to compensate
 position errors.
 
-Since the motors used by the simulation framework are velocity
-controlled, their acceleration is not limited. This is not consistent
-with real motors, thus limits for velocites and acceleration where
-introduced to \name{SimDynamics}, that can be configured on a per-joint
-basis.
+The motors implemented \name{Bullet} do not limit the motor velocity and
+acceleration. This is not consistent with real motors, thus limits for
+velocites and acceleration where introduced to \name{SimDynamics}, that
+can be configured on a per-joint basis.
+
+\section{Simulation analysis}\label{simulation-analysis}
 
 An important part of the simulation is the generation of measurements
-that can saved to be carefully evaluted offline or displayed in the
+that can be carefully evaluted offline or displayed in the
 visualization. For this purpose a modular measuremt component was added
 to the simulator. An important design goal was to keep the measurement
 component as simple to extend and maintain as possible. Each module
@@ -1665,21 +1699,7 @@ jitter.
 simulator}\label{integration-into-the-simulator}
 
 As was the case with the components of the pattern generator, the core
-of the stabilizer is implemented as part of \name{libBipedal}. To
-integrate the stabilizer into the simulation, each stabilizer is
-implements the \texttt{TrajectoryController} interface.
-\todo{block diagramm of simulator} Currently three controllers are
-implemented. A controller based on the stabilizer propose by Kajita
-above, a simple heuristic stabilizer
-\todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position}
-and a controller that just plays back the specified walking pattern.
-After each simulation cycle the physics engine invokes a callback in the
-simulator that calls the actived controllers and measurement units. The
-actual stabilizer loop runs with the same cycle-time as the specified
-reference trajectory. The computed reference joint angles and velocites
-are then interpolated using cubic splines. The joint values are then
-send to the motor controllers in \name{SimDynamics} which controlls the
-motors in \name{Bullet}.
+of the stabilizer is implemented as part of \name{libBipedal}.
 
 \subsection{Problems}\label{problems}
 
@@ -1821,22 +1841,26 @@ results with a duration of $t = $ \fixme{add real time here}.
 
 If a fall is detected, a recovery maneuver needs to be executed. In
 single support phase, that means we need to place the swing foot at the
-capture point. In dual support we try to move the support foot that is
-closest to the capture point. Recall that the base of the pendulum
-coincides with the ZMP in our model view. This if the resulting support
-polygone includes the capture point, the position will be stable.
+capture point. In dual support phase we try to move the support foot
+that is closest to the capture point. Recall that the base of the
+pendulum coincides with the ZMP in our model view. Thus if the resulting
+support polygone includes the capture point, the position will be
+stable. Since the motor velocities are limited, we need a minimal amount
+of time $t_{min}$ to place the foot in the desired location. Thus
+instead of using the Immediate Capture Point, we use the future
+Immediate Capture Point $p_{ic}(t_{min})$ to derive the desired
+location.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Read paper again
-\item
-  Definition of capture point
-\item
-  Capturebility \textless{}-\textgreater{} capture region
-\item
-  Immediate Capture Point
-\end{itemize}
+\section{Implementation}\label{implementation-2}
+
+The stabilizer that is outlined in chapter \ref{section:stabilizer} was
+extented to call the fall detection module in each iteration of the
+control loop. If an unstable state is reached, the recovery module
+overrides the normal trajectory of the stabilizer. After completing the
+recovery maneuver, the robot remains in the given position. The
+stabilizer is activted again to hold the current position. Resuming the
+original pattern requires planning dynamically stable transition
+trajectory. This is left for future work.
 
 \chapter{Results}\label{results}
 

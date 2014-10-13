@@ -83,11 +83,21 @@ mistake. An experimental evaluation yielded good results with a duration of $t =
 
 If a fall is detected, a recovery maneuver needs to be executed.
 In single support phase, that means we need to place the swing foot at the capture point.
-In dual support we try to move the support foot that is closest to the capture point.
+In dual support phase we try to move the support foot that is closest to the capture point.
 Recall that the base of the pendulum coincides with the ZMP in our model view.
-This if the resulting support polygone includes the capture point, the position will be stable.
+Thus if the resulting support polygone includes the capture point, the position will be stable.
+Since the motor velocities are limited, we need a minimal amount of time $t_{min}$ to place
+the foot in the desired location.
+Thus instead of using the Immediate Capture Point, we use the future Immediate Capture Point $p_{ic}(t_{min})$
+to derive the desired location.
 
-* Read paper again
-* Definition of capture point
-* Capturebility <-> capture region
-* Immediate Capture Point
+## Implementation
+
+The stabilizer that is outlined in chapter \ref{section:stabilizer} was
+extented to call the fall detection module in each iteration of the control loop.
+If an unstable state is reached, the recovery module overrides the normal trajectory
+of the stabilizer. After completing the recovery maneuver, the robot remains
+in the given position. The stabilizer is activted again to hold the current position.
+Resuming the original pattern requires planning dynamically stable transition trajectory.
+This is left for future work.
+
