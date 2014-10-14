@@ -14,17 +14,6 @@ However for some trajectories like walking in a circle, significant deviations c
 
 Figure \ref{img:player-undisturbed-straight-thumbs} shows the simulation of walking straight for 10 steps.
 
-The top plot in figure \ref{img:player-undisturbed-straight-x} shows the desired ZMP and CoM.
-The actual realized ZMP, CoM and are shown in the bottom plot. For comparision the position of
-the TCP of both feet is shown as well.
-The ZMP shown is derived using the Cart-Table model, for a comparison of different
-methodes to derive the actual ZMP see \ref{section:multi-body-zmp}.
-As you can see the realized ZMP roughly follows the desired trajectory, while the signal is
-rather noisy. To get an idea why the ZMP oscillates so much, consider figure \ref{img:noisy-com-acc}.
-The acceleration of the CoM oscillates wildly. We believe this is caused by the 
-the problems outlined in section \ref{section:rigid-body-simulation} about rigid body simulation.
-In single support the ZMP oscillates near the boarder of the support polygone, but overall stays inside.
-
 \begin{figure*}[htb]
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/player_undisturbed_straight_thumbs.png}
@@ -32,10 +21,20 @@ In single support the ZMP oscillates near the boarder of the support polygone, b
 \label{img:player-undisturbed-straight-thumbs}
 \end{figure*}
 
+Figure \ref{img:undisturbed-straight-x} shows the desired and actually realized ZMP and CoM
+trajectory for walking 10 steps. For orientation the TCP of both feet is shown as well.
+The ZMP shown is derived using the Multi-Body methode. For a comparison of different
+methodes to derive the realized ZMP see \ref{section:multi-body-zmp}.
+As you can see the realized ZMP roughly follows the desired trajectory, while the signal is
+rather noisy. To get an idea why the ZMP oscillates so much, consider figure \ref{img:noisy-com-acc}.
+The acceleration of the CoM oscillates wildly. We believe this is caused by the 
+the problems outlined in section \ref{section:rigid-body-simulation} about rigid body simulation.
+In single support the ZMP oscillates near the boarder of the support polygone, but overall stays inside.
+
 \begin{figure*}[hbt]
 \vspace*{-1em}
-\includegraphics[width=\textwidth,resolution=300]{images/player_undisturbed_straight_x.png}
-\caption{CoM and ZMP as specified by the pattern (top) and actual realized values (bottom).
+\includegraphics[width=\textwidth,resolution=300]{images/undisturbed_straight_x.png}
+\caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
 All coordinates in the global reference frame.}
 \label{img:player-undisturbed-straight-x}
 \end{figure*}
@@ -69,8 +68,8 @@ However stable walking is still realized. See figure \ref{img:player-undisturbed
 
 \begin{figure}[hbt]
 \vspace*{-1em}
-\includegraphics[width=\textwidth,resolution=300]{images/player_undisturbed_circle.png}
-\caption{ZMP (left) and CoM (right) as specified by the pattern and the actually realized values.}
+\includegraphics[width=\textwidth,resolution=300]{images/undisturbed_circle.png}
+\caption{Walking in a cricle. ZMP (left) and CoM (right) as specified by the pattern and the actually realized values.}
 \label{img:player-undisturbed-circle}
 \end{figure}
 
@@ -83,15 +82,12 @@ Smaller disturbances can be corrected to remain stable.
 
 ## Undisturbed walking
 
-Figure \fixme{ref} and \fixme{ref} show the realized ZMP and CoM trajectory of the same for walking straight and in a circle.
+Figure \ref{img:cartesian-undisturbed-straight-x} and \fixme{ref} shows the realized ZMP and CoM trajectory of the same for walking straight and in a circle.
 As input trajectories for the stabilizer the trajectorie tested in the previous section are used.
 
 The trajectory deviates a little more than it was the case for unstabilized walking.
 This is somewhat expected, since the stabilizer modifies the reference trajectory to ensure
 the constrains outlined in \ref{section:alternative-approach}.
-
-\todo{actual-zmp-straight}
-\todo{actual-zmp-circle}
 
 ## Disturbed walking
 
