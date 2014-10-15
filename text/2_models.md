@@ -1,4 +1,4 @@
-# Models for humanoid walking
+# Models for humanoid walking {#section:walking-models}
 
 ## The Linear Inverted Pendulum Model
 

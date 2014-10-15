@@ -92,9 +92,9 @@
 \chapter{Introduction}\label{introduction}
 
 Nearly one hundret years of Sci-Fiction have estabilished the firm image
-of a mechanical humanoid servant with super humand capabilities, with
-the term \emph{Robot}. Today we live in a world where large parts of our
-production circles are already governed by robots. Yet, widespread
+of a mechanical humanoid servant with super human capabilities, with the
+term \emph{Robot}. Today we live in a world where large parts of our
+production circles are already dominated by robots. Yet, widespread
 adoption of humanoid robots is still nowhere in evidence. One core
 problem of humanoid robots is their inherent complexity. Vison,
 cognition, manipulation and locomotion all need to be combined in one
@@ -106,41 +106,94 @@ navigation in human environments is not as natural as for full humanoid
 robots.
 
 Over the last two decades a lot of progress has been made in humanoid
-walking. Every one is familiar with the famous ASIMO robot developed by
-Honda or the HRP robots developed by AIST which demostrate stable
-walking. More recently ATLAS by Boston Dynamics shows great stability
-even under disturbances. Sadly most of these platforms are closed and it
-is not known exactly which models are used in each robot to derive
-stable walking.
+walking. Every one is familiar with the famous \name{ASIMO} robot
+developed by Honda or the HRP robots developed by AIST which demostrate
+stable walking. More recently \name{ATLAS} by Boston Dynamics shows
+great stability even under disturbances. Sadly most of these platforms
+are closed and it is not known exactly which models are used in each
+robot to derive stable walking.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Motivation why walking is important. (drop a few names of humanoid
-  bipedals)
-\item
-  Approaches to make robots walk: Synthetic \textless{}-\textgreater{}
-  Motion Capture
-\item
-  Walking in humans:
+As the goal for bipedal walking is to be as human-like as possible,
+research on human walking is a greate inspiration for robotic walking.
+While the human gait can be devided into many phases, of primary
+interest for the stability is the number of feet that are in contact
+with the ground. For walking the ground contact alternates between both
+feet and one support foot. These phases are called dual and single
+support respectively. Each step starts with a dual support phase, that
+shifts the center of mass to the foot that supports the weight in the
+next step. The non-supporting foot (the \emph{swing foot}) is then moved
+to the next foot hold. The area that is in contact with the ground is
+not constant in each phase. Most notably at the end of the single
+support phase the heel is lifted. Consequently the contact changes from
+full sole contact to the toes. Also the swing foot hits the ground heel
+first and rotate to meet the ground while the center of mass is shifted
+forward. \todo{Reference some paper about walking phases, Winter?}
 
-  \begin{itemize}
-  \itemsep1pt\parskip0pt\parsep0pt
-  \item
-    Gait phases
-  \item
-    CoM movement \todo{I mentioned that somewhere else, move it here.}
-  \end{itemize}
-\item
-  Static stability vs.~dynamic stability
-\item
-  Overview of models for dynamic stability: Details later
-\item
-  Overview of the software created
-\end{enumerate}
+Early robots where only able to emulate this walking style to varying
+degrees. A common simplification is to use a foot without movable toes.
+The result is a characteristic walking style, where the foot sole is
+always parallel to the ground. The most prominent example is the early
+\name{ASIMO} robot. However today human-like walking using the toes has
+been successfully demonstrated e.g.~by the \name{WABIAN-2R} robot.
+\todo{cite wabian paper}
 
-\chapter{Models for humanoid walking}\label{models-for-humanoid-walking}
+Besides the need for an adequate kinematic structure, deriving
+trajectories that are stable is not trivial. When talking about
+stability, one needs to consider two cases: \emph{static} and
+\emph{dynamic} stability. Static stability is concerned with the
+stability of objects at rest (e.g.~standing), while dynamical stability
+is concerned with the stability of objects in motion (e.g.~walking).
+Deriving a stability criteria for the \emph{static} case is rather
+simple. If the projection of center of mass to the ground is inside the
+support polygone, the pose is said to be \emph{statically} stable. The
+support polygone is the convex hull of all points of the foot that are
+in contact with the ground. However dynamic stability deals with the
+stability of objects (e.g.~in this case robots) in motion. In that case
+more elaborate methodes need to be derived using a description of the
+dynamics of the robot.
+
+There are two basic approaches to derive a trajectory for bipedal
+walking. On the one side are approaches based on direct immitation of a
+human motion. First a human test subject is equiped with markers. The
+marker movements are recorded using motion capturing and mapped to
+corresponding markers on a humanoid model. Since the kinematic structure
+of a human does not map directly to the kinematic structure of a robot,
+the resulting trajectory needs to be adapted to the target robot. In
+general only adapting the motion based on the kinematic structure will
+not yield a dynamically stable motion. Different weights and inertia
+values of the links also need to be considert. However this might cause
+significat modifications of the original trajectory. Thus recent
+methodes in this field as employed by \todo{reference Miura} try to
+limit the characteristics that are emulated. This gives more room for
+modifications to realize stable dynamics.
+
+On the other side there are completely synthetic approaches. Based on
+simplifing models of the dynamics of a humanoid robot, stability
+conditions are derived. Using disired foot positions or step length and
+walking speed as input, corresponding trajectories are derived that
+sattisfy the given stability conditions. Most notably in this catagory
+are approaches based on the Zero Moment Point. In section
+\ref{section:walking-models} the ZMP is derived for different simplified
+dynamic models. Fundermental for this approach is the insight, that the
+dynamics of bipedal walking can be approximated sufficiently by an
+inverted pendulum. The model views the center of mass as the head of the
+pendulum, while the base is attached to the support foot. Thus the task
+of walking can be formalized as moving the base of the pendulum while
+keeping it upright.
+
+This thesis presents the design rationals and results of a software
+framework for bipedal humanoid walking. Building on an implementation by
+Ömer Telemz, a generator for walking pattern using ZMP Preview Control
+was developed. To test the resulting patterns a dynamic simulation for
+walking was build. The simulation utilizes the \name{SimDynamics}
+framework contained in \name{Simox}. The simulation was extented by
+real-time controllers for stabilization and push recovery. For easiy
+integration into other software projects all methodes presented here are
+implemented in a shared library \name{libBipedal}. \name{libBipedal} is
+independent of the dynamic simulation and only depends on
+\name{VirtualRobot} for computing forward and inverse kinematics.
+
+\chapter{Models for humanoid walking}\label{section:walking-models}
 
 \section{The Linear Inverted Pendulum
 Model}\label{the-linear-inverted-pendulum-model}
@@ -1866,18 +1919,14 @@ trajectory. This is left for future work.
 
 \todo{Write small introduction}
 
-\section{Unstabilized walking}\label{unstabilized-walking}
+\section{Undisturbed walking}\label{undisturbed-walking}
 
-In this section the results of just playing back the patterns generated
-by the pattern generator are presented. In short, all patterns generated
-by the Pattern Generate are dynamically stable and realize walking
-without falling. However for some trajectories like walking in a circle,
-significant deviations can be observed.
+\subsection{Walking in a straight
+line}\label{walking-in-a-straight-line}
 
-\subsection{Walking straight}\label{walking-straight-1}
-
-Figure \ref{img:player-undisturbed-straight-thumbs} shows the simulation
-of walking straight for 10 steps.
+The first scenario is walking in a straight line for 10 steps. Figure
+\ref{img:player-undisturbed-straight-thumbs} shows the simulation of
+walking straight for 10 steps using no stabilization.
 
 \begin{figure*}[htb]
 \vspace*{-1em}
@@ -1886,25 +1935,29 @@ of walking straight for 10 steps.
 \label{img:player-undisturbed-straight-thumbs}
 \end{figure*}
 
-Figure \ref{img:undisturbed-straight-x} shows the desired and actually
-realized ZMP and CoM trajectory for walking 10 steps. For orientation
-the TCP of both feet is shown as well. The ZMP shown is derived using
-the Multi-Body methode. For a comparison of different methodes to derive
-the realized ZMP see \ref{section:multi-body-zmp}. As you can see the
-realized ZMP roughly follows the desired trajectory, while the signal is
-rather noisy. To get an idea why the ZMP oscillates so much, consider
-figure \ref{img:noisy-com-acc}. The acceleration of the CoM oscillates
-wildly. We believe this is caused by the the problems outlined in
-section \ref{section:rigid-body-simulation} about rigid body simulation.
-In single support the ZMP oscillates near the boarder of the support
-polygone, but overall stays inside.
+In the unstabilized case, only the joint trajectory that is generated is
+interpolated and replayed. In the stabilized case the the alternative
+stabiliter described in section \ref{section:alternative-approach} is
+used.
+
+Figure \ref{img:undisturbed-straight-x} shows the desired and realized
+CoM and ZMP trajectories in both cases. As you can see the ZMP deviates
+significantly from the desired trajectory and oscillates between both
+edges of the support polygone. We believe this is caused by the problems
+outlined in section \ref{section:rigid-body-simulation}. Consider figure
+\ref{img:noisy-com-acc} which shows the desired CoM acceleration in
+comparision to the realized acceleration. However the foot remains in
+full ground contact and friction forces are applied acurately. Thus
+dynamically stable walking is realized for both unstabilized and
+stabilized walking. We hope that a more stable Featherstone constraint
+solver will produce more acurate contact forces and thus ZMP values.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_straight_x.png}
 \caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
 All coordinates in the global reference frame.}
-\label{img:player-undisturbed-straight-x}
+\label{img:undisturbed-straight-x}
 \end{figure*}
 
 \begin{figure*}[hbt]
@@ -1917,15 +1970,16 @@ All coordinates in the global reference frame.}
 \subsection{Walking in a circle}\label{walking-in-a-circle}
 
 Figure \ref{img:player-undisturbed-circle-thumbs} shows the simulation
-of walking in a circle. The robot walks in 12 steps in an arc of 180°
-and 0.5 m radius. As you can see the desired 180° turn is not realized
-completely. Due to the chest rotation following the tangent of the
-circle, a torque around the yaw-axis is excerted on the foot. Recall
-that during pattern generation we assumed that this torque is zero.
-Since we do not correct this disturbance the trajectory deviates
+of unstabilized walking in a circle. The robot walks in 12 steps in an
+arc of 180° and 0.5 m radius. As you can see the desired 180° turn is
+not realized completely. Due to the chest rotation following the tangent
+of the circle, a torque around the yaw-axis is excerted on the foot.
+Recall that during pattern generation we assumed that this torque is
+zero. Since we do not correct this disturbance the trajectory deviates
 significantly. \todo{read paper about yaw compensation} However stable
-walking is still realized. See figure
-\ref{img:player-undisturbed-circle}
+walking is still realized. See figure \ref{img:undisturbed-circle} for
+the realized ZMP distribution and CoM trajectory for both unstabilized
+and stabilized walking.
 
 \todo{image-series walking in a circle}
 
@@ -1939,28 +1993,10 @@ walking is still realized. See figure
 \begin{figure}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_circle.png}
-\caption{Walking in a cricle. ZMP (left) and CoM (right) as specified by the pattern and the actually realized values.}
-\label{img:player-undisturbed-circle}
+\caption{Walking in a cricle. ZMP (left) and CoM (right) as specified by the pattern and the actually realized values.
+Each for the unstabilized and stabilized case.}
+\label{img:undisturbed-circle}
 \end{figure}
-
-\section{Stabilized walking}\label{stabilized-walking}
-
-In this section we present the results of using the alternative
-stabilizer derived from the Kajita Stabilizer. As was the case with
-unstabilized walking, a stable walking trajectory is realized. Smaller
-disturbances can be corrected to remain stable.
-
-\section{Undisturbed walking}\label{undisturbed-walking}
-
-Figure \ref{img:cartesian-undisturbed-straight-x} and \fixme{ref} shows
-the realized ZMP and CoM trajectory of the same for walking straight and
-in a circle. As input trajectories for the stabilizer the trajectorie
-tested in the previous section are used.
-
-The trajectory deviates a little more than it was the case for
-unstabilized walking. This is somewhat expected, since the stabilizer
-modifies the reference trajectory to ensure the constrains outlined in
-\ref{section:alternative-approach}.
 
 \section{Disturbed walking}\label{disturbed-walking}
 
