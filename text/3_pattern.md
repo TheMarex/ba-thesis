@@ -235,7 +235,20 @@ We will outline the implementation of each module seperately.
 
 To generate the foot trajectories several parameters are needed:
 
-\todo{table with used parameters}
+\begin{figure*}[b]
+\begin{center}
+  \begin{tabular}{| l | l |}
+    \hline
+    $h$ & 0.1 m \\ \hline
+    $l$ & 0.3 m \\ \hline
+    $w$ & 0.2 m \\ \hline
+    $t_{ss}$ & 0.7 s\\ \hline
+    $t_{ds}$ & 0.1 s\\ \hline
+  \end{tabular}
+\caption{Default parameters used for generating a walking trajectory.}
+\label{table:pattern-parameters}
+\end{center}
+\end{figure*}
 
 Step height $h$
   ~  Maximum distance between the foot sole and the floor
@@ -251,6 +264,9 @@ Single support duration $t_{ss}$
 
 Dual support duratoin $t_{ds}$
   ~ Time the weight of the robot is supported by both feet
+
+See figure \ref{table:pattern-generator} for the values used to generate the trajectories
+using a model of the \name{Armar IV} robot.
 
 #### Walking straight
 
@@ -305,16 +321,15 @@ This assures we do not start to move the ZMP too early.
 
 This module implements the methode described by Kajita et. al. and uses the methode outlined by Katayama et. al. to compute the optimal control
 input $u[k]$. Since it is computational feasable, the preview periode consists of the full reference trajectory.
-For an online usage of this methode, this could be reduced to a much smaller sample size.
-\todo{Add timings, implement configurable preview periode}
+For an online usage of this methode, this could be reduced to a much smaller sample size, e.g. only preview one step ahead.
 Using the system dynamics described by \ref{eq:state-transition-result} the CoM trajectory, velocity and acceleration can be computed.
 The implementation makes heavy use of Eigen, a high performence linear algebra framework that uses SIMD instructions to speed up calculations.
-Thus thus a calculation time of \fixme{calculation time} could be achieved.
+Thus thus a calculation time of 6.2s could be achieved to calculate ten steps, including the inverse kinematics.
 
 ### Inverse Kinematics
 
 Using the foot trajectories and CoM trajectory the actual resulting joint angles need to be calculated.
-Since the kinematic model that is used has a total of \fixme{DOF} degrees of freedom, we need to reduce the number of joints that are used to
+Since the kinematic model that is used has a total of 35 degrees of freedom, we need to reduce the number of joints that are used to
 a sensible value.
 For walking only the joints of the legs and both the torso roll and pitch joints are used. All other joints are constrained to static values that will not cause self-collisions (e.g. the arms are slightly extended and do not touch the body).
 For comptuing the IK additional constraints where added, to make sure the robot has a sensible pose: The chest should always have an upright position
@@ -339,8 +354,9 @@ Since we can specify the root position freely, that removes the need of solving 
 
 4. Right foot pose
 
-To solve the inverse kinematics a hiearchical solver was used to solve for that goals in the given order. It was observed that specifing a good target height for the CoM is of utmost importance for the quality of the IK. For the model of \name{Armar IV} that used here, a height of $0.86$ m yielded
-the best results.
+A hiearchical solver was used to solve the inverse kinematics for that goals in the given order.
+It was observed that specifing a good target height for the CoM is of utmost importance for the quality of the IK.
+For the model of \name{Armar IV} that used here, a height of $0.86$ m yielded the best results.
 
 ### Trajectory Export
 
@@ -348,8 +364,8 @@ The trajectory was exported in open \name{MMM} trajectory format. The format was
 useful for debugging and controlling the generated trajectory.
 That means besides the joint values and velocites the trajectory also includes the CoM and ZMP trajectory that was used to derive them.
 Also information about the current support phase is saved.
-For convinience the pose of chest, pelvis, left and right foot are exported as homogenous matrices as well. This was done to save the additional step of computing them again from the exported joint trajectory for the stabilizer and also reduce an additional error source.
-
-\todo{Maybe doing the FK now would be better and more versatile, since we could feed normal \name{MMM} trajectories in the stabilizer}
+For convinience the pose of chest, pelvis, left and right foot are exported as homogenous matrices as well.
+This was done to save the additional step of computing them again from the exported joint trajectory for the stabilizer
+and also elimnate an additional error source while debugging.
 
 

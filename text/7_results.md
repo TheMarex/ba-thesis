@@ -53,7 +53,6 @@ As you can see the desired 180° turn is not realized completely. Due to the
 chest rotation following the tangent of the circle, a torque around the yaw-axis is excerted on the foot.
 Recall that during pattern generation we assumed that this torque is zero. Since we do not correct this
 disturbance the trajectory deviates significantly.
-\todo{read paper about yaw compensation}
 However stable walking is still realized. See figure \ref{img:undisturbed-circle} for the realized ZMP
 distribution and CoM trajectory for both unstabilized and stabilized walking.
 

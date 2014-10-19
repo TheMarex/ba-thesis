@@ -1,4 +1,4 @@
-# Conclusions
+# Conclusion and future work
 
 A design and the implementation of a software framework
 for bipedal humanoid walking were presnted. Building on an implementation by Ömer Telemz,
@@ -21,16 +21,17 @@ it should be replaced by a solver based on the Featherstone methode.
 The imporved accuracy should make a torque feedback more viable and enable
 to actually use the stabilizer based described and implemented in \ref{section:stabilizer}.
 
-The pattern generator and stabilizer only realize basic walking, that is not too similar to human walking.
+The pattern generator and stabilizer only realize basic walking, that is noticable different to human walking.
 For one the knees remain bent at all times, the center of mass stays at the same height and the toe joint is not
-used. Newer paper \todo{reference paper} extend the methodes implemented here to include the foot toe.
-The realized walking trajectories are a lot more human-like.
+used. A follow up paper \cite{kajita2012evaluation} extends the methodes implemented here to include the toes.
+The realized walking trajectories seem to be more natural.
 
-The push recovery is very rudimentary. Most notably after executing a push recovery step, the original
-trajectory can not be resumed. To enable that, online motion planning needs to be integrated.
+As the evalutation of the circular trajectory shows, the yaw moment excerted on the foot can cause severe disturbences.
+To deal better with trajectories that include turns or arm movements, that torque should be compensated. Kim et. al \cite{kim2005humanoid} propose to move the arms around the roll axis to compensate for yaw momentum.
 
-As walking in a circle shows, the current implementation does not compensate the generated yaw momentum.
-A yaw compensation based on \todo{reference paper} needs to be implemented.
+The push recovery implemented is very rudimentary. The placement of the foot to recover from a push does not consider collisions
+with the environment. Also, after executing a push recovery step, the original trajectory can not be resumed.
+To enable that, online planning of dynamically stable motions needs to be integrated.
 
 # TODO
 

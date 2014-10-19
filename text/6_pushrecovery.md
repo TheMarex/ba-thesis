@@ -12,7 +12,7 @@ The push recovery implemented here uses a simplistic methode based on the Captur
 
 ## Capture Point
 
-Pratt \todo{Add citation} derives the Capture Point for multiple models based on the 3D-LIPM.
+Koolen et. al. \cite{koolen2012capturability} derive the Capture Point for multiple models based on the 3D-LIPM.
 The simplest model is the 3D Linear Inverted Pendulum with a point contact and a massless
 telescopic rod.
 If we use the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with zero input torque,
@@ -29,8 +29,6 @@ we need to substitude $x$ with $x - p$ to yield:
 \end{equation}
 
 The orbital energy $E_x$ can be derived by integrating \ref{eq:lip-x-general}:
-
-\todo{Ask Julia how this was integrated. I don't see it.}
 
 \begin{equation} \label{eq:orbital-x}
 E_x = \frac{1}{2} \dot{x}^2 - \frac{g}{2 \cdot z_c} (x - p)^2
@@ -56,7 +54,7 @@ an orbital energy of zero, thus the head of the pendulum (the CoM) will stop at 
 In most cases we will not be able to move the base of the pendulum instentaniously.
 So we are more interested in the Immediate Capture Point in $\Delta t$ seconds from now.
 This point can be obtained by \ref{eq:future-icp}.
-For a detailed derivation, we recommend the paper by Pratt et al. \todo{Add reference}
+For a detailed derivation, we recommend the paper by Koolen et. al. \cite{koolen2012capturability}.
 
 \begin{equation} \label{eq:future-icp}
 p_{ic}(\Delta t) = p_{ankle} + (p_{ic}(0) - p_{ankle}) \cdot e^{\frac{g}{z_c} \cdot \Delta t}

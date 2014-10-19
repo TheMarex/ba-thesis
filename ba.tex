@@ -874,7 +874,20 @@ trajectories}\label{generating-foot-trajectories}
 
 To generate the foot trajectories several parameters are needed:
 
-\todo{table with used parameters}
+\begin{figure*}[b]
+\begin{center}
+  \begin{tabular}{| l | l |}
+    \hline
+    $h$ & 0.1 m \\ \hline
+    $l$ & 0.3 m \\ \hline
+    $w$ & 0.2 m \\ \hline
+    $t_{ss}$ & 0.7 s\\ \hline
+    $t_{ds}$ & 0.1 s\\ \hline
+  \end{tabular}
+\caption{Default parameters used for generating a walking trajectory.}
+\label{table:pattern-parameters}
+\end{center}
+\end{figure*}
 
 \begin{description}
 \item[Step height $h$]
@@ -889,6 +902,9 @@ Time the weight of the robot is only support by exactly one foot
 \item[Dual support duratoin $t_{ds}$]
 Time the weight of the robot is supported by both feet
 \end{description}
+
+See figure \ref{table:pattern-generator} for the values used to generate
+the trajectories using a model of the \name{Armar IV} robot.
 
 \subsubsection{Walking straight}\label{walking-straight}
 
@@ -967,30 +983,30 @@ This module implements the methode described by Kajita et. al. and uses
 the methode outlined by Katayama et. al. to compute the optimal control
 input $u[k]$. Since it is computational feasable, the preview periode
 consists of the full reference trajectory. For an online usage of this
-methode, this could be reduced to a much smaller sample size.
-\todo{Add timings, implement configurable preview periode} Using the
-system dynamics described by \ref{eq:state-transition-result} the CoM
-trajectory, velocity and acceleration can be computed. The
-implementation makes heavy use of Eigen, a high performence linear
-algebra framework that uses SIMD instructions to speed up calculations.
-Thus thus a calculation time of \fixme{calculation time} could be
-achieved.
+methode, this could be reduced to a much smaller sample size, e.g.~only
+preview one step ahead. Using the system dynamics described by
+\ref{eq:state-transition-result} the CoM trajectory, velocity and
+acceleration can be computed. The implementation makes heavy use of
+Eigen, a high performence linear algebra framework that uses SIMD
+instructions to speed up calculations. Thus thus a calculation time of
+6.2s could be achieved to calculate ten steps, including the inverse
+kinematics.
 
 \subsection{Inverse Kinematics}\label{inverse-kinematics}
 
 Using the foot trajectories and CoM trajectory the actual resulting
 joint angles need to be calculated. Since the kinematic model that is
-used has a total of \fixme{DOF} degrees of freedom, we need to reduce
-the number of joints that are used to a sensible value. For walking only
-the joints of the legs and both the torso roll and pitch joints are
-used. All other joints are constrained to static values that will not
-cause self-collisions (e.g.~the arms are slightly extended and do not
-touch the body). For comptuing the IK additional constraints where
-added, to make sure the robot has a sensible pose: The chest should
-always have an upright position and the pelvis should always be parallel
-to the floor. To support non-straight walking, the pelvis and chest
-orientation should also follow the walking direction. Thus the following
-methode to compute the desired chest and pelvis orientation is used:
+used has a total of 35 degrees of freedom, we need to reduce the number
+of joints that are used to a sensible value. For walking only the joints
+of the legs and both the torso roll and pitch joints are used. All other
+joints are constrained to static values that will not cause
+self-collisions (e.g.~the arms are slightly extended and do not touch
+the body). For comptuing the IK additional constraints where added, to
+make sure the robot has a sensible pose: The chest should always have an
+upright position and the pelvis should always be parallel to the floor.
+To support non-straight walking, the pelvis and chest orientation should
+also follow the walking direction. Thus the following methode to compute
+the desired chest and pelvis orientation is used:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1023,11 +1039,11 @@ satisfied by the inverse kinematics:
   Right foot pose
 \end{enumerate}
 
-To solve the inverse kinematics a hiearchical solver was used to solve
-for that goals in the given order. It was observed that specifing a good
-target height for the CoM is of utmost importance for the quality of the
-IK. For the model of \name{Armar IV} that used here, a height of $0.86$
-m yielded the best results.
+A hiearchical solver was used to solve the inverse kinematics for that
+goals in the given order. It was observed that specifing a good target
+height for the CoM is of utmost importance for the quality of the IK.
+For the model of \name{Armar IV} that used here, a height of $0.86$ m
+yielded the best results.
 
 \subsection{Trajectory Export}\label{trajectory-export}
 
@@ -1039,10 +1055,8 @@ ZMP trajectory that was used to derive them. Also information about the
 current support phase is saved. For convinience the pose of chest,
 pelvis, left and right foot are exported as homogenous matrices as well.
 This was done to save the additional step of computing them again from
-the exported joint trajectory for the stabilizer and also reduce an
-additional error source.
-
-\todo{Maybe doing the FK now would be better and more versatile, since we could feed normal \name{MMM} trajectories in the stabilizer}
+the exported joint trajectory for the stabilizer and also elimnate an
+additional error source while debugging.
 
 \chapter{Dynamic Simulation}\label{dynamic-simulation}
 
@@ -1821,14 +1835,14 @@ Point.
 
 \section{Capture Point}\label{capture-point}
 
-Pratt \todo{Add citation} derives the Capture Point for multiple models
-based on the 3D-LIPM. The simplest model is the 3D Linear Inverted
-Pendulum with a point contact and a massless telescopic rod. If we use
-the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with zero input
-torque, we can derive that so called \emph{orbital energy} of the
-pendulum. As we did in the section about the pattern generator, we will
-derive the equations only for one dimension. The other dimension follows
-analogous.
+Koolen et. al. \cite{koolen2012capturability} derive the Capture Point
+for multiple models based on the 3D-LIPM. The simplest model is the 3D
+Linear Inverted Pendulum with a point contact and a massless telescopic
+rod. If we use the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with
+zero input torque, we can derive that so called \emph{orbital energy} of
+the pendulum. As we did in the section about the pattern generator, we
+will derive the equations only for one dimension. The other dimension
+follows analogous.
 
 The base of the pendulum is assumed to be at the origin of the reference
 frame in \ref{eq:lip-x}. Since we want to specify the location freely,
@@ -1840,8 +1854,6 @@ we need to substitude $x$ with $x - p$ to yield:
 
 The orbital energy $E_x$ can be derived by integrating
 \ref{eq:lip-x-general}:
-
-\todo{Ask Julia how this was integrated. I don't see it.}
 
 \begin{equation} \label{eq:orbital-x}
 E_x = \frac{1}{2} \dot{x}^2 - \frac{g}{2 \cdot z_c} (x - p)^2
@@ -1869,8 +1881,8 @@ head of the pendulum (the CoM) will stop at $p_{ic}$. In most cases we
 will not be able to move the base of the pendulum instentaniously. So we
 are more interested in the Immediate Capture Point in $\Delta t$ seconds
 from now. This point can be obtained by \ref{eq:future-icp}. For a
-detailed derivation, we recommend the paper by Pratt et al.
-\todo{Add reference}
+detailed derivation, we recommend the paper by Koolen et. al.
+\cite{koolen2012capturability}.
 
 \begin{equation} \label{eq:future-icp}
 p_{ic}(\Delta t) = p_{ankle} + (p_{ic}(0) - p_{ankle}) \cdot e^{\frac{g}{z_c} \cdot \Delta t}
@@ -1983,10 +1995,9 @@ not realized completely. Due to the chest rotation following the tangent
 of the circle, a torque around the yaw-axis is excerted on the foot.
 Recall that during pattern generation we assumed that this torque is
 zero. Since we do not correct this disturbance the trajectory deviates
-significantly. \todo{read paper about yaw compensation} However stable
-walking is still realized. See figure \ref{img:undisturbed-circle} for
-the realized ZMP distribution and CoM trajectory for both unstabilized
-and stabilized walking.
+significantly. However stable walking is still realized. See figure
+\ref{img:undisturbed-circle} for the realized ZMP distribution and CoM
+trajectory for both unstabilized and stabilized walking.
 
 \todo{image-series walking in a circle}
 
@@ -2021,7 +2032,7 @@ The point of impact is denoted as red lines.
 
 \todo{actual-zmp-stabilized actual-zmp-unstabilized} \todo{image-series}
 
-\chapter{Conclusions}\label{conclusions}
+\chapter{Conclusion and future work}\label{conclusion-and-future-work}
 
 A design and the implementation of a software framework for bipedal
 humanoid walking were presnted. Building on an implementation by Ömer
@@ -2047,19 +2058,23 @@ torque feedback more viable and enable to actually use the stabilizer
 based described and implemented in \ref{section:stabilizer}.
 
 The pattern generator and stabilizer only realize basic walking, that is
-not too similar to human walking. For one the knees remain bent at all
-times, the center of mass stays at the same height and the toe joint is
-not used. Newer paper \todo{reference paper} extend the methodes
-implemented here to include the foot toe. The realized walking
-trajectories are a lot more human-like.
+noticable different to human walking. For one the knees remain bent at
+all times, the center of mass stays at the same height and the toe joint
+is not used. A follow up paper \cite{kajita2012evaluation} extends the
+methodes implemented here to include the toes. The realized walking
+trajectories seem to be more natural.
 
-The push recovery is very rudimentary. Most notably after executing a
-push recovery step, the original trajectory can not be resumed. To
-enable that, online motion planning needs to be integrated.
+As the evalutation of the circular trajectory shows, the yaw moment
+excerted on the foot can cause severe disturbences. To deal better with
+trajectories that include turns or arm movements, that torque should be
+compensated. Kim et. al \cite{kim2005humanoid} propose to move the arms
+around the roll axis to compensate for yaw momentum.
 
-As walking in a circle shows, the current implementation does not
-compensate the generated yaw momentum. A yaw compensation based on
-\todo{reference paper} needs to be implemented.
+The push recovery implemented is very rudimentary. The placement of the
+foot to recover from a push does not consider collisions with the
+environment. Also, after executing a push recovery step, the original
+trajectory can not be resumed. To enable that, online planning of
+dynamically stable motions needs to be integrated.
 
 \chapter{TODO}\label{todo}
 
