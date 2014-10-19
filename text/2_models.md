@@ -33,7 +33,7 @@ Furthermore we know that the transpose $J_\Phi^T$ maps *cartesian forces* $F = m
 
 We write $x$, $y$ and $z$ in terms of our generalized coordinates to compute the corresponding jacobian $J_\Phi$.
 From the fact that the $\theta_P$ is the angle between the projection of $c$ onto the $xz$-plane and $c$
-and $\theta_R$ the angle between $c$ and the projection onto the $yz$ plane we can derive the following equations \todo{reference paper}:
+and $\theta_R$ the angle between $c$ and the projection onto the $yz$ plane we can derive the following equations \cite{kajita20013d}:
 
 \begin{equation}
 \begin{array}{lcll} \label{eq:lip-xyz}
@@ -99,11 +99,9 @@ can be approximate by a slightly sloped plane. In most cases it can even assumed
 
 The basic assumption in the next section will be that the CoM will have a *constant displacement* with regard to our ground plane.
 Thus we can constrain the movement of the CoM to a plane that is parallel to the ground plane.
-Note that this assumption is, depending on the walking speed, only approximately true for human walking as shown by Orendurff et. al.
+Note that this assumption is, depending on the walking speed, only approximately true for human walking as shown by Orendurff et. al. \citep{orendurff2004effect}.
 For slow to fast walking ($0.7$ m/s and $1.6$ m/s respectively) the average displacement in $z$-direction was found to be between $2.7cm$ and $4.81$ cm.
 While the walking patterns generated based on the LIP-model will guarantee dynamic stability, they might not look natural with regard to human walking.
-
-\todo{cite Orendurff}
 
 We are going to constrain the $z$ coordinate of our inverted pendulum to a plane
 with normal vector $(k_x, k_y, -1)$ and $z$-displacement $z_c$:
@@ -148,12 +146,10 @@ Which yields our final description of the dynamics:
 \ddot{y} = \frac{g}{z_c} y - \frac{u_R}{m z_c}
 \end{equation}
 
-As outlined in \todo{cite kajita 1991} the inputs $u_P$ and $u_R$ are generally set to zero.
+As outlined in \cite{kajita20013d} the inputs $u_P$ and $u_R$ are generally set to zero.
 Thus the 3D-LIMP has no input torque. This is desireable, as the torque
 that can be applied on the ankle joints is limited. Thus it makes sense to reserve the torque
 for correcting disturbences.
-
-\todo{include pattern generation just based on 3D-LIPM, I don't understand how they derived the controller}
 
 ## The Zero Moment Point
 
@@ -209,6 +205,13 @@ This will yield: $\tau_x = \tau_y = 0$.
 Please note that $\tau_z$ will in general not be zero, nonetheless in case of straight walking it is often assumed to be zero as well.
 
 ## The table-cart model {#section:table-cart}
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+  \begin{center}
+     \includegraphics[width=0.4\textwidth]{images/carttable.png}
+  \end{center}
+  \caption{The Cart-Table model.}
+\end{wrapfigure}
 
 The table-cart model is equivalent to the 3D-LIPM model discussed before,
 but somewhat more intuitive for computing the resulting ZMP from an CoM motion.

@@ -1,7 +1,5 @@
 # Stabilizing a trajectory
 
-\todo{More introduction: Most stabilizers are propritary and very robot specific.}
-
 While executing a trajectory there are several sources of errors that will make it neccessary to correct the trajectory.
 We can devide them in about three main classes:
 
@@ -33,20 +31,25 @@ Luckily for most humanoid robots this is the case.
 
 ## Stabilizer {#section:stabilizer}
 
-We chose a stabilizer proposed by Kajita et. al. in their 2010 paper. \todo{add reference}.
-The stabilizer only needs a joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
+We chose a stabilizer proposed by Kajita et. al. in their 2010 paper. \cite{kajita2010biped}
+The stabilizer only needs the joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
 This allows the stabilizer to use patterns that where generated synthetically, e.g. by a pattern generator, or patterns that are
 the results of (adapted) motion capturing.
 The methode proposed by Kajita does not need a torque controlled robot, but works with position control.
-This was very important for the selection of this stabilizer as, the motors in \name{Bullet} are velocity controlled, thus we can not controll
-the torque directly.
+This was very important for the selection of this stabilizer. The underlying simulation engine \name{Bullet} only supports velocity controlled motors,
+consequently the torque can not be controlled directly directly.
 
 The controller works by attaching control frames to specific points on the robot.
 The reference position of this frames can be calculated from the input trajectory using forwards kinematics.
 To compensate a disturbance the orientation of a reference frame is modified.
 The modified reference frames are then converted to the modified joint angles by the inverse kinematics.
 
-\todo{include block digramm of controller}
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/stabilizer_architechture.png}
+\caption{Architechture of the stabilizer}
+\label{img:archtitechture-stabiluzer}
+\end{figure*}
 
 In the remainder of this chapter we will use the superscript $d$ to denote reference values and the subscript $*$
 to denote modified values.
@@ -123,8 +126,6 @@ we know that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
 $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$.
 A heuristic for computing this alpha is the *ZMP distributor*.
 
-\todo{For some reason I named the class ForceDistributor, I should fix that}
-
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from the ZMP to the support polygones of the feet.
 If the ZMP falls inside one of the support polygones set $\alpha = 1$ or $\alpha = 0$ respectively.
 If it is outside of bothe support polygones the ZMP is projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
@@ -185,8 +186,6 @@ If the torque acts in anti-clockwise direction (positive sign), we assumte it wi
 We can now transform the torques form our local coordinate system to the coordinate system of the corresponding foot
 yielding $\tau^d_L$ and $\tau^d_R$.
 
-\todo{Cite kajita paper from 2005 that outlines the motivation for doing pose control}
-
 Now that we have obtained the reference torques, we can try to control the torque in each angle
 using the measured torques $\tau_R$ and $\tau_L$. However since we assume a position controlled robot,
 the torque differences need to be translated into pose changes.
@@ -207,12 +206,11 @@ The foot is in solid contact with the ground:
     Instead, the pose of the rest of the robot is changed. If the foot pose is changed by the angles $\Delta \phi$ and $\Delta \theta$
     all other frames of the robot will be changed by $-\Delta \phi$ and $-\Delta \theta$.
 
-\todo{IK model <-> real robot}
-
 For a foot with a rubber surface we will start with a non-solid contact and transition to a solid contact, once the rubber is sufficiently compressed.
+\cite{kajita2005running}
 
 To get an idea how changing the pose on such a foot with rubber surface affects the torque,
-consider the case of rotating the foot around its lateral axis (x-Axis) in anti-clockwise direction.
+consider the case of rotating the foot around its lateral axis ($x$-Axis) in anti-clockwise direction.
 Since the contact with the ground is at first non-solid, we can employ the spring model. The springs at the front of the foot are compressed
 thus the force applied at the corresponding contact points increases.
 Accordingly the springs at the back are compressed less, thus the force applied to the corresponding contact points decreases.
@@ -223,12 +221,9 @@ the increase in the joint angle in the ankle will rotate the upper body backward
 in that model this means our pendulum swings backwards. This will lead to an increase of the torque around the $x$-Axis in the base of the pendulum, the ankle joint.
 
 For rotating the foot around the $y$-axis the same ideas hold.
-
 As a result we see that additional foot rotation long the $x$- and $y$-Axis have a proportional relationship with the torque
 around that axis. This motivates the definition of the controller proposed by Kajita et. al. The additional rotation angles
 are can be calculated by the following equations:
-
-\todo{Maybe add a step response to the controller}
 
 \begin{equation}
 \Delta \dot{\phi_i} = \frac{1}{D_{ix}} (\tau^d_{ix} - \tau_{ix}) - \frac{1}{T_{ix}} \cdot \Delta \phi_i
@@ -260,7 +255,6 @@ In dual support we know that $f^d_L + f^d_R = M \cdot g$. If we apply the same r
 If we can additionally make sure that $f^d_L - f^d_R = f_L - f_R$ we can deduce that $f^d_L = f_L$ and $f^d_R = f_R$.
 Equation \ref{eq:ds-torque} can be used to calculate the ZMP position from the applied forces and torques on the foot. If both reference torques and reference forces on the feet are realized, that will guarantee the reference ZMP is also realized.
 
-\todo{The code of that part was broken: Fix it.}
 Since the $x$ and $y$ components of both $f^d_L - f^d_R$ and $f_L = f_R$ are zero we only need to control the $z$
 components. As we motivated in the beginning of this section, differences in floor height are the main cause of deviation in the force.
 To compensate that, the height of the ankle needs to be changed.
@@ -293,7 +287,6 @@ The most important coupling exists between the chest posture controller and the 
 Recall that in case of a solid contact with the ground the ankle torque controller will not rotate the supporting foot
 but rather the body of the robot. This will however change the posture of chest frame. The chest posture controller
 compensates that and keeps the body upright.
-\todo{relationship between foot force controller and other controllers}
 This tight coupling makes tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as their performence depends on the other controllers.
 Best results where observed when the chest posture controller was tuned independently first, disabling the other controllers.
 Then the foot force controllers was enabled and tuned and finally the ankle torque controller was added and tuned.
@@ -368,17 +361,15 @@ the poles, $A$ and $B$ using predefined functions in \name{MATLAB} or similar so
 
 ## Implementation
 
-\fixme{Needs introduction}
-
-### Computing the inverse kinematics
-While implementing the stabilizer above, a number of problems has to be solved.
-For one, computing the inverse kinematics proofed challenging. During walking the base of support
-depends on which foot is in contact with the ground. Thus the left foot will act as base and the right foot as TCP
-if the left foot is the support foot. The reverse is true if the right foot is the support foot.
+To implement the stabilizer above, a number of problems had to be solved.
+For one, computing the inverse kinematics is challenging. During walking the base of support
+depends on which foot is in contact with the ground. For example, if the left foot is the support foot, it is considered the base
+and the right foot is considered the TCP.
+The reverse is true if the right foot is the support foot.
 In dual support phase, we actually have two bases of support, which yields a parallel kinematic chain.
 \name{Simox}, the framework used to compute the inverse kinematics, describes the kinematic structure of a robot
 as a directed tree. Solving the inverse kinematics was initially only possible for sub-trees of that tree.
-That means it was not possible to chose base and TCP freely, but it was determined by the structure in which the kinematic model
+Which means it was not possible to chose base and TCP freely, but it was determined by the structure in which the kinematic model
 was initially described.
 
 As a first approximation, a kinematic model with the left foot as root node was used.
@@ -392,17 +383,16 @@ to the pelvis link, we can compute the realized pelvis offset as $v' = R_y(-e_{\
 Which yields $1.76mm$ error in x-direction and $0.87mm$ error in y-direction.
 
 To solve this \name{Simox} was extented by a function ```cloneInversed``` that can compute a kinematic structure with abitrary root placement from an existing description.
-To solve the parallel kinematic chain, it proofed sufficient to approximate it as a normal kinematic chain and constrain the base and TCP
+For the parallel kinematic chain, it proofed sufficient to approximate it as a normal kinematic chain and constrain the base and TCP
 targets acordingly. However since the position of one foot will have small positioning errors, there will be some jitter introduced
 into the system. Integrating a solver for parallel kinematics might decrease some of the jitter observed in foot contact forces during dual support,
 as the constraint solver used for the simulation will only amplify this jitter.
 
-### Integration into the simulator
-
 As was the case with the components of the pattern generator, the core of the stabilizer
-is implemented as part of \name{libBipedal}.
+is implemented as part of \name{libBipedal}. A plugin integrates the
+stabilizer into the dynamic simulation.
 
-### Problems
+## Problems
 
 Some problems became immediately clear when testing the stabilizer proposed by Kajita.
 The ground reaction forces in dual support are oscillating widly. Instead of a continous force at about $0.5 \cdot f_g$
@@ -415,7 +405,7 @@ Besides the sequential impulse solver newer versions of \name{Bullet} support a 
 Given the scope of this thesis, integrating that solver was out of question, thus an alternative approach to stabilizing
 had to be found.
 
-### Alternative approach {#section:alternative-approach}
+## Alternative approach {#section:alternative-approach}
 
 A a simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
 feedback with the pose error of pelvis and feet frames respectively.
@@ -428,7 +418,7 @@ It should be noted that it is probably not feasible to implement this stabilizer
 precisely estimating the pose of a robot is not easy. While the dampening controllers can be configured to smoothen a noisy sensor signal,
 a high level of precision is required to ensure a correct foot posture.
 
-Since the ZMP and CoM trajectory is not adaped, the compensation of environment disturbences is only based on a fast controller raction
+Since the ZMP and CoM trajectory is not adaped, the compensation of environment disturbences is only based on a fast controller reaction
 to leave the reference trajectory a little as possible and the stability margins the ZMP provides.
 However as we will discuss in the evaluation section, this simple approach is already supprisingly resilient.
 

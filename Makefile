@@ -8,8 +8,9 @@ ba.pdf: ba.tex images/*.png
 	pdflatex ba.tex
 	bibtex ba || true
 	pdflatex ba.tex
+	pdflatex ba.tex
 
-ba.tex: ba.tex.in text/*.md
+ba.tex: ba.tex.in text/*.md KITreprt.cls
 	pandoc --chapters --template ba.tex.in ${CHAPTERS} -o ba.tex
 
 clean:

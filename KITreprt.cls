@@ -173,7 +173,7 @@ If none needed:  \texttt{ \textbackslash newcommand\{\textbackslash noadvisors\}
 \pagestyle{scrheadings} %gemachte Einstellungen anwenden
 \renewcommand{\chapterpagestyle}{scrheadings}
 
-\usepackage[round]{natbib}
+\usepackage[numbers, sort]{natbib}
 
 
 %\bibliographystyle{dinat}

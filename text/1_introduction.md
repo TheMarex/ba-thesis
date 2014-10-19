@@ -25,19 +25,24 @@ While the human gait can be devided into many phases, of primary interest for th
 feet that are in contact with the ground. For walking the ground contact alternates between both feet
 and one support foot. These phases are called dual and single support respectively.
 Each step starts with a dual support phase, that shifts the center of mass to the foot that supports the weight in the next step.
-The non-supporting foot (the *swing foot*) is then moved to the next foot hold.
+The non-supporting foot (the *swing foot*) is then moved to the next foot hold. (See figure \ref{img:human-gait})
 The area that is in contact with the ground is not constant in each phase.
 Most notably at the end of the single support phase the heel is lifted. Consequently the contact changes
 from full sole contact to the toes.
 Also the swing foot hits the ground heel first and rotate to meet the ground while the center of mass
-is shifted forward. \todo{Reference some paper about walking phases, Winter?}
+is shifted forward.
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/human_gait.png}
+\caption{Phases of human gait. Source: Dynamics of Human Gait \cite{vaughan1992dynamics}, page 9}
+\label{img:human-gait}
+\end{figure*}
 
 Early robots where only able to emulate this walking style to varying degrees.
 A common simplification is to use a foot without movable toes.
 The result is a characteristic walking style, where the foot sole is always parallel to the ground.
 The most prominent example is the early \name{ASIMO} robot.
-However today human-like walking using the toes has been successfully demonstrated e.g. by the \name{WABIAN-2R} robot.
-\todo{cite wabian paper}
+However today human-like walking using the toes has been successfully demonstrated e.g. by the \name{WABIAN-2R} robot \cite{ogura2006human}.
 
 Besides the need for an adequate kinematic structure, deriving trajectories that are stable is
 not trivial.
@@ -61,14 +66,12 @@ the resulting trajectory needs to be adapted to the target robot.
 In general only adapting the motion based on the kinematic structure will not yield a dynamically stable motion.
 Different weights and inertia values of the links also need to be considert.
 However this might cause significat modifications of the original trajectory.
-Thus recent methodes in this field as employed by \todo{reference Miura} try to limit the characteristics that
-are emulated. This gives more room for modifications to realize stable dynamics.
 
 On the other side there are completely synthetic approaches. Based on simplifing
 models of the dynamics of a humanoid robot, stability conditions are derived.
 Using disired foot positions or step length and walking speed as input, corresponding
 trajectories are derived that sattisfy the given stability conditions.
-Most notably in this catagory are approaches based on the Zero Moment Point.
+Most notably in this catagory are approaches based on the Zero Moment Point using a so called Pattern Generator.
 In section \ref{section:walking-models} the ZMP is derived for different simplified
 dynamic models. Fundermental for this approach is the insight, that the dynamics
 of bipedal walking can be approximated sufficiently by an inverted pendulum.
@@ -83,16 +86,17 @@ Also the environment the robot operates in might not match the assumptions compl
 For example a convinient assumption is that the ground is completely flat. This is rarely the
 case and needs to be controlled for.
 Thus a stabilizer is needed to adapt the trajectory to the disturbences.
-\todo{State of the art for stabilizer}
+Most stabilizer for estabilished robotic platforms are closed source and very
+robot specific. Notabliy various iterations of stabilzers based on modifying
+an already dynamically stable pattern where proposed by Kajita and Miura et. al.
+(\cite{kajita2010biped}, \cite{miura2011human} and \cite{kajita2012evaluation})
 
-This thesis presents the design rationals and results of a software framework
-for bipedal humanoid walking. Building on an implementation by Ömer Telemz,
-a generator for walking pattern using ZMP Preview Control was developed.
-To test the resulting patterns a dynamic simulation for walking was build.
-The simulation utilizes the \name{SimDynamics} framework contained in \name{Simox}.
-The simulation was extented by real-time controllers for stabilization and push recovery.
-For easiy integration into other software projects all methodes presented here
-are implemented in a shared library \name{libBipedal}. \name{libBipedal} is independent
-of the dynamic simulation and only depends on \name{VirtualRobot} for computing
-forward and inverse kinematics.
+While a stabilizer can deal with continous small disturbances, a robot may
+encounter short but severe distrubances. These distrubances can be viewed
+as pushes. Pratt et. al. estabilished the concept of a Capture Point,
+that can be used to recover from such disturbances.
+
+This thesis presents a software framework that implements rudimentary support
+for each component. They are integrated into a dynamic simulation environment
+and evaluted.
 

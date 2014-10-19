@@ -125,6 +125,13 @@ that can be configured on a per-joint basis.
 
 ## Simulation analysis
 
+\begin{wrapfigure}{R}{0.6\textwidth}
+  \begin{center}
+     \includegraphics[width=0.6\textwidth]{images/plotting_screenshot.png}
+  \end{center}
+  \caption{Screenshot of ipython showing plots of the CoM obtained by a simulation}
+\end{wrapfigure}
+
 An important part of the simulation is the generation of measurements that can be carefully evaluted offline or displayed in the visualization.
 For this purpose a modular measuremt component was added to the simulator.
 An important design goal was to keep the measurement component as simple to extend and maintain as possible.
@@ -139,4 +146,12 @@ Some small helper scripts are provied to make it easier to load the data into th
 \name{IPython} is used to easily run the analysis and display the results in a browser window.
 All plots of simulated patterns found in this thesis can be generated automatically for every simulation.
 
-\todo{Screenshot of analysis software}
+
+<!--
+\begin{figure*}[htb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/plotting_screenshot.png}
+\label{img:player-undisturbed-straight-thumbs}
+\end{figure*}
+-->
+

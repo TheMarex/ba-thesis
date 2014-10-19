@@ -27,8 +27,8 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. April 2014}
-\renewcommand{\timeend}{1. Oktober 2014}
+\renewcommand{\timestart}{1. Mai 2014}
+\renewcommand{\timeend}{31. Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
@@ -91,7 +91,7 @@
 
 $body$
 
-\bibliographystyle{dinat} %-Deutsch
+\bibliographystyle{ieeetr}
 
 \bibliography{ba}
 

@@ -7,14 +7,12 @@ To generate a walking pattern for a bipedal robot two basic approaches are commo
 2. Generate a CoM trajectory for prescribed foot trajectories
 
 The first approach is generally used for implementing pattern generators soley based
-on the 3D-LIPM model. \todo{citation needed}
-
+on the 3D-LIP model. \cite{kajita20013d} 
 The second approach is the more versatile one, since it is easy to incorporate constrains
 of our environment (e.g. only limited foot holds) in the input of the pattern generator.
 However care must be taken while chosing adequate step width and step length parameters for the foot trajectory,
 so that they can actually be realized by the robot.
-
-The pattern generator proposed by Kajita et al. \todo{add citation} based on Preview Control
+The pattern generator proposed by Kajita et al. \cite{kajita2003biped} based on Preview Control
 realizes the second approach.
 We will discuss the theoretical background of this pattern generator here in more detail,
 since all pattern that we used where generated that way.
@@ -46,7 +44,6 @@ problems:
 Instead Kajita et. al. chose to define a dynamic system in the time domain that describes the CoM movement.
 
 ### Pattern generation as dynamic system
-\todo{maybe do a formal introduction into dynamic system and the state space approach}
 
 For simplicity we will only focus on the dynamic description of one dimension, as the other one is analogous.
 To transform the equations to a strictly proper dynamical system, we need to determine the state vector of our system.
@@ -193,8 +190,7 @@ Trying make this lag as small as possible can lead to very high velocities, whic
 However we have at least limited knowledge of the future reference trajectory. This knowledge can be leveraged
 by using Preview Control, which considers the next $N$ timesteps for computing the performence index.
 
-\todo{add citation katayama}
-Kajita et. al. use a performence index proposed by Katayama et. al. to solve all of the problems above:
+Kajita et. al. use a performence index proposed by Katayama et. al. \cite{katayama1985design} to solve all of the problems above:
 
 \begin{equation}
 J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Delta u_x[i]^2
@@ -213,7 +209,13 @@ Since the calculation is quite elaborate we refer to the cited article by Kataya
 
 ## Implementation
 
-\todo{block diagramm of architechture}
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/pattern_generator_architechture.png}
+\caption{Architechture of the pattern generator}
+\label{img:pattern-generator-architechture}
+\end{figure*}
+
 To generate walking patterns based on the ZMP preview control methode, the approach from Kajita
 was implemented in \name{libBipedal} a shared library. A front-end was developed to easily change parameters, visualize
  and subsequently export the trajectory to the \name{MMM} format.
@@ -337,9 +339,8 @@ Since we can specify the root position freely, that removes the need of solving 
 
 4. Right foot pose
 
-To solve the inverse kinematics a hiearchical solver was used to solve for that goals in the given order. It was observed that specifing a good target height for the CoM is of utmost importance for the quality of the IK. Specifing the CoM height too height or too low can lead to the effective loss of degrees of freedom.
-
-\todo{Maybe a more theoretical explaination?}
+To solve the inverse kinematics a hiearchical solver was used to solve for that goals in the given order. It was observed that specifing a good target height for the CoM is of utmost importance for the quality of the IK. For the model of \name{Armar IV} that used here, a height of $0.86$ m yielded
+the best results.
 
 ### Trajectory Export
 

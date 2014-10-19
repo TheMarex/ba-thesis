@@ -27,8 +27,8 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. April 2014}
-\renewcommand{\timeend}{1. Oktober 2014}
+\renewcommand{\timestart}{1. Mai 2014}
+\renewcommand{\timeend}{31. Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
@@ -122,20 +122,27 @@ feet and one support foot. These phases are called dual and single
 support respectively. Each step starts with a dual support phase, that
 shifts the center of mass to the foot that supports the weight in the
 next step. The non-supporting foot (the \emph{swing foot}) is then moved
-to the next foot hold. The area that is in contact with the ground is
-not constant in each phase. Most notably at the end of the single
-support phase the heel is lifted. Consequently the contact changes from
-full sole contact to the toes. Also the swing foot hits the ground heel
-first and rotate to meet the ground while the center of mass is shifted
-forward. \todo{Reference some paper about walking phases, Winter?}
+to the next foot hold. (See figure \ref{img:human-gait}) The area that
+is in contact with the ground is not constant in each phase. Most
+notably at the end of the single support phase the heel is lifted.
+Consequently the contact changes from full sole contact to the toes.
+Also the swing foot hits the ground heel first and rotate to meet the
+ground while the center of mass is shifted forward.
+
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/human_gait.png}
+\caption{Phases of human gait. Source: Dynamics of Human Gait \cite{vaughan1992dynamics}, page 9}
+\label{img:human-gait}
+\end{figure*}
 
 Early robots where only able to emulate this walking style to varying
 degrees. A common simplification is to use a foot without movable toes.
 The result is a characteristic walking style, where the foot sole is
 always parallel to the ground. The most prominent example is the early
 \name{ASIMO} robot. However today human-like walking using the toes has
-been successfully demonstrated e.g.~by the \name{WABIAN-2R} robot.
-\todo{cite wabian paper}
+been successfully demonstrated e.g.~by the \name{WABIAN-2R} robot
+\cite{ogura2006human}.
 
 Besides the need for an adequate kinematic structure, deriving
 trajectories that are stable is not trivial. When talking about
@@ -162,36 +169,43 @@ the resulting trajectory needs to be adapted to the target robot. In
 general only adapting the motion based on the kinematic structure will
 not yield a dynamically stable motion. Different weights and inertia
 values of the links also need to be considert. However this might cause
-significat modifications of the original trajectory. Thus recent
-methodes in this field as employed by \todo{reference Miura} try to
-limit the characteristics that are emulated. This gives more room for
-modifications to realize stable dynamics.
+significat modifications of the original trajectory.
 
 On the other side there are completely synthetic approaches. Based on
 simplifing models of the dynamics of a humanoid robot, stability
 conditions are derived. Using disired foot positions or step length and
 walking speed as input, corresponding trajectories are derived that
 sattisfy the given stability conditions. Most notably in this catagory
-are approaches based on the Zero Moment Point. In section
-\ref{section:walking-models} the ZMP is derived for different simplified
-dynamic models. Fundermental for this approach is the insight, that the
-dynamics of bipedal walking can be approximated sufficiently by an
-inverted pendulum. The model views the center of mass as the head of the
-pendulum, while the base is attached to the support foot. Thus the task
-of walking can be formalized as moving the base of the pendulum while
-keeping it upright.
+are approaches based on the Zero Moment Point using a so called Pattern
+Generator. In section \ref{section:walking-models} the ZMP is derived
+for different simplified dynamic models. Fundermental for this approach
+is the insight, that the dynamics of bipedal walking can be approximated
+sufficiently by an inverted pendulum. The model views the center of mass
+as the head of the pendulum, while the base is attached to the support
+foot. Thus the task of walking can be formalized as moving the base of
+the pendulum while keeping it upright.
 
-This thesis presents the design rationals and results of a software
-framework for bipedal humanoid walking. Building on an implementation by
-Ömer Telemz, a generator for walking pattern using ZMP Preview Control
-was developed. To test the resulting patterns a dynamic simulation for
-walking was build. The simulation utilizes the \name{SimDynamics}
-framework contained in \name{Simox}. The simulation was extented by
-real-time controllers for stabilization and push recovery. For easiy
-integration into other software projects all methodes presented here are
-implemented in a shared library \name{libBipedal}. \name{libBipedal} is
-independent of the dynamic simulation and only depends on
-\name{VirtualRobot} for computing forward and inverse kinematics.
+In reality executing a trajectory that was obtained by either methode is
+not easy. For one, the models to approximate the dynamics of a complex
+robot might be inaccurate. Also the environment the robot operates in
+might not match the assumptions completely. For example a convinient
+assumption is that the ground is completely flat. This is rarely the
+case and needs to be controlled for. Thus a stabilizer is needed to
+adapt the trajectory to the disturbences. Most stabilizer for
+estabilished robotic platforms are closed source and very robot
+specific. Notabliy various iterations of stabilzers based on modifying
+an already dynamically stable pattern where proposed by Kajita and Miura
+et. al. (\cite{kajita2010biped}, \cite{miura2011human} and
+\cite{kajita2012evaluation})
+
+While a stabilizer can deal with continous small disturbances, a robot
+may encounter short but severe distrubances. These distrubances can be
+viewed as pushes. Pratt et. al. estabilished the concept of a Capture
+Point, that can be used to recover from such disturbances.
+
+This thesis presents a software framework that implements rudimentary
+support for each component. They are integrated into a dynamic
+simulation environment and evaluted.
 
 \chapter{Models for humanoid walking}\label{section:walking-models}
 
@@ -245,7 +259,7 @@ compute the corresponding jacobian $J_\Phi$. From the fact that the
 $\theta_P$ is the angle between the projection of $c$ onto the
 $xz$-plane and $c$ and $\theta_R$ the angle between $c$ and the
 projection onto the $yz$ plane we can derive the following equations
-\todo{reference paper}:
+\cite{kajita20013d}:
 
 \begin{equation}
 \begin{array}{lcll} \label{eq:lip-xyz}
@@ -318,13 +332,11 @@ a \emph{constant displacement} with regard to our ground plane. Thus we
 can constrain the movement of the CoM to a plane that is parallel to the
 ground plane. Note that this assumption is, depending on the walking
 speed, only approximately true for human walking as shown by Orendurff
-et. al. For slow to fast walking ($0.7$ m/s and $1.6$ m/s respectively)
-the average displacement in $z$-direction was found to be between
-$2.7cm$ and $4.81$ cm. While the walking patterns generated based on the
-LIP-model will guarantee dynamic stability, they might not look natural
-with regard to human walking.
-
-\todo{cite Orendurff}
+et. al. \citep{orendurff2004effect}. For slow to fast walking ($0.7$ m/s
+and $1.6$ m/s respectively) the average displacement in $z$-direction
+was found to be between $2.7cm$ and $4.81$ cm. While the walking
+patterns generated based on the LIP-model will guarantee dynamic
+stability, they might not look natural with regard to human walking.
 
 We are going to constrain the $z$ coordinate of our inverted pendulum to
 a plane with normal vector $(k_x, k_y, -1)$ and $z$-displacement $z_c$:
@@ -379,13 +391,11 @@ Which yields our final description of the dynamics:
 \ddot{y} = \frac{g}{z_c} y - \frac{u_R}{m z_c}
 \end{equation}
 
-As outlined in \todo{cite kajita 1991} the inputs $u_P$ and $u_R$ are
+As outlined in \cite{kajita20013d} the inputs $u_P$ and $u_R$ are
 generally set to zero. Thus the 3D-LIMP has no input torque. This is
 desireable, as the torque that can be applied on the ankle joints is
 limited. Thus it makes sense to reserve the torque for correcting
 disturbences.
-
-\todo{include pattern generation just based on 3D-LIPM, I don't understand how they derived the controller}
 
 \section{The Zero Moment Point}\label{the-zero-moment-point}
 
@@ -453,6 +463,13 @@ Please note that $\tau_z$ will in general not be zero, nonetheless in
 case of straight walking it is often assumed to be zero as well.
 
 \section{The table-cart model}\label{section:table-cart}
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+  \begin{center}
+     \includegraphics[width=0.4\textwidth]{images/carttable.png}
+  \end{center}
+  \caption{The Cart-Table model.}
+\end{wrapfigure}
 
 The table-cart model is equivalent to the 3D-LIPM model discussed
 before, but somewhat more intuitive for computing the resulting ZMP from
@@ -579,18 +596,16 @@ are common:
 \end{enumerate}
 
 The first approach is generally used for implementing pattern generators
-soley based on the 3D-LIPM model. \todo{citation needed}
-
-The second approach is the more versatile one, since it is easy to
-incorporate constrains of our environment (e.g.~only limited foot holds)
-in the input of the pattern generator. However care must be taken while
-chosing adequate step width and step length parameters for the foot
-trajectory, so that they can actually be realized by the robot.
-
-The pattern generator proposed by Kajita et al. \todo{add citation}
-based on Preview Control realizes the second approach. We will discuss
-the theoretical background of this pattern generator here in more
-detail, since all pattern that we used where generated that way.
+soley based on the 3D-LIP model. \cite{kajita20013d} The second approach
+is the more versatile one, since it is easy to incorporate constrains of
+our environment (e.g.~only limited foot holds) in the input of the
+pattern generator. However care must be taken while chosing adequate
+step width and step length parameters for the foot trajectory, so that
+they can actually be realized by the robot. The pattern generator
+proposed by Kajita et al. \cite{kajita2003biped} based on Preview
+Control realizes the second approach. We will discuss the theoretical
+background of this pattern generator here in more detail, since all
+pattern that we used where generated that way.
 
 \section{Computing the CoM from a reference
 ZMP}\label{computing-the-com-from-a-reference-zmp}
@@ -630,8 +645,6 @@ domain that describes the CoM movement.
 
 \subsection{Pattern generation as dynamic
 system}\label{pattern-generation-as-dynamic-system}
-
-\todo{maybe do a formal introduction into dynamic system and the state space approach}
 
 For simplicity we will only focus on the dynamic description of one
 dimension, as the other one is analogous. To transform the equations to
@@ -805,8 +818,8 @@ reference trajectory. This knowledge can be leveraged by using Preview
 Control, which considers the next $N$ timesteps for computing the
 performence index.
 
-\todo{add citation katayama} Kajita et. al. use a performence index
-proposed by Katayama et. al. to solve all of the problems above:
+Kajita et. al. use a performence index proposed by Katayama et. al.
+\cite{katayama1985design} to solve all of the problems above:
 
 \begin{equation}
 J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Delta u_x[i]^2
@@ -828,13 +841,20 @@ the cited article by Katayama p.~680 for more details.
 
 \section{Implementation}\label{implementation}
 
-\todo{block diagramm of architechture} To generate walking patterns
-based on the ZMP preview control methode, the approach from Kajita was
-implemented in \name{libBipedal} a shared library. A front-end was
-developed to easily change parameters, visualize and subsequently export
-the trajectory to the \name{MMM} format. The implementation was build on
-a previous implementation, which was refactored, extended and tuned with
-respect to results from the dynamics simulation.
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/pattern_generator_architechture.png}
+\caption{Architechture of the pattern generator}
+\label{img:pattern-generator-architechture}
+\end{figure*}
+
+To generate walking patterns based on the ZMP preview control methode,
+the approach from Kajita was implemented in \name{libBipedal} a shared
+library. A front-end was developed to easily change parameters,
+visualize and subsequently export the trajectory to the \name{MMM}
+format. The implementation was build on a previous implementation, which
+was refactored, extended and tuned with respect to results from the
+dynamics simulation.
 
 The pattern generator makes extensive usage of
 \name{Simox VirtualRobot}, for providing a model of the robot and the
@@ -1006,10 +1026,8 @@ satisfied by the inverse kinematics:
 To solve the inverse kinematics a hiearchical solver was used to solve
 for that goals in the given order. It was observed that specifing a good
 target height for the CoM is of utmost importance for the quality of the
-IK. Specifing the CoM height too height or too low can lead to the
-effective loss of degrees of freedom.
-
-\todo{Maybe a more theoretical explaination?}
+IK. For the model of \name{Armar IV} that used here, a height of $0.86$
+m yielded the best results.
 
 \subsection{Trajectory Export}\label{trajectory-export}
 
@@ -1215,6 +1233,13 @@ can be configured on a per-joint basis.
 
 \section{Simulation analysis}\label{simulation-analysis}
 
+\begin{wrapfigure}{R}{0.6\textwidth}
+  \begin{center}
+     \includegraphics[width=0.6\textwidth]{images/plotting_screenshot.png}
+  \end{center}
+  \caption{Screenshot of ipython showing plots of the CoM obtained by a simulation}
+\end{wrapfigure}
+
 An important part of the simulation is the generation of measurements
 that can be carefully evaluted offline or displayed in the
 visualization. For this purpose a modular measuremt component was added
@@ -1238,11 +1263,7 @@ is used to easily run the analysis and display the results in a browser
 window. All plots of simulated patterns found in this thesis can be
 generated automatically for every simulation.
 
-\todo{Screenshot of analysis software}
-
 \chapter{Stabilizing a trajectory}\label{stabilizing-a-trajectory}
-
-\todo{More introduction: Most stabilizers are propritary and very robot specific.}
 
 While executing a trajectory there are several sources of errors that
 will make it neccessary to correct the trajectory. We can devide them in
@@ -1285,15 +1306,15 @@ upper body and arms. Luckily for most humanoid robots this is the case.
 \section{Stabilizer}\label{section:stabilizer}
 
 We chose a stabilizer proposed by Kajita et. al. in their 2010 paper.
-\todo{add reference}. The stabilizer only needs a joint trajectory of
+\cite{kajita2010biped} The stabilizer only needs the joint trajectory of
 the walking pattern augmented with a desired ZMP trajectory. This allows
 the stabilizer to use patterns that where generated synthetically,
 e.g.~by a pattern generator, or patterns that are the results of
 (adapted) motion capturing. The methode proposed by Kajita does not need
 a torque controlled robot, but works with position control. This was
-very important for the selection of this stabilizer as, the motors in
-\name{Bullet} are velocity controlled, thus we can not controll the
-torque directly.
+very important for the selection of this stabilizer. The underlying
+simulation engine \name{Bullet} only supports velocity controlled
+motors, consequently the torque can not be controlled directly directly.
 
 The controller works by attaching control frames to specific points on
 the robot. The reference position of this frames can be calculated from
@@ -1302,7 +1323,12 @@ disturbance the orientation of a reference frame is modified. The
 modified reference frames are then converted to the modified joint
 angles by the inverse kinematics.
 
-\todo{include block digramm of controller}
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/stabilizer_architechture.png}
+\caption{Architechture of the stabilizer}
+\label{img:archtitechture-stabiluzer}
+\end{figure*}
 
 In the remainder of this chapter we will use the superscript $d$ to
 denote reference values and the subscript $*$ to denote modified values.
@@ -1395,8 +1421,6 @@ that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
 $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$. A heuristic
 for computing this alpha is the \emph{ZMP distributor}.
 
-\todo{For some reason I named the class ForceDistributor, I should fix that}
-
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from
 the ZMP to the support polygones of the feet. If the ZMP falls inside
 one of the support polygones set $\alpha = 1$ or $\alpha = 0$
@@ -1468,8 +1492,6 @@ We can now transform the torques form our local coordinate system to the
 coordinate system of the corresponding foot yielding $\tau^d_L$ and
 $\tau^d_R$.
 
-\todo{Cite kajita paper from 2005 that outlines the motivation for doing pose control}
-
 Now that we have obtained the reference torques, we can try to control
 the torque in each angle using the measured torques $\tau_R$ and
 $\tau_L$. However since we assume a position controlled robot, the
@@ -1496,15 +1518,13 @@ other frames of the robot will be changed by $-\Delta \phi$ and
 $-\Delta \theta$.
 \end{description}
 
-\todo{IK model <-> real robot}
-
 For a foot with a rubber surface we will start with a non-solid contact
 and transition to a solid contact, once the rubber is sufficiently
-compressed.
+compressed. \cite{kajita2005running}
 
 To get an idea how changing the pose on such a foot with rubber surface
 affects the torque, consider the case of rotating the foot around its
-lateral axis (x-Axis) in anti-clockwise direction. Since the contact
+lateral axis ($x$-Axis) in anti-clockwise direction. Since the contact
 with the ground is at first non-solid, we can employ the spring model.
 The springs at the front of the foot are compressed thus the force
 applied at the corresponding contact points increases. Accordingly the
@@ -1520,15 +1540,12 @@ means our pendulum swings backwards. This will lead to an increase of
 the torque around the $x$-Axis in the base of the pendulum, the ankle
 joint.
 
-For rotating the foot around the $y$-axis the same ideas hold.
-
-As a result we see that additional foot rotation long the $x$- and
-$y$-Axis have a proportional relationship with the torque around that
-axis. This motivates the definition of the controller proposed by Kajita
-et. al. The additional rotation angles are can be calculated by the
-following equations:
-
-\todo{Maybe add a step response to the controller}
+For rotating the foot around the $y$-axis the same ideas hold. As a
+result we see that additional foot rotation long the $x$- and $y$-Axis
+have a proportional relationship with the torque around that axis. This
+motivates the definition of the controller proposed by Kajita et. al.
+The additional rotation angles are can be calculated by the following
+equations:
 
 \begin{equation}
 \Delta \dot{\phi_i} = \frac{1}{D_{ix}} (\tau^d_{ix} - \tau_{ix}) - \frac{1}{T_{ix}} \cdot \Delta \phi_i
@@ -1575,15 +1592,14 @@ ZMP position from the applied forces and torques on the foot. If both
 reference torques and reference forces on the feet are realized, that
 will guarantee the reference ZMP is also realized.
 
-\todo{The code of that part was broken: Fix it.} Since the $x$ and $y$
-components of both $f^d_L - f^d_R$ and $f_L = f_R$ are zero we only need
-to control the $z$ components. As we motivated in the beginning of this
-section, differences in floor height are the main cause of deviation in
-the force. To compensate that, the height of the ankle needs to be
-changed. Thus the difference in ankle height $z_{ctl}$ was chosen to
-compensate the difference in forces exerted by the foot. The description
-of the controller again uses the concept of a dampening controller, that
-was used in the previous sections.
+Since the $x$ and $y$ components of both $f^d_L - f^d_R$ and $f_L = f_R$
+are zero we only need to control the $z$ components. As we motivated in
+the beginning of this section, differences in floor height are the main
+cause of deviation in the force. To compensate that, the height of the
+ankle needs to be changed. Thus the difference in ankle height $z_{ctl}$
+was chosen to compensate the difference in forces exerted by the foot.
+The description of the controller again uses the concept of a dampening
+controller, that was used in the previous sections.
 
 \begin{equation}
 \dot{z}_{ctl} = \frac{1}{D_z} [(f^d_L - f^d_R) - (f_L - f_R)] - \frac{1}{T_z} z_{ctl}
@@ -1617,14 +1633,13 @@ controller and the ankle torque controller. Recall that in case of a
 solid contact with the ground the ankle torque controller will not
 rotate the supporting foot but rather the body of the robot. This will
 however change the posture of chest frame. The chest posture controller
-compensates that and keeps the body upright.
-\todo{relationship between foot force controller and other controllers}
-This tight coupling makes tuning the parameters $D_i$ and $T_i$ of the
-controllers difficult, as their performence depends on the other
-controllers. Best results where observed when the chest posture
-controller was tuned independently first, disabling the other
-controllers. Then the foot force controllers was enabled and tuned and
-finally the ankle torque controller was added and tuned.
+compensates that and keeps the body upright. This tight coupling makes
+tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as
+their performence depends on the other controllers. Best results where
+observed when the chest posture controller was tuned independently
+first, disabling the other controllers. Then the foot force controllers
+was enabled and tuned and finally the ankle torque controller was added
+and tuned.
 
 \subsection{CoM and ZMP control}\label{com-and-zmp-control}
 
@@ -1701,24 +1716,19 @@ functions in \name{MATLAB} or similar software.
 
 \section{Implementation}\label{implementation-1}
 
-\fixme{Needs introduction}
-
-\subsection{Computing the inverse
-kinematics}\label{computing-the-inverse-kinematics}
-
-While implementing the stabilizer above, a number of problems has to be
-solved. For one, computing the inverse kinematics proofed challenging.
-During walking the base of support depends on which foot is in contact
-with the ground. Thus the left foot will act as base and the right foot
-as TCP if the left foot is the support foot. The reverse is true if the
-right foot is the support foot. In dual support phase, we actually have
-two bases of support, which yields a parallel kinematic chain.
-\name{Simox}, the framework used to compute the inverse kinematics,
-describes the kinematic structure of a robot as a directed tree. Solving
-the inverse kinematics was initially only possible for sub-trees of that
-tree. That means it was not possible to chose base and TCP freely, but
-it was determined by the structure in which the kinematic model was
-initially described.
+To implement the stabilizer above, a number of problems had to be
+solved. For one, computing the inverse kinematics is challenging. During
+walking the base of support depends on which foot is in contact with the
+ground. For example, if the left foot is the support foot, it is
+considered the base and the right foot is considered the TCP. The
+reverse is true if the right foot is the support foot. In dual support
+phase, we actually have two bases of support, which yields a parallel
+kinematic chain. \name{Simox}, the framework used to compute the inverse
+kinematics, describes the kinematic structure of a robot as a directed
+tree. Solving the inverse kinematics was initially only possible for
+sub-trees of that tree. Which means it was not possible to chose base
+and TCP freely, but it was determined by the structure in which the
+kinematic model was initially described.
 
 As a first approximation, a kinematic model with the left foot as root
 node was used. In the case of the right foot being the support foot,
@@ -1738,23 +1748,20 @@ yields $1.76mm$ error in x-direction and $0.87mm$ error in y-direction.
 
 To solve this \name{Simox} was extented by a function
 \texttt{cloneInversed} that can compute a kinematic structure with
-abitrary root placement from an existing description. To solve the
-parallel kinematic chain, it proofed sufficient to approximate it as a
-normal kinematic chain and constrain the base and TCP targets
-acordingly. However since the position of one foot will have small
-positioning errors, there will be some jitter introduced into the
-system. Integrating a solver for parallel kinematics might decrease some
-of the jitter observed in foot contact forces during dual support, as
-the constraint solver used for the simulation will only amplify this
-jitter.
-
-\subsection{Integration into the
-simulator}\label{integration-into-the-simulator}
+abitrary root placement from an existing description. For the parallel
+kinematic chain, it proofed sufficient to approximate it as a normal
+kinematic chain and constrain the base and TCP targets acordingly.
+However since the position of one foot will have small positioning
+errors, there will be some jitter introduced into the system.
+Integrating a solver for parallel kinematics might decrease some of the
+jitter observed in foot contact forces during dual support, as the
+constraint solver used for the simulation will only amplify this jitter.
 
 As was the case with the components of the pattern generator, the core
-of the stabilizer is implemented as part of \name{libBipedal}.
+of the stabilizer is implemented as part of \name{libBipedal}. A plugin
+integrates the stabilizer into the dynamic simulation.
 
-\subsection{Problems}\label{problems}
+\section{Problems}\label{problems}
 
 Some problems became immediately clear when testing the stabilizer
 proposed by Kajita. The ground reaction forces in dual support are
@@ -1772,7 +1779,7 @@ support a solver based on the Featherstone algorithm. Given the scope of
 this thesis, integrating that solver was out of question, thus an
 alternative approach to stabilizing had to be found.
 
-\subsection{Alternative approach}\label{section:alternative-approach}
+\section{Alternative approach}\label{section:alternative-approach}
 
 A a simple heuristic, we used the controllers proposed by Kajita as
 inspiration and replaced the force and torque feedback with the pose
@@ -1791,7 +1798,7 @@ noisy sensor signal, a high level of precision is required to ensure a
 correct foot posture.
 
 Since the ZMP and CoM trajectory is not adaped, the compensation of
-environment disturbences is only based on a fast controller raction to
+environment disturbences is only based on a fast controller reaction to
 leave the reference trajectory a little as possible and the stability
 margins the ZMP provides. However as we will discuss in the evaluation
 section, this simple approach is already supprisingly resilient.
@@ -2016,13 +2023,49 @@ The point of impact is denoted as red lines.
 
 \chapter{Conclusions}\label{conclusions}
 
-things to improve summary of work done and results
+A design and the implementation of a software framework for bipedal
+humanoid walking were presnted. Building on an implementation by Ömer
+Telemz, a generator for walking pattern using ZMP Preview Control was
+developed. To test the resulting patterns a dynamic simulation for
+walking was build. The simulation utilizes the \name{SimDynamics}
+framework contained in \name{Simox}. The simulation was extented by
+real-time controllers for stabilization and push recovery. For easiy
+integration into other software projects all methodes presented here are
+implemented in a shared library \name{libBipedal}. \name{libBipedal} is
+independent of the dynamic simulation and only depends on
+\name{VirtualRobot} for computing forward and inverse kinematics.
+
+Evaluation showed that stable walking could be realized in simulation.
+By applying a stabilizer the trajectories remained stable, even when
+faced with disturbances. Falling was avoided by initiating a push
+recovery mechanism based on the Capture Point.
+
+Since accuracy of the dynamic simulation suffered severely by using the
+Sequential Impulse Solver methode, it should be replaced by a solver
+based on the Featherstone methode. The imporved accuracy should make a
+torque feedback more viable and enable to actually use the stabilizer
+based described and implemented in \ref{section:stabilizer}.
+
+The pattern generator and stabilizer only realize basic walking, that is
+not too similar to human walking. For one the knees remain bent at all
+times, the center of mass stays at the same height and the toe joint is
+not used. Newer paper \todo{reference paper} extend the methodes
+implemented here to include the foot toe. The realized walking
+trajectories are a lot more human-like.
+
+The push recovery is very rudimentary. Most notably after executing a
+push recovery step, the original trajectory can not be resumed. To
+enable that, online motion planning needs to be integrated.
+
+As walking in a circle shows, the current implementation does not
+compensate the generated yaw momentum. A yaw compensation based on
+\todo{reference paper} needs to be implemented.
 
 \chapter{TODO}\label{todo}
 
 \listoftodos
 
-\bibliographystyle{dinat} %-Deutsch
+\bibliographystyle{ieeetr}
 
 \bibliography{ba}
 
