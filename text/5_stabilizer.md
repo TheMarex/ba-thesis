@@ -57,6 +57,25 @@ to denote modified values.
 For this approach four control frames where selected. The chest to modify the body posture,
 the feet to modify the ankle torque, and the pelvis to modify the difference between contact forces of the two feet.
 
+### Reference coordinate system
+
+\begin{wrapfigure}{R}{0.4\textwidth}
+\vspace*{-1em}
+\includegraphics[width=0.4\textwidth]{images/ground_frame.png}
+\caption{Ground frame in dual support}
+\label{img:ground-frame}
+\end{wrapfigure}
+
+To control the ZMP and CoM it is desireable to have a reference system that is static with respect to the ground in each support phase.
+It is convinied to place the reference coordinate system in the center of the respective support polygone.
+That means we place the ground frame at the TCP of the respective foot in single support phase.
+As the ground frame should be aligned with the floor, we use the projection of the foot poses
+to the floor plane.
+In dual support phase, we calculate the pose from the position by $p = \frac{1}{2} \cdot (p_{left} + p_{right})$ and
+the $y$-axis by $y = \frac{1}{2} \cdot (y_{left} + y_{right})$. The $z$-axis is the normal of the floor plane: $z = (0, 0, 1)$.
+See figure \ref{img:ground-frame} for an example.
+The resulting reference frame is called the *ground frame*.
+
 ### Controlling the body posture
 
 The control strategy of the chest pose is straight forward: Given the reference roll angle $\phi^d$ and reference pitch angle $\theta^d$
@@ -89,6 +108,7 @@ Since our reference trajectory specifies an upright upper body pose we can assum
 Since the upper body is bent forward the roll angle $\phi$ will be below zero.
 Depending on $D_c$ we will eventually reach $\Delta \phi \approx |\phi|$, thus the reference frame will be modified to bent backwards
 to compensate the wrong pose.
+
 
 ### Controlling the ankle torques
 
@@ -148,7 +168,6 @@ As before, we assume that $\tau_{zmp} = 0$ which lets us solve \ref{eq:ds-torque
 \tau_0 = (p_R - p^d_{zmp}) \times f_R + (p_L - p^d_{zmp}) \times f_L
 \end{equation}
 
-\todo{define ground frame}
 We now again apply a heurstic using the $\alpha$ computed before to distribute $\tau_0$ to each ankle.
 First we need to transform $\tau_0$ from the global coordinate system to a local coordinate system
 described by the *ground frame*. We mark all vectors in the local coordinate system with $'$.
