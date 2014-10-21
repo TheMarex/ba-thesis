@@ -6,7 +6,7 @@ A simple model for describing the dynamics of a bipedal robot during single supp
 We reduce the body of the robot to a point-mass at the center of mass and replace the support leg
 by a mass-less telescopic leg which is fixed at a point on the supporting foot.
 Initially this will yield non-linear equations that will be hard to control.
-Howevery by constraining the movement of the inverted pendulum to a fixed plane, we can derive a linear dynamic system.
+However by constraining the movement of the inverted pendulum to a fixed plane, we can derive a linear dynamic system.
 This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 
 \begin{wrapfigure}{R}{0.4\textwidth}
@@ -20,18 +20,18 @@ This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 
 To describe the dynamics of the inverted pendulum we are mainly interested in the effect a given actuator torque has on the movement of the pendulum.
 
-For simplicity we assume that the base of the pendulum is fixed at the origin of the current cartesian coordinate system.
+For simplicity we assume that the base of the pendulum is fixed at the origin of the current Cartesian coordinate system.
 Thus we can describe the position inverted pendulum by a vector $c = (x, y, z)$.
 We are going to introduce an appropriate (generalized) coordinate system $q = (\theta_R, \theta_P, r)$ to get an easy description of our actuator torques:
 Let $m$ be the mass of the pendulum and $r$ the length of the telescopic leg.
 $\theta_P$ and $\theta_R$ describe the corresponding roll and pitch angles of the pose of the pendulum.
 
-Now we need to find a mapping between forces in the cartesian coordinate system and the generalized forces (the actuator torques).
-Let $\Phi: \mathbb{R}^3 \longrightarrow \mathbb{R}^3, (\theta_R, \theta_P, r) \mapsto (x, y, z)$ be a function that maps the generalized coordinates to the cartesian coordinates.
-Then the jacobian $J_\Phi = \frac{\partial p}{\partial q}$ maps the *generalized velocites* to *cartesian velocites*.
-Furthermore we know that the transpose $J_\Phi^T$ maps *cartesian forces* $F = m (\ddot x, \ddot y, \ddot z)$ to *generalized forces* $(\tau_r, \tau_p, f)$.
+Now we need to find a mapping between forces in the Cartesian coordinate system and the generalized forces (the actuator torques).
+Let $\Phi: \mathbb{R}^3 \longrightarrow \mathbb{R}^3, (\theta_R, \theta_P, r) \mapsto (x, y, z)$ be a function that maps the generalized coordinates to the Cartesian coordinates.
+Then the Jacobian $J_\Phi = \frac{\partial p}{\partial q}$ maps the *generalized velocities* to *Cartesian velocites*.
+Furthermore we know that the transpose $J_\Phi^T$ maps *Cartesian forces* $F = m (\ddot x, \ddot y, \ddot z)$ to *generalized forces* $(\tau_r, \tau_p, f)$.
 
-We write $x$, $y$ and $z$ in terms of our generalized coordinates to compute the corresponding jacobian $J_\Phi$.
+We write $x$, $y$ and $z$ in terms of our generalized coordinates to compute the corresponding Jacobian $J_\Phi$.
 From the fact that the $\theta_P$ is the angle between the projection of $c$ onto the $xz$-plane and $c$
 and $\theta_R$ the angle between $c$ and the projection onto the $yz$ plane we can derive the following equations \cite{kajita20013d}:
 
@@ -43,9 +43,9 @@ z & = & \sqrt{r^2 - x^2 - y^2} = r \cdot \sqrt{1 - s_P^2 - s_R^2} & \\
 \end{array}
 \end{equation}
 
-From which we can compute the jacobian by partial derivation:
+From which we can compute the Jacobian by partial derivation:
 
-\begin{equation} \label{eq:lip-jacobian}
+\begin{equation} \label{eq:lip-Jacobian}
 J = \frac{\partial p}{\partial q} = \left( \begin{array}{rcl}
 0 & r \cdot c_P & s_P \\
 -r \cdot c_R & 0 & s_P \\
@@ -79,7 +79,7 @@ f \\
 \end{array}
 \end{equation}
 
-and equations \ref{eq:lip-jacobian} and \ref{eq:lip-xyz} we can derive the following equations:
+and equations \ref{eq:lip-Jacobian} and \ref{eq:lip-xyz} we can derive the following equations:
 
 \begin{equation} \label{eq:lip-dyn-y}
 m(-z\ddot{y} + y\ddot{z}) = \frac{\sqrt{1 - s_P^2 - s_R^2}}{c_R} \cdot \tau_R + m g y
@@ -116,7 +116,7 @@ Subsequently the second derivative of $z$ can be described by:
 \ddot{z} = k_x \cdot \ddot{x} + k_y \cdot \ddot{y}
 \end{equation}
 
-Substituing \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the equations \ref{eq:lip-dyn-y} and \ref{eq:lip-dyn-x}
+Substituting \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the equations \ref{eq:lip-dyn-y} and \ref{eq:lip-dyn-x}
 yields the following equations:
 
 \begin{equation}
@@ -147,16 +147,16 @@ Which yields our final description of the dynamics:
 \end{equation}
 
 As outlined in \cite{kajita20013d} the inputs $u_P$ and $u_R$ are generally set to zero.
-Thus the 3D-LIMP has no input torque. This is desireable, as the torque
+Thus the 3D-LIMP has no input torque. This is desirable, as the torque
 that can be applied on the ankle joints is limited. Thus it makes sense to reserve the torque
-for correcting disturbences.
+for correcting disturbances.
 
 ## The Zero Moment Point
 
 A very popular approach to humanoid walking are schemes based on the Zero Moment Point. One reason for that might be that
 it is very simple to describe constrains for dynamic stability using this reference point.
 As long as the following condition is met we will have full ground contact of our support foot and thus can realize dynamically stable walking:
-*The ZMP is strictly inside the support polygone of the support foot.*
+*The ZMP is strictly inside the support polygon of the support foot.*
 
 For flat ground contact of our support foot with the floor the ZMP corresponds with the position of the center of pressure (CoP).
 Indeed, some author (notably Pratt) prefer to use the term CoP instead of ZMP.
@@ -198,7 +198,7 @@ Since we have flat ground contact, all contact points have the same $z$-coordina
 \end{equation}
 
 Furthermore we can use the corresponding components $p_x$ and $p_y$ from the definition of the ZMP \ref{eq:zmp-definition}
-and substitude in the equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
+and substitute in the equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
 
 This will yield: $\tau_x = \tau_y = 0$.
 
@@ -215,7 +215,7 @@ Please note that $\tau_z$ will in general not be zero, nonetheless in case of st
 
 The table-cart model is equivalent to the 3D-LIPM model discussed before,
 but somewhat more intuitive for computing the resulting ZMP from an CoM motion.
-The model consists of an (infinitely) large mass-less table of height $z_c$, while the foot of the table has the shape of the support polygone.
+The model consists of an (infinitely) large mass-less table of height $z_c$, while the foot of the table has the shape of the support polygon.
 Given a frictionless cart with mass $m$ that moves on the table we can compute the resulting ZMP in the support foot.
 Please note that the 3D-dimensional model is equivalent to having two independent tables
 with two carts each in the $xz$ and $yz$-plane respectively.
@@ -244,8 +244,8 @@ p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 
 ## Multi-Body methode to calculate the ZMP {#section:multi-body-zmp}
 
-Besides the simplified table-cart model, there also exsists an exact methode
-to calculate the resulting ZMP from the movement from serveral connected rigid bodies.
+Besides the simplified table-cart model, there also exists an exact method
+to calculate the resulting ZMP from the movement from several connected rigid bodies.
 
 Let $c_i$ be the CoM position and $m_i$ the mass of the $i$-th body ($i \in \{1, ..., k\}$). Then the total linear
 momentum $\mathcal{P}$ can be calculated by:
@@ -298,12 +298,12 @@ p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\math
 Both equations are dependent on $p_z$. If we assume the robot walks on a flat
 floor, we can set $p_z = 0$.
 
-See figure \ref{zmp-comparision} to get an idea how much the Multi-Body ZMP
+See figure \ref{zmp-comparison} to get an idea how much the Multi-Body ZMP
 derives from the estimation using the Cart-Table model.
 
 \begin{figure*}[tb]
 \includegraphics[width=\textwidth,resolution=300]{images/zmp_comparison.png}
-\caption{Comparision of the Cart-Table and Multi-Body to estimate the realized ZMP during walking.}
-\label{img:zmp-comparison}
+\caption{Comparison of the Cart-Table and Multi-Body to estimate the realized ZMP during walking.}
+\label{img:zmp-comparson}
 \end{figure*}
 
