@@ -4,6 +4,9 @@
 \documentclass[english,ngerman]{KITreprt}
 
 \usepackage{wrapfig}
+\usepackage{float}
+
+\addtolength{\abovecaptionskip}{-8mm}
 
 %% -------------------------------
 %% |  Information for PDF file   |
