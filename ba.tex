@@ -94,31 +94,31 @@
 
 \chapter{Introduction}\label{introduction}
 
-Nearly one hundret years of Sci-Fiction have estabilished the firm image
+Nearly one hundred years of Sci-Fiction have established the firm image
 of a mechanical humanoid servant with super human capabilities, with the
 term \emph{Robot}. Today we live in a world where large parts of our
 production circles are already dominated by robots. Yet, widespread
 adoption of humanoid robots is still nowhere in evidence. One core
-problem of humanoid robots is their inherent complexity. Vison,
+problem of humanoid robots is their inherent complexity. Vision,
 cognition, manipulation and locomotion all need to be combined in one
 mechanism. While every of these problems is under active research, one
 has been especially resilient: Locomotion. Some robots, e.g.~the
 \name{Armar III} robots, solve it by replacing the legs with a stable
-base on wheels. While this yields convinient research platform, the
+base on wheels. While this yields convenient research platform, the
 navigation in human environments is not as natural as for full humanoid
 robots.
 
 Over the last two decades a lot of progress has been made in humanoid
 walking. Every one is familiar with the famous \name{ASIMO} robot
-developed by Honda or the HRP robots developed by AIST which demostrate
+developed by Honda or the HRP robots developed by AIST which demonstrate
 stable walking. More recently \name{ATLAS} by Boston Dynamics shows
 great stability even under disturbances. Sadly most of these platforms
 are closed and it is not known exactly which models are used in each
 robot to derive stable walking.
 
 As the goal for bipedal walking is to be as human-like as possible,
-research on human walking is a greate inspiration for robotic walking.
-While the human gait can be devided into many phases, of primary
+research on human walking is a great inspiration for robotic walking.
+While the human gait can be divided into many phases, of primary
 interest for the stability is the number of feet that are in contact
 with the ground. For walking the ground contact alternates between both
 feet and one support foot. These phases are called dual and single
@@ -155,60 +155,60 @@ stability of objects at rest (e.g.~standing), while dynamical stability
 is concerned with the stability of objects in motion (e.g.~walking).
 Deriving a stability criteria for the \emph{static} case is rather
 simple. If the projection of center of mass to the ground is inside the
-support polygone, the pose is said to be \emph{statically} stable. The
-support polygone is the convex hull of all points of the foot that are
-in contact with the ground. However dynamic stability deals with the
+support polygon, the pose is said to be \emph{statically} stable. The
+support polygon is the convex hull of all points of the foot that are in
+contact with the ground. However dynamic stability deals with the
 stability of objects (e.g.~in this case robots) in motion. In that case
-more elaborate methodes need to be derived using a description of the
+more elaborate methods need to be derived using a description of the
 dynamics of the robot.
 
 There are two basic approaches to derive a trajectory for bipedal
-walking. On the one side are approaches based on direct immitation of a
-human motion. First a human test subject is equiped with markers. The
+walking. On the one side are approaches based on direct imitation of a
+human motion. First a human test subject is equipped with markers. The
 marker movements are recorded using motion capturing and mapped to
 corresponding markers on a humanoid model. Since the kinematic structure
 of a human does not map directly to the kinematic structure of a robot,
 the resulting trajectory needs to be adapted to the target robot. In
 general only adapting the motion based on the kinematic structure will
 not yield a dynamically stable motion. Different weights and inertia
-values of the links also need to be considert. However this might cause
-significat modifications of the original trajectory.
+values of the links also need to be considered. However this might cause
+significant modifications of the original trajectory.
 
 On the other side there are completely synthetic approaches. Based on
-simplifing models of the dynamics of a humanoid robot, stability
-conditions are derived. Using disired foot positions or step length and
+simplified models of the dynamics of a humanoid robot, stability
+conditions are derived. Using desired foot positions or step length and
 walking speed as input, corresponding trajectories are derived that
-sattisfy the given stability conditions. Most notably in this catagory
+satisfy the given stability conditions. Most notably in this category
 are approaches based on the Zero Moment Point using a so called Pattern
 Generator. In section \ref{section:walking-models} the ZMP is derived
-for different simplified dynamic models. Fundermental for this approach
+for different simplified dynamic models. Fundamental for this approach
 is the insight, that the dynamics of bipedal walking can be approximated
 sufficiently by an inverted pendulum. The model views the center of mass
 as the head of the pendulum, while the base is attached to the support
 foot. Thus the task of walking can be formalized as moving the base of
 the pendulum while keeping it upright.
 
-In reality executing a trajectory that was obtained by either methode is
+In reality executing a trajectory that was obtained by either method is
 not easy. For one, the models to approximate the dynamics of a complex
 robot might be inaccurate. Also the environment the robot operates in
-might not match the assumptions completely. For example a convinient
+might not match the assumptions completely. For example a convenient
 assumption is that the ground is completely flat. This is rarely the
 case and needs to be controlled for. Thus a stabilizer is needed to
-adapt the trajectory to the disturbences. Most stabilizer for
-estabilished robotic platforms are closed source and very robot
-specific. Notabliy various iterations of stabilzers based on modifying
-an already dynamically stable pattern where proposed by Kajita and Miura
-et. al. (\cite{kajita2010biped}, \cite{miura2011human} and
+adapt the trajectory to the disturbances. Most stabilizer for
+established robotic platforms are closed source and very robot specific.
+Notably various iterations of stabilizers based on modifying an already
+dynamically stable pattern where proposed by Kajita and Miura et. al.
+(\cite{kajita2010biped}, \cite{miura2011human} and
 \cite{kajita2012evaluation})
 
-While a stabilizer can deal with continous small disturbances, a robot
-may encounter short but severe distrubances. These distrubances can be
-viewed as pushes. Pratt et. al. estabilished the concept of a Capture
+While a stabilizer can deal with continuous small disturbances, a robot
+may encounter short but severe disturbances. These disturbances can be
+viewed as pushes. Pratt et. al. established the concept of a Capture
 Point, that can be used to recover from such disturbances.
 
 This thesis presents a software framework that implements rudimentary
 support for each component. They are integrated into a dynamic
-simulation environment and evaluted.
+simulation environment and evaluated.
 
 \chapter{Models for humanoid walking}\label{section:walking-models}
 
@@ -220,7 +220,7 @@ single support phase is the 3D inverted pendulum. We reduce the body of
 the robot to a point-mass at the center of mass and replace the support
 leg by a mass-less telescopic leg which is fixed at a point on the
 supporting foot. Initially this will yield non-linear equations that
-will be hard to control. Howevery by constraining the movement of the
+will be hard to control. However by constraining the movement of the
 inverted pendulum to a fixed plane, we can derive a linear dynamic
 system. This model called the 3D \emph{linear} inverted pendulum model
 (short \emph{3D-LIPM}).
@@ -239,7 +239,7 @@ interested in the effect a given actuator torque has on the movement of
 the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the
-origin of the current cartesian coordinate system. Thus we can describe
+origin of the current Cartesian coordinate system. Thus we can describe
 the position inverted pendulum by a vector $c = (x, y, z)$. We are going
 to introduce an appropriate (generalized) coordinate system
 $q = (\theta_R, \theta_P, r)$ to get an easy description of our actuator
@@ -247,18 +247,18 @@ torques: Let $m$ be the mass of the pendulum and $r$ the length of the
 telescopic leg. $\theta_P$ and $\theta_R$ describe the corresponding
 roll and pitch angles of the pose of the pendulum.
 
-Now we need to find a mapping between forces in the cartesian coordinate
+Now we need to find a mapping between forces in the Cartesian coordinate
 system and the generalized forces (the actuator torques). Let
 $\Phi: \mathbb{R}^3 \longrightarrow \mathbb{R}^3, (\theta_R, \theta_P, r) \mapsto (x, y, z)$
-be a function that maps the generalized coordinates to the cartesian
-coordinates. Then the jacobian $J_\Phi = \frac{\partial p}{\partial q}$
-maps the \emph{generalized velocites} to \emph{cartesian velocites}.
-Furthermore we know that the transpose $J_\Phi^T$ maps \emph{cartesian
+be a function that maps the generalized coordinates to the Cartesian
+coordinates. Then the Jacobian $J_\Phi = \frac{\partial p}{\partial q}$
+maps the \emph{generalized velocities} to \emph{Cartesian velocites}.
+Furthermore we know that the transpose $J_\Phi^T$ maps \emph{Cartesian
 forces} $F = m (\ddot x, \ddot y, \ddot z)$ to \emph{generalized forces}
 $(\tau_r, \tau_p, f)$.
 
 We write $x$, $y$ and $z$ in terms of our generalized coordinates to
-compute the corresponding jacobian $J_\Phi$. From the fact that the
+compute the corresponding Jacobian $J_\Phi$. From the fact that the
 $\theta_P$ is the angle between the projection of $c$ onto the
 $xz$-plane and $c$ and $\theta_R$ the angle between $c$ and the
 projection onto the $yz$ plane we can derive the following equations
@@ -272,9 +272,9 @@ z & = & \sqrt{r^2 - x^2 - y^2} = r \cdot \sqrt{1 - s_P^2 - s_R^2} & \\
 \end{array}
 \end{equation}
 
-From which we can compute the jacobian by partial derivation:
+From which we can compute the Jacobian by partial derivation:
 
-\begin{equation} \label{eq:lip-jacobian}
+\begin{equation} \label{eq:lip-Jacobian}
 J = \frac{\partial p}{\partial q} = \left( \begin{array}{rcl}
 0 & r \cdot c_P & s_P \\
 -r \cdot c_R & 0 & s_P \\
@@ -309,7 +309,7 @@ f \\
 \end{array}
 \end{equation}
 
-and equations \ref{eq:lip-jacobian} and \ref{eq:lip-xyz} we can derive
+and equations \ref{eq:lip-Jacobian} and \ref{eq:lip-xyz} we can derive
 the following equations:
 
 \begin{equation} \label{eq:lip-dyn-y}
@@ -354,7 +354,7 @@ Subsequently the second derivative of $z$ can be described by:
 \ddot{z} = k_x \cdot \ddot{x} + k_y \cdot \ddot{y}
 \end{equation}
 
-Substituing \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the
+Substituting \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the
 equations \ref{eq:lip-dyn-y} and \ref{eq:lip-dyn-x} yields the following
 equations:
 
@@ -396,9 +396,9 @@ Which yields our final description of the dynamics:
 
 As outlined in \cite{kajita20013d} the inputs $u_P$ and $u_R$ are
 generally set to zero. Thus the 3D-LIMP has no input torque. This is
-desireable, as the torque that can be applied on the ankle joints is
+desirable, as the torque that can be applied on the ankle joints is
 limited. Thus it makes sense to reserve the torque for correcting
-disturbences.
+disturbances.
 
 \section{The Zero Moment Point}\label{the-zero-moment-point}
 
@@ -407,7 +407,7 @@ Zero Moment Point. One reason for that might be that it is very simple
 to describe constrains for dynamic stability using this reference point.
 As long as the following condition is met we will have full ground
 contact of our support foot and thus can realize dynamically stable
-walking: \emph{The ZMP is strictly inside the support polygone of the
+walking: \emph{The ZMP is strictly inside the support polygon of the
 support foot.}
 
 For flat ground contact of our support foot with the floor the ZMP
@@ -457,7 +457,7 @@ to:
 \end{equation}
 
 Furthermore we can use the corresponding components $p_x$ and $p_y$ from
-the definition of the ZMP \ref{eq:zmp-definition} and substitude in the
+the definition of the ZMP \ref{eq:zmp-definition} and substitute in the
 equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
 
 This will yield: $\tau_x = \tau_y = 0$.
@@ -478,7 +478,7 @@ The table-cart model is equivalent to the 3D-LIPM model discussed
 before, but somewhat more intuitive for computing the resulting ZMP from
 an CoM motion. The model consists of an (infinitely) large mass-less
 table of height $z_c$, while the foot of the table has the shape of the
-support polygone. Given a frictionless cart with mass $m$ that moves on
+support polygon. Given a frictionless cart with mass $m$ that moves on
 the table we can compute the resulting ZMP in the support foot. Please
 note that the 3D-dimensional model is equivalent to having two
 independent tables with two carts each in the $xz$ and $yz$-plane
@@ -509,8 +509,8 @@ p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 \section{Multi-Body methode to calculate the
 ZMP}\label{section:multi-body-zmp}
 
-Besides the simplified table-cart model, there also exsists an exact
-methode to calculate the resulting ZMP from the movement from serveral
+Besides the simplified table-cart model, there also exists an exact
+method to calculate the resulting ZMP from the movement from several
 connected rigid bodies.
 
 Let $c_i$ be the CoM position and $m_i$ the mass of the $i$-th body
@@ -575,13 +575,13 @@ p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\math
 Both equations are dependent on $p_z$. If we assume the robot walks on a
 flat floor, we can set $p_z = 0$.
 
-See figure \ref{zmp-comparision} to get an idea how much the Multi-Body
+See figure \ref{zmp-comparison} to get an idea how much the Multi-Body
 ZMP derives from the estimation using the Cart-Table model.
 
 \begin{figure*}[tb]
 \includegraphics[width=\textwidth,resolution=300]{images/zmp_comparison.png}
-\caption{Comparision of the Cart-Table and Multi-Body to estimate the realized ZMP during walking.}
-\label{img:zmp-comparison}
+\caption{Comparison of the Cart-Table and Multi-Body to estimate the realized ZMP during walking.}
+\label{img:zmp-comparson}
 \end{figure*}
 
 \chapter{Pattern generator}\label{pattern-generator}
@@ -599,16 +599,16 @@ are common:
 \end{enumerate}
 
 The first approach is generally used for implementing pattern generators
-soley based on the 3D-LIP model. \cite{kajita20013d} The second approach
-is the more versatile one, since it is easy to incorporate constrains of
-our environment (e.g.~only limited foot holds) in the input of the
-pattern generator. However care must be taken while chosing adequate
-step width and step length parameters for the foot trajectory, so that
-they can actually be realized by the robot. The pattern generator
-proposed by Kajita et al. \cite{kajita2003biped} based on Preview
-Control realizes the second approach. We will discuss the theoretical
-background of this pattern generator here in more detail, since all
-pattern that we used where generated that way.
+solely based on the 3D-LIP model. \cite{kajita20013d} The second
+approach is the more versatile one, since it is easy to incorporate
+constrains of our environment (e.g.~only limited foot holds) in the
+input of the pattern generator. However care must be taken while
+choosing adequate step width and step length parameters for the foot
+trajectory, so that they can actually be realized by the robot. The
+pattern generator proposed by Kajita et al. \cite{kajita2003biped} based
+on Preview Control realizes the second approach. We will discuss the
+theoretical background of this pattern generator here in more detail,
+since all pattern that we used where generated that way.
 
 \section{Computing the CoM from a reference
 ZMP}\label{computing-the-com-from-a-reference-zmp}
@@ -616,7 +616,7 @@ ZMP}\label{computing-the-com-from-a-reference-zmp}
 As we saw in the section \ref{section:table-cart} it is easy to compute
 the resulting ZMP given the CoM and its acceleration. However for
 generating the walking pattern, we want to compute the CoM trajectory
-from a given ZMP. If you rearange the equations \ref{eq:zmp-x} and
+from a given ZMP. If you rearrange the equations \ref{eq:zmp-x} and
 \ref{eq:zmp-y} you see that we have to solve a second order differential
 equations:
 
@@ -692,7 +692,7 @@ As you can see the jerk of the CoM was introduced as an input
 $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
 
 We use equation \ref{eq:zmp-x} to calculate the actual output of the
-dynamic system the resulting zmp, that will be controlled:
+dynamic system the resulting ZMP, that will be controlled:
 
 \begin{equation} \label{eq:zmp-x-output}
 p_x =
@@ -713,7 +713,7 @@ our input ZMP trajectory will consist of discrete samples at equal time
 intervals $T$ we define the discrete state as $x[k] := x(k \cdot T)$.
 Please note that this system is a linear time-invariant system (LTI),
 and both matrices $A_0$ and $B_0$ are constant. We can therefore use the
-standart approach to solve this system using the equation:
+standard approach to solve this system using the equation:
 
 \begin{equation}
 x(t) = e^{A_0 \cdot (t - \tau)} x(\tau) + \int^t_\tau e^{A_0 \cdot (t - \lambda)} B_0 u(\lambda) d\lambda
@@ -730,7 +730,7 @@ x[k+1] & = & e^{A_0 \cdot ((k+1)T - kT)} x[k] + \int^{(k+1)T}_{kT} e^{A_0 \cdot 
 Keep in mind that $u(\lambda) = u[k], \lambda \in (kT, (k+1)T)$ so we
 can move it outside of the integral. Let us first compute a general
 solution for the matrix exponential $e^{A_0 \cdot t}$. It is easy to see
-that $A_0$ is nilpotent and $A_0^3 = 0$, thus the computation simpilfies
+that $A_0$ is nilpotent and $A_0^3 = 0$, thus the computation simplifies
 to the following:
 
 \begin{equation}
@@ -779,11 +779,11 @@ x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
 system}\label{controlling-the-dynamic-system}
 
 To control this dynamic system we need to determine an adequate control
-input $u_x$ to realize the reference ZMP trajectory. A performence index
+input $u_x$ to realize the reference ZMP trajectory. A performance index
 $J_x$ for a given control input $u_x$ is needed to formalize what a
-``good'' control input would be. A naive performence index could be:
+``good'' control input would be. A naive performance index could be:
 
-\begin{equation}
+\begin{equation} \label{eq:simple-performance}
 J_x[k+1] := (p^{ref}_x[k+1] - p_x[k+1])^2
 \end{equation}
 
@@ -796,20 +796,26 @@ u_x[k] = \frac{p^{ref}_x[k+1] - C \cdot A \cdot x[k]}{C \cdot B} = \frac{p^{ref}
 = \frac{p^{ref}_x[k+1] - p_x[k] - T \dot{c_x}[k] - \frac{1}{2} T^2 \ddot{c_x}[k]}{\frac{1}{6}T^3 - \frac{z_c}{g} T}
 \end{equation}
 
-To analyse the behaviour of this control law for $u_x$ we simulate the
+To analyze the behavior of this control law for $u_x$ we simulate the
 rapid change of reference ZMP when changing the support foot.
-\todo{insert plot}
+
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/simple_zmp_control.png}
+\caption{ZMP control based on the performance index described by equation \ref{eq:simple-performance}.}
+\label{img:simple-zmp-control}
+\end{figure*}
 
 As you can see the reference ZMP is perfectly tracked. However, the CoM
-does not behave as expected. To achive the required ZMP position the CoM
-will be \emph{accelerated indefinietly} in the opposite direction.
+does not behave as expected. To achieve the required ZMP position the
+CoM will be \emph{accelerated indefinitely} in the opposite direction.
 Clearly this is not desired and will lead to falling on a real robot. A
-more sophisticated performence index is needed. To eventually reach a
-stable state at which the CoM comes to rest, the performence index
+more sophisticated performance index is needed. To eventually reach a
+stable state at which the CoM comes to rest, the performance index
 should include a state feedback. Also note the large jerk that is
-applied to the system when the reference ZMP position changes rappidly.
-In a real mechanical system large jerks will lead to oszillations, which
-will disturbe the system. Thus the performence index should also try to
+applied to the system when the reference ZMP position changes rapidly.
+In a real mechanical system large jerks will lead to oscillations, which
+will disturb the system. Thus the performance index should also try to
 limit the applied jerk.
 
 Another problem is caused by the very nature of a controller: The
@@ -818,10 +824,10 @@ reference ZMP trajectory. Trying make this lag as small as possible can
 lead to very high velocities, which might not be realizable by motors of
 a robot. However we have at least limited knowledge of the future
 reference trajectory. This knowledge can be leveraged by using Preview
-Control, which considers the next $N$ timesteps for computing the
-performence index.
+Control, which considers the next $N$ time steps for computing the
+performance index.
 
-Kajita et. al. use a performence index proposed by Katayama et. al.
+Kajita et. al. use a performance index proposed by Katayama et. al.
 \cite{katayama1985design} to solve all of the problems above:
 
 \begin{equation}
@@ -831,7 +837,7 @@ J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Del
 $Q_e$ is the error gain, $Q_x$ a symmetric non-negative definite matrix
 (typically just a diagonal matrix) to weight the components of
 $\Delta x[i]$ differently and $R > 0$. Conveniently Katayama also
-derived an optimal controller for this performence index, which is given
+derived an optimal controller for this performance index, which is given
 by:
 
 \begin{equation}
@@ -839,7 +845,7 @@ u[k] = -G_i \sum^k_{i=0} e[k] - G_x x[k] - \sum^N_{j=1} G_p p^{ref}_x[k + j]
 \end{equation}
 
 The gains $G_i, G_x, G_p$, can be derived from the parameters of the
-performence index. Since the calculation is quite elaborate we refer to
+performance index. Since the calculation is quite elaborate we refer to
 the cited article by Katayama p.~680 for more details.
 
 \section{Implementation}\label{implementation}
@@ -851,7 +857,7 @@ the cited article by Katayama p.~680 for more details.
 \label{img:pattern-generator-architechture}
 \end{figure*}
 
-To generate walking patterns based on the ZMP preview control methode,
+To generate walking patterns based on the ZMP preview control method,
 the approach from Kajita was implemented in \name{libBipedal} a shared
 library. A front-end was developed to easily change parameters,
 visualize and subsequently export the trajectory to the \name{MMM}
@@ -865,12 +871,12 @@ associated task of computing the forward- and inverse kinematics.
 
 Generating a walking pattern consists of multiple steps. First the foot
 positions are calculated. These are used to derive the reference ZMP
-trajectory which is feed into the zmp preview controller. From that the
+trajectory which is feed into the ZMP preview controller. From that the
 CoM trajectory is computed. The CoM trajectory and feet trajectories are
 then used to compute the inverse kinematics. The resulting joint
 trajectory is displayed in the visual front-end and can be exported.
 Each step is contained in dedicated modules that can be easily replaced,
-if needed. We will outline the implementation of each module seperately.
+if needed. We will outline the implementation of each module separately.
 
 \subsection{Generating foot
 trajectories}\label{generating-foot-trajectories}
@@ -899,10 +905,10 @@ Maximum distance between the foot sole and the floor
 Distance in anterior direction ($y$-Axis) between the lift-off point and
 the touch-down point
 \item[Step width $w$]
-Distance in lateral directoin ($x$-Axis) between both TCP on the feet
+Distance in lateral direction ($x$-Axis) between both TCP on the feet
 \item[Single support duration $t_{ss}$]
 Time the weight of the robot is only support by exactly one foot
-\item[Dual support duratoin $t_{ds}$]
+\item[Dual support duration $t_{ds}$]
 Time the weight of the robot is supported by both feet
 \end{description}
 
@@ -915,22 +921,22 @@ Since the foot trajectories of a humanoid walking have a cyclic nature,
 we only need three different foot trajectories that can be composed to
 arbitrarily long trajectories: Two transient trajectories for the first
 and last step respectively and a cyclic motion that can be repeated
-indefinetly. We can use the same trajectories for both feet, as they are
-geometrically identical. Each foot trajectory starts with swing phase
-and a resting phase. The trajectory in $y$ and $z$ direction is computed
-by a 5th order polynomial that assures the velocities and accelerations
-are approaching zero at the lift-off and touch-down point. The first and
-last step only have half of the normal step length, since the trajectory
-is starting and ending from a dual support stance, where both feet are
-placed parallel to eachother. Each trajectory is encoded as a
-$6 \times N$ matrix, each column containing cartesian coordinates and
-roll, pitch and yaw angles.
+indefinitely. We can use the same trajectories for both feet, as they
+are geometrically identical. Each foot trajectory starts with swing
+phase and a resting phase. The trajectory in $y$ and $z$ direction is
+computed by a 5th order polynomial that assures the velocities and
+accelerations are approaching zero at the lift-off and touch-down point.
+The first and last step only have half of the normal step length, since
+the trajectory is starting and ending from a dual support stance, where
+both feet are placed parallel to each other. Each trajectory is encoded
+as a $6 \times N$ matrix, each column containing Cartesian coordinates
+and roll, pitch and yaw angles.
 
 \subsubsection{Walking on a circle}\label{walking-on-a-circle}
 
 Much of the general structure of the foot trajectory remains the same as
-for walking straight. However instead of specifing the step length, it
-is implicitly given by the segment of the cricle that should be
+for walking straight. However instead of specifying the step length, it
+is implicitly given by the segment of the circle that should be
 traversed and the number of steps. So extra care needs to be taken to
 specify enough steps so that the generated foot positions are still.
 Each foot needs to move on a circle with radius
@@ -938,10 +944,10 @@ $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending
 which foot lies in the direction of the turn. The movement in
 $z$-direction remains unaffected. However the movement in the $xy$-plane
 is transformed to follow the circle for the specific foot.
-\todo{Current implementation does effectively that, but is actually a hack. Needs seperate trajectories for left/right}
+\todo{Current implementation does effectively that, but is actually a hack. Needs separate trajectories for left/right}
 The same polynomial that was previously used for the $y$-direction is
 now used to compute the angle on the corresponding circle and the $x$
-and $y$ coordinates are calculated acordingly. The foot orientation is
+and $y$ coordinates are calculated accordingly. The foot orientation is
 computed from the tangential (y-Axis) and normal (x-Axis) of circle the
 foot follows.
 
@@ -953,12 +959,11 @@ generates a trajectory for standing on one foot. Starting from dual
 support stance, the swing leg is moved in vertical direction until the
 usual step height is achieved. Additionally the foot is moved in lateral
 direction to half the step width. This reduces the necessary upper body
-tilt to compensate the inbalance. For the last step the inverse movement
-is performed to get back into dual support stance. This methode could be
+tilt to compensate the imbalance. For the last step the inverse movement
+is performed to get back into dual support stance. This method could be
 extended to walk by setting the next support foot in a straight line
 before the current support foot. The swing foot would need to be moved
 in an arc in lateral direction to avoid self-collisions.
-\todo{It is easy to extent this: DO IT.}
 
 \subsection{ZMP reference generation}\label{zmp-reference-generation}
 
@@ -966,31 +971,30 @@ As an input for the ZMP preview control, we need a reference ZMP
 movement that corresponds with the foot trajectory. The reference
 generator receives a list of intervals associated with the desired
 support stance and foot positions as input. In single support phase, the
-reference generator places the ZMP in the center of the support polygone
-of the corresponding foot. Since the support polygone is convex, the
-center is the point furthest away from the border of the polygone. Thus
-it should guarantee a maxium of stability with regard to possible ZMP
+reference generator places the ZMP in the center of the support polygon
+of the corresponding foot. Since the support polygon is convex, the
+center is the point furthest away from the border of the polygon. Thus
+it should guarantee a maximum of stability with regard to possible ZMP
 errors. In dual support phase, the reference generator shifts the ZMP
 from the previous support foot to the next support foot. Kajita et. al.
-suggest using a poylnomial to interpolate the ZMP positions between the
+suggest using a polynomial to interpolate the ZMP positions between the
 feet. However a simple step function
 $\sigma(t) = \left\{\begin{array}{lr}p_1 & t \leq t_0 \\ p_2 & t > t_0 \end{array}\right.$
-seems to suffice as well. Since the the touch-down of the swing foot
-might have a small lag, it is important that $t_0$ is the middle of the
-dual support phase. This assures we do not start to move the ZMP too
-early.
+seems to suffice as well. Since the touch-down of the swing foot might
+have a small lag, it is important that $t_0$ is the middle of the dual
+support phase. This assures we do not start to move the ZMP too early.
 
 \subsection{ZMP Preview Control}\label{zmp-preview-control}
 
-This module implements the methode described by Kajita et. al. and uses
-the methode outlined by Katayama et. al. to compute the optimal control
-input $u[k]$. Since it is computational feasable, the preview periode
+This module implements the method described by Kajita et. al. and uses
+the method outlined by Katayama et. al. to compute the optimal control
+input $u[k]$. Since it is computational feasible, the preview period
 consists of the full reference trajectory. For an online usage of this
-methode, this could be reduced to a much smaller sample size, e.g.~only
+method, this could be reduced to a much smaller sample size, e.g.~only
 preview one step ahead. Using the system dynamics described by
 \ref{eq:state-transition-result} the CoM trajectory, velocity and
 acceleration can be computed. The implementation makes heavy use of
-Eigen, a high performence linear algebra framework that uses SIMD
+\name{Eigen}, a high performance linear algebra framework that uses SIMD
 instructions to speed up calculations. Thus thus a calculation time of
 6.2s could be achieved to calculate ten steps, including the inverse
 kinematics.
@@ -1004,11 +1008,11 @@ of joints that are used to a sensible value. For walking only the joints
 of the legs and both the torso roll and pitch joints are used. All other
 joints are constrained to static values that will not cause
 self-collisions (e.g.~the arms are slightly extended and do not touch
-the body). For comptuing the IK additional constraints where added, to
+the body). For computing the IK additional constraints where added, to
 make sure the robot has a sensible pose: The chest should always have an
 upright position and the pelvis should always be parallel to the floor.
 To support non-straight walking, the pelvis and chest orientation should
-also follow the walking direction. Thus the following methode to compute
+also follow the walking direction. Thus the following method to compute
 the desired chest and pelvis orientation is used:
 
 \begin{enumerate}
@@ -1042,8 +1046,8 @@ satisfied by the inverse kinematics:
   Right foot pose
 \end{enumerate}
 
-A hiearchical solver was used to solve the inverse kinematics for that
-goals in the given order. It was observed that specifing a good target
+A hierarchical solver was used to solve the inverse kinematics for that
+goals in the given order. It was observed that specifying a good target
 height for the CoM is of utmost importance for the quality of the IK.
 For the model of \name{Armar IV} that used here, a height of $0.86$ m
 yielded the best results.
@@ -1053,13 +1057,13 @@ yielded the best results.
 The trajectory was exported in open \name{MMM} trajectory format. The
 format was extended to export additional information useful for
 debugging and controlling the generated trajectory. That means besides
-the joint values and velocites the trajectory also includes the CoM and
+the joint values and velocities the trajectory also includes the CoM and
 ZMP trajectory that was used to derive them. Also information about the
-current support phase is saved. For convinience the pose of chest,
-pelvis, left and right foot are exported as homogenous matrices as well.
-This was done to save the additional step of computing them again from
-the exported joint trajectory for the stabilizer and also elimnate an
-additional error source while debugging.
+current support phase is saved. For convenience the pose of chest,
+pelvis, left and right foot are exported as homogeneous matrices as
+well. This was done to save the additional step of computing them again
+from the exported joint trajectory for the stabilizer and also eliminate
+an additional error source while debugging.
 
 \chapter{Dynamic Simulation}\label{dynamic-simulation}
 
@@ -1070,45 +1074,45 @@ that is part of \name{Simox}. \name{SimDynamics} uses
 work on the simulator was spend on configuring the parameters and
 finding flaws in the physics simulation. Thus the simulator includes a
 extensive logging framework that measures all important parameters of
-the simulation. For visulizing and analysing the measurement the Open
-Source tools \name{IPython}, numpy and \name{pandas} where used.
+the simulation. For visualizing and analysing the measurement the Open
+Source tools \name{IPython}, \name{numpy} and \name{pandas} where used.
 
 \section{Simulating rigid body
 dynamics}\label{section:rigid-body-simulation}
 
-For physical simulation in general can be devided into discrete methodes
-and continous methodes. Discrete simulators only compute the state of
-the system at specific points in time, while continous simulators are
+For physical simulation in general can be divided into discrete methods
+and continuous methods. Discrete simulators only compute the state of
+the system at specific points in time, while continuous simulators are
 able to compute the state of the system at any point in time. While
-contious simulation is the more flexible approach, it quickly becomes
+continuous simulation is the more flexible approach, it quickly becomes
 impractical with the number of constrains involved. Typically a large
 amount of differential equations need to be solved. Since it is hard to
 obtain analytical solutions for most differential equations, numerical
-methodes need to be used, which often have a large runtime. On contrast
-discrete simulation methodes only compute simulation values for specific
+methods need to be used, which often have a large runtime. On contrast
+discrete simulation methods only compute simulation values for specific
 time steps. This exploits the observation that we will typically query
 the state of the physics engine only at a fixed rate anyway, e.g.~at
-each iteration of our control loop). Rather than solving the differntial
-equations that describe the physical system in each step, a solution is
-derived from the previous simulation state.
+each iteration of our control loop). Rather than solving the
+differential equations that describe the physical system in each step, a
+solution is derived from the previous simulation state.
 
 A physical system we can typically find two kind of forces: Applied
 forces and constraint forces. Applied forces are the input forces of the
 system. Source of applied forces are for example objects like springs or
-gravity. Constraint forces are fictious forces that arrise from
-contrains we impose on the system: Non-penetration constraints, friction
-constraints, position constrains of joints or velocity constrains for
-motors. Mathematically we can express such constrains in the form:
-$C(x) = 0$ or $\dot{C}(x) = 0$ in the case of equality constrains, or as
-$C(x) \geq 0$ or $\dot{C(x)} \geq 0$ in the case of inequality
-constrains. For example the position constraint of a joint $p$ connected
-to a base $p_0$ with distance $r_0 = ||p-p_0||$ would be:
+gravity. Constraint forces are fictional forces that arise from
+constrains we impose on the system: Non-penetration constraints,
+friction constraints, position constrains of joints or velocity
+constrains for motors. Mathematically we can express such constrains in
+the form: $C(x) = 0$ or $\dot{C}(x) = 0$ in the case of equality
+constrains, or as $C(x) \geq 0$ or $\dot{C(x)} \geq 0$ in the case of
+inequality constrains. For example the position constraint of a joint
+$p$ connected to a base $p_0$ with distance $r_0 = ||p-p_0||$ would be:
 $C(p) = || p - p_0 ||^2 - r_0^2$ If $p$ is moving with a linear velocity
 $v$ a constraint force $F_c$ is applied to $p$ to maintain this
-constraint. We can view $C$ as a transformation from our cartesian space
-to the constraint space. Thus by computing the jacobian $J$ of $C$ we
-can relate velocities in both spaces. Furthermore we can realte
-constraint space forces $\lambda$ with cartesian space forces using the
+constraint. We can view $C$ as a transformation from our Cartesian space
+to the constraint space. Thus by computing the Jacobian $J$ of $C$ we
+can relate velocities in both spaces. Furthermore we can relate
+constraint space forces $\lambda$ with Cartesian space forces using the
 transpose of the Jacobian. Thus if we can find the constraint space
 force $\lambda$ that is needed to maintain this constraint we can
 compute $F_c$ using $F_c = J^T \lambda$. Computing this constraint space
@@ -1118,11 +1122,11 @@ The constrained solver used by \name{Bullet} and thus the constraint
 solver used for simulating the patterns here is a sequential impulse
 solver. To make some calculations easier, a SI solver works with
 impulses and velocities rather than forces and accelerations. Impulses
-and forces can be easily transformed in eachother as $P = F \cdot T$
-where $P$ is the impulse and $T$ the timestep size. A sequential impulse
-solver tries to compute the constraint force (in this case rather
-impulse) $\lambda$ for each costraint \emph{seperately}. For each
-constraint the following steps are executed:
+and forces can be easily transformed in each other as $P = F \cdot T$
+where $P$ is the impulse and $T$ the time step size. A sequential
+impulse solver tries to compute the constraint force (in this case
+rather impulse) $\lambda$ for each constraint \emph{separately}. For
+each constraint the following steps are executed:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1142,27 +1146,27 @@ constraint the following steps are executed:
 
 Of course this might not lead to a global solution, as satisfying a
 constraint might violate a previously solved one. The idea is to
-repeadidetly loop over all constraints, so that a global solution will
-be reached. Obviously the quality of this methode relies on how often
-this loop is executed. Consider the case of a kinematic chain where a
+repeatedly loop over all constraints, so that a global solution will be
+reached. Obviously the quality of this method relies on how often this
+loop is executed. Consider the case of a kinematic chain where a
 movement of a link always violates at least one constraint. It is clear
-that this methode needs a lot of iterations to yield good results in
-this case. It becomes even worse in the case of a parallel kinematic
-that is in contact with the ground, as is the case for a bipedal robot
-in dual support stance. Solving a non-penetration constrain on either
-end, will invalidate the position constraint of the next link. In turn,
-the position constraint of each link needs to be updated until the other
-end of the kinematic chain is reached. If the non-penetration constraint
-is violated again for this end, the whole process starts again in
-reverse direction. This leads to oscillations that need a lot more
-iterations to level off to an acceptable level. Dispite these
-inaccuracies using enought solver iteration this still yields an overall
-usable systems. However the velocities still will have a small random
-error in each simulation step. This poses a major problem when trying to
-measure accelerations, as the random error acauses them to accelerate
-wildly. This circumstance needs to be taken into account when dealing
-with values derived from the acceleration (e.g.~the ZMP), as
-mean-filters might be neccessary.
+that this method needs a lot of iterations to yield good results in this
+case. It becomes even worse in the case of a parallel kinematic that is
+in contact with the ground, as is the case for a bipedal robot in dual
+support stance. Solving a non-penetration constrain on either end, will
+invalidate the position constraint of the next link. In turn, the
+position constraint of each link needs to be updated until the other end
+of the kinematic chain is reached. If the non-penetration constraint is
+violated again for this end, the whole process starts again in reverse
+direction. This leads to oscillations that need a lot more iterations to
+level off to an acceptable level. Despite these inaccuracies using
+enough solver iteration this still yields an overall usable systems.
+However the velocities still will have a small random error in each
+simulation step. This poses a major problem when trying to measure
+accelerations, as the random error causes them to accelerate wildly.
+This circumstance needs to be taken into account when dealing with
+values derived from the acceleration (e.g.~the ZMP), as mean-filters
+might be necessary.
 
 \section{Practical challenges of physics
 simulation}\label{practical-challenges-of-physics-simulation}
@@ -1171,33 +1175,33 @@ While walking only the feet of the robot are in contact with the ground.
 Thus the stability of the whole robots depends on the contact of the
 feet with the floor. Especially in single support phase that area is
 very small with regard to the size of the robot. For that reason the
-accuracy of ground contatc forces and friction is of utmost importance
+accuracy of ground contact forces and friction is of utmost importance
 for the quality of the simulation. In general three classes of errors
-need to be elimnated to get a good simulation:
+need to be eliminated to get a good simulation:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Incorrectly configured parameters, such as fictions coefficent and
+  Incorrectly configured parameters, such as fictions coefficients and
   contact thresholds
 \item
   Numerical errors
 \item
-  Inherent errors of the methode
+  Inherent errors of the method
 \end{enumerate}
 
 As outline in the section about discrete time dynamic simulation, the
 physics of the system are formulated as input forces and constrains that
 need to be solved for the constraint forces. Since \name{Bullet} uses
-the iterative apporach described in section
+the iterative approach described in section
 \ref{section:rigid-body-simulation}. Thus it is important to use a
 sufficient amount of iterations for each simulation step. Another
-important parameter is the timestep of each simulation step. Through
+important parameter is the time step of each simulation step. Through
 experimental evaluation a simulation with 2000 solver iterations and a
-timestep size of 1ms was sufficiently stable. However since the number
-of iterations is very high and a lot of timesteps are calculated during
+time step size of 1ms was sufficiently stable. However since the number
+of iterations is very high and a lot of time steps are calculated during
 the simulation, numeric errors become significant. That made is
-neccessary to enable using double precision floating point numbers for
+necessary to enable using double precision floating point numbers for
 the values used during simulation.
 
 To decide which contact constrains are active for which points,
@@ -1206,7 +1210,7 @@ involved different algorithms are used to calculate the contact points.
 Major gains in accuracy could be observed by replacing the feet and the
 floor with simple box shapes, instead using mesh based models.
 
-\section{Implementatoin}\label{implementatoin}
+\section{Implementation}\label{implementation-1}
 
 \begin{figure*}[htb]
 \vspace*{-1em}
@@ -1219,10 +1223,8 @@ The simulator was designed to load arbitrary motions in the \name{MMM}
 format and replay them. Additional stabilization algorithms can be
 applied depending on additional information provided in the \name{MMM}
 motions. These stabilization algorithms are called by real-time plugins
-called \texttt{TrajectoryController}, that get invoked in each
-simulation step.
-
-\todo{Pose Stabilizer might be better than Cartesian stabilizer since we don't actually controll the foot position}
+implemented by the class \texttt{TrajectoryController}, that get invoked
+in each simulation step.
 
 Currently three controllers are implemented. A controller based on the
 stabilizer proposed by Kajita (as outlined in section
@@ -1233,19 +1235,19 @@ invoked in the same cycle time as the reference walking pattern.
 
 \todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
 
-The resulting, possibily modified, joint angles are then interpolated
+The resulting, possibly modified, joint angles are then interpolated
 using cubic splines. This ensures a smooth velocity profile and
 mitigates destabilizing oscillations caused by large velocity changes.
 
 The interpolated angles are send via \name{SimDynamics} to the
 corresponding motors. Since the motor implemented in \name{Bullet} are
 velocity controlled, PID based motor controllers were added to
-\name{SimDynamics}. They control the motor velocites to compensate
+\name{SimDynamics}. They control the motor velocities to compensate
 position errors.
 
 The motors implemented \name{Bullet} do not limit the motor velocity and
 acceleration. This is not consistent with real motors, thus limits for
-velocites and acceleration where introduced to \name{SimDynamics}, that
+velocities and acceleration where introduced to \name{SimDynamics}, that
 can be configured on a per-joint basis.
 
 \section{Simulation analysis}\label{simulation-analysis}
@@ -1258,24 +1260,24 @@ can be configured on a per-joint basis.
 \end{wrapfigure}
 
 An important part of the simulation is the generation of measurements
-that can be carefully evaluted offline or displayed in the
-visualization. For this purpose a modular measuremt component was added
-to the simulator. An important design goal was to keep the measurement
-component as simple to extend and maintain as possible. Each module
-meassures a specific set of values and writes them, indexed by the
+that can be carefully evaluated offline or displayed in the
+visualization. For this purpose a modular measurement component was
+added to the simulator. An important design goal was to keep the
+measurement component as simple to extend and maintain as possible. Each
+module measures a specific set of values and writes them, indexed by the
 corresponding timestamp, to its log file. As output format the well know
-plaintext format CSV was used. The visualization can query the
+plain text format CSV was used. The visualization can query the
 measurement components directly to get the newest values to be
 displayed. For example the ZMP module measures the actual ZMP and also
 provides an interface to query the trajectory ZMP and the reference ZMP
 that was provided as input for the pattern generator. Thus all three
 values can be displayed in the visualization and easily compared later
 by analysing the log file. Since the goal was to keep the component as
-simple as possible, we use exsistening well known tools for analysing
-the generated log files. Some small helper scripts are provied to make
-it easier to load the data into the time series analysis framework
+simple as possible, we use existing well known tools for analyzing the
+generated log files. Some small helper scripts are provided to make it
+easier to load the data into the time series analysis framework
 \name{pandas}. \name{Pandas} interfaces with the popular plotting
-framework \name{matplotlib} to diplay plots of the data. \name{IPython}
+framework \name{matplotlib} to display plots of the data. \name{IPython}
 is used to easily run the analysis and display the results in a browser
 window. All plots of simulated patterns found in this thesis can be
 generated automatically for every simulation.
@@ -1283,7 +1285,7 @@ generated automatically for every simulation.
 \chapter{Stabilizing a trajectory}\label{stabilizing-a-trajectory}
 
 While executing a trajectory there are several sources of errors that
-will make it neccessary to correct the trajectory. We can devide them in
+will make it necessary to correct the trajectory. We can divide them in
 about three main classes:
 
 \begin{description}
@@ -1294,10 +1296,10 @@ flat and has no slope. Also we assume we can navigate without colliding
 with other object. Any environment that deviates from this assumption
 can be seen as a disturbance.
 \item[Disturbances due to simulation errors:]
-Physical simulations often make a tradeoff between speed and simulation
+Physical simulations often make a trade-off between speed and simulation
 accuracy. Thus the simulation might not always behave as it was modeled
 during calculating the pattern, or as it would behave in reality.
-\item[Disturbances due to errors of the methode:]
+\item[Disturbances due to errors of the method:]
 Often pattern generators use simplified models of the dynamics involved
 to derive generation scheme. For example the pattern generator that was
 used here assumes the ZMP behaves as the cart-table-model predicts.
@@ -1309,13 +1311,13 @@ substantially deviate.
 
 When using a ZMP based control scheme to derive a walking pattern it
 seems natural to check for deviations of the actual ZMP from the goal
-ZMP. However a deviation from the reference ZMP does not neccessarily
-mean we will see any disturbance. As long a the ZMP remains inside the
-support polygone the trajectory can be executed as planed. Also we saw
+ZMP. However a deviation from the reference ZMP does not necessarily
+mean we will see any disturbance. As long as the ZMP remains inside the
+support polygon the trajectory can be executed as planed. Also we saw
 before, it is entirely possible to realize the reference ZMP while being
 in an overall state that deviates significantly from the state we
 assumed while generating the pattern. Thus we also need to check for a
-diviation in the trajectory of our CoM. A common approach to correct for
+deviation in the trajectory of our CoM. A common approach to correct for
 CoM position is to control the pose of the chest frame of the robot.
 This only works if the majority of the mass of a robot is located in the
 upper body and arms. Luckily for most humanoid robots this is the case.
@@ -1327,7 +1329,7 @@ We chose a stabilizer proposed by Kajita et. al. in their 2010 paper.
 the walking pattern augmented with a desired ZMP trajectory. This allows
 the stabilizer to use patterns that where generated synthetically,
 e.g.~by a pattern generator, or patterns that are the results of
-(adapted) motion capturing. The methode proposed by Kajita does not need
+(adapted) motion capturing. The method proposed by Kajita does not need
 a torque controlled robot, but works with position control. This was
 very important for the selection of this stabilizer. The underlying
 simulation engine \name{Bullet} only supports velocity controlled
@@ -1364,10 +1366,10 @@ system}\label{reference-coordinate-system}
 \label{img:ground-frame}
 \end{wrapfigure}
 
-To control the ZMP and CoM it is desireable to have a reference system
+To control the ZMP and CoM it is desirable to have a reference system
 that is static with respect to the ground in each support phase. It is
-convinied to place the reference coordinate system in the center of the
-respective support polygone. That means we place the ground frame at the
+convenient to place the reference coordinate system in the center of the
+respective support polygon. That means we place the ground frame at the
 TCP of the respective foot in single support phase. As the ground frame
 should be aligned with the floor, we use the projection of the foot
 poses to the floor plane. In dual support phase, we calculate the pose
@@ -1384,9 +1386,9 @@ The control strategy of the chest pose is straight forward: Given the
 reference roll angle $\phi^d$ and reference pitch angle $\theta^d$
 compute the differences to the actual angles $\phi$ and $\theta$. The
 main problem in a real robot is to obtain the actual global pose of this
-frame. The proposed methode is to use a Kalman filter to estimate the
+frame. The proposed method is to use a Kalman filter to estimate the
 pose from the joint position and accelerometers. We did not implement
-this methode in simulation, as it is easy to obtain the exact pose from
+this method in simulation, as it is easy to obtain the exact pose from
 the simulator. To prevent rapid movements of the chest that cause large
 accelerations, a dampening controller is used. The angles $\Delta \phi$
 and $\Delta \theta$ can be calculated by the following equations:
@@ -1424,8 +1426,8 @@ torques}\label{controlling-the-ankle-torques}
 Since the stabilizer only has the joint trajectory and desired ZMP
 trajectory as input, we need a way to compute the desired actuation
 torques on the ankles. The canonical way to do this, would be to solve
-the inverse dynamics of the robot. However for this we need an acurate
-model of the robot, including correct masses and moments of intertia for
+the inverse dynamics of the robot. However for this we need an accurate
+model of the robot, including correct masses and moments of inertia for
 each link. This model is not always easy to obtain and calculating the
 inverse dynamics of a robot with many degrees of freedom is rather slow.
 For this reason a simple heuristic is proposed to yield approximate
@@ -1462,11 +1464,10 @@ $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$. A heuristic
 for computing this alpha is the \emph{ZMP distributor}.
 
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from
-the ZMP to the support polygones of the feet. If the ZMP falls inside
-one of the support polygones set $\alpha = 1$ or $\alpha = 0$
-respectively. If it is outside of bothe support polygones the ZMP is
-projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point
-$p_{\alpha}$.
+the ZMP to the support polygons of the feet. If the ZMP falls inside one
+of the support polygons set $\alpha = 1$ or $\alpha = 0$ respectively.
+If it is outside of both support polygons the ZMP is projected onto line
+from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
 
 We can then set $\alpha$ to:
 
@@ -1488,7 +1489,7 @@ As before, we assume that $\tau_{zmp} = 0$ which lets us solve
 \tau_0 = (p_R - p^d_{zmp}) \times f_R + (p_L - p^d_{zmp}) \times f_L
 \end{equation}
 
-We now again apply a heurstic using the $\alpha$ computed before to
+We now again apply a heuristic using the $\alpha$ computed before to
 distribute $\tau_0$ to each ankle. First we need to transform $\tau_0$
 from the global coordinate system to a local coordinate system described
 by the \emph{ground frame}. We mark all vectors in the local coordinate
@@ -1508,7 +1509,7 @@ The torque around the $y$-Axis depends on the direction of the total
 torque $\tau_{0y}'$. If the total torque acts in clockwise direction
 (negative sign), we can assume it will only be applied to the left foot.
 If the torque acts in anti-clockwise direction (positive sign), we
-assumte it will only be applied to the right foot.
+assume it will only be applied to the right foot.
 
 \begin{equation} \label{eq:torque-right-x}
 \tau^{d'}_{Ry} = \left\{
@@ -1549,7 +1550,7 @@ non-solid:]
 If the foot has a soft contact surface (e.g.~rubber) we can model the
 contact with the ground as springs that connect the ground with the
 contact points on the foot. Changing the pose of the foot will
-relax/compress the springs and change the contact forces acoordingly.
+relax/compress the springs and change the contact forces accordingly.
 \item[The foot is in solid contact with the ground:]
 Changing the reference foot pose \emph{will not change the foot pose at
 all}. Instead, the pose of the rest of the robot is changed. If the foot
@@ -1570,7 +1571,7 @@ The springs at the front of the foot are compressed thus the force
 applied at the corresponding contact points increases. Accordingly the
 springs at the back are compressed less, thus the force applied to the
 corresponding contact points decreases. Resulting we see a increase in
-torque around the $x$-Axsis.
+torque around the $x$-axis.
 
 If the springs are compressed sufficiently, we can assume the contact
 with the floor is solid. Since the pose of the foot does not change, the
@@ -1645,8 +1646,8 @@ controller, that was used in the previous sections.
 \dot{z}_{ctl} = \frac{1}{D_z} [(f^d_L - f^d_R) - (f_L - f_R)] - \frac{1}{T_z} z_{ctl}
 \end{equation}
 
-Two methodes were proposed to realize this difference in ankle height.
-The first methode is straight forward change the reference position of
+Two methods were proposed to realize this difference in ankle height.
+The first method is straight forward change the reference position of
 the feet in $z$-direction:
 
 \begin{equation}
@@ -1657,11 +1658,11 @@ p^{d*}_R = p^d_R + 0.5 \cdot \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}
 p^{d*}_L = p^d_L - 0.5 \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right)
 \end{equation}
 
-This can lead to singularities if both legs are already fully streched,
-as the edge of their workspace is reached. The second methode relies on
+This can lead to singularities if both legs are already fully stretched,
+as the edge of their workspace is reached. The second method relies on
 an additional rotating the pelvis link. For this approach to work, the
 robot needs a joint that allows rotations around the anterior axis
-($y$-Axis) to keep the upper body uprigt. Since the robot model we used
+($y$-Axis) to keep the upper body upright. Since the robot model we used
 does not have this DOF, we only implemented the first approach.
 
 \subsection{Interaction between
@@ -1675,7 +1676,7 @@ rotate the supporting foot but rather the body of the robot. This will
 however change the posture of chest frame. The chest posture controller
 compensates that and keeps the body upright. This tight coupling makes
 tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as
-their performence depends on the other controllers. Best results where
+their performance depends on the other controllers. Best results where
 observed when the chest posture controller was tuned independently
 first, disabling the other controllers. Then the foot force controllers
 was enabled and tuned and finally the ankle torque controller was added
@@ -1690,7 +1691,8 @@ ZMP was predicted, that prediction might have already been wrong. For
 example the ZMP Preview Control approach uses the Table-Cart model to
 predict the ZMP. That prediction can deviate significantly from the real
 ZMP as the model simplifies the dynamics. Thus to make sure the desired
-ZMP is tracked acurately, the reference ZMP needs to be adapted as well.
+ZMP is tracked accurately, the reference ZMP needs to be adapted as
+well.
 
 Kajita et. al. propose a dynamic system that describes the 3D-LIMP
 dynamics. To model mechanical lag they introduce a parameter $T_p$ that
@@ -1754,7 +1756,7 @@ the poles $(-13, -3, \sqrt{\frac{g}{c_z}})$ was proposed. The gains can
 be easily computed from the poles, $A$ and $B$ using predefined
 functions in \name{MATLAB} or similar software.
 
-\section{Implementation}\label{implementation-1}
+\section{Implementation}\label{implementation-2}
 
 To implement the stabilizer above, a number of problems had to be
 solved. For one, computing the inverse kinematics is challenging. During
@@ -1776,7 +1778,7 @@ this approach leads to an increased error. Consider solving the inverse
 kinematics for both legs using a differential solver in two steps: First
 from the base (the left foot) to the pelvis, then from the pelvis to the
 right foot. Lets assume the IK computes a perfect solution to place the
-pevlis link and only achieves a small pose error of $e_{\alpha} = 0.1°$
+pelvis link and only achieves a small pose error of $e_{\alpha} = 0.1°$
 in the pitch angle of the right foot. If the trajectory is execute, the
 right foot will achieve its target pose, since it is constrained by the
 ground contact. However the error in the right foot pose will effect all
@@ -1786,11 +1788,11 @@ pelvis offset as
 $v' = R_y(-e_{\alpha}) \cdot v = (-0.49825, 0,  1.00087)^T m$ Which
 yields $1.76mm$ error in x-direction and $0.87mm$ error in y-direction.
 
-To solve this \name{Simox} was extented by a function
+To solve this \name{Simox} was extended by a function
 \texttt{cloneInversed} that can compute a kinematic structure with
-abitrary root placement from an existing description. For the parallel
+arbitrary root placement from an existing description. For the parallel
 kinematic chain, it proofed sufficient to approximate it as a normal
-kinematic chain and constrain the base and TCP targets acordingly.
+kinematic chain and constrain the base and TCP targets accordingly.
 However since the position of one foot will have small positioning
 errors, there will be some jitter introduced into the system.
 Integrating a solver for parallel kinematics might decrease some of the
@@ -1805,12 +1807,12 @@ integrates the stabilizer into the dynamic simulation.
 
 Some problems became immediately clear when testing the stabilizer
 proposed by Kajita. The ground reaction forces in dual support are
-oscillating widly. Instead of a continous force at about $0.5 \cdot f_g$
-the forces on both feet oscillate between $0$ and $f_g$, the support
-foot changes in rapid successions. As outlines in section
+oscillating wildly. Instead of a continuous force at about
+$0.5 \cdot f_g$ the forces on both feet oscillate between $0$ and $f_g$,
+the support foot changes in rapid successions. As outlines in section
 \ref{section:rigid-body-simulation} this is a result of the constraint
-solver methode employed by \name{Bullet}. Subsequently the measured
-torques on the ankles did not follow the prediction as well. Pleae note
+solver method employed by \name{Bullet}. Subsequently the measured
+torques on the ankles did not follow the prediction as well. Please note
 that this is not merely sensor noise, these are the actual values used
 by the simulator. Even when adding mean-filters to smoothen the measured
 torques it was not possible to extract a meaningful control signal.
@@ -1821,7 +1823,7 @@ alternative approach to stabilizing had to be found.
 
 \section{Alternative approach}\label{section:alternative-approach}
 
-A a simple heuristic, we used the controllers proposed by Kajita as
+A simple heuristic, we used the controllers proposed by Kajita as
 inspiration and replaced the force and torque feedback with the pose
 error of pelvis and feet frames respectively. The chest controller
 (Equation \ref{eq:chest-dampening-roll} and
@@ -1839,26 +1841,26 @@ easy. While the dampening controllers can be configured to smoothen a
 noisy sensor signal, a high level of precision is required to ensure a
 correct foot posture.
 
-Since the ZMP and CoM trajectory is not adaped, the compensation of
-environment disturbences is only based on a fast controller reaction to
+Since the ZMP and CoM trajectory is not adapted, the compensation of
+environment disturbances is only based on a fast controller reaction to
 leave the reference trajectory as little as possible and the stability
 margins the ZMP provides. However as we will discuss in the evaluation
-section, this simple approach is already supprisingly resilient.
+section, this simple approach is already surprisingly resilient.
 
 \chapter{Push recovery}\label{push-recovery}
 
-As we saw in the chapter about Stabilizers, not all disturbences can be
-compensated. If the disturbence reaches a certain severity, the
+As we saw in the chapter about Stabilizers, not all disturbances can be
+compensated. If the disturbance reaches a certain severity, the
 trajectory can not be executed as planed without falling. Thus the
 trajectory needs to be changed radically to avoid falling. There is
-little hope to recover from continous heavy disturbences, as any attempt
-to recover will be defeated. Thus we focus on short but severe
-disturbences, pushes.
+little hope to recover from continuous heavy disturbances, as any
+attempt to recover will be defeated. Thus we focus on short but severe
+disturbances, pushes.
 
-The most prominent methode to recover from pushes is the Capture Point.
+The most prominent method to recover from pushes is the Capture Point.
 The idea is to find a point, that will guarantee that the CoM comes to a
-rest, if the support foot is instantanously placed there. The push
-recovery implemented here uses a simplistic methode based on the Capture
+rest, if the support foot is instantaneously placed there. The push
+recovery implemented here uses a simplistic method based on the Capture
 Point.
 
 \section{Capture Point}\label{capture-point}
@@ -1874,7 +1876,7 @@ follows analogous.
 
 The base of the pendulum is assumed to be at the origin of the reference
 frame in \ref{eq:lip-x}. Since we want to specify the location freely,
-we need to substitude $x$ with $x - p$ to yield:
+we need to substitute $x$ with $x - p$ to yield:
 
 \begin{equation} \label{eq:lip-x-general}
 \ddot{x} = \frac{g}{z_c} (x - p)
@@ -1889,13 +1891,13 @@ E_x = \frac{1}{2} \dot{x}^2 - \frac{g}{2 \cdot z_c} (x - p)^2
 
 For the CoM to come to a rest the orbital energy $E_x$ must be zero.
 Thus we can solve \ref{eq:orbital-x} to yield the point $p$ that will
-achieve this. Since it is a quaratic equation there are two solutions:
+achieve this. Since it is a quadratic equation there are two solutions:
 
 \begin{equation}
 p = x - \sqrt{\frac{z_c}{g}} \dot{x} \:\:\:\:\text{ or }\:\:\:\: p = x + \sqrt{\frac{z_c}{g}} \dot{x}
 \end{equation}
 
-Since it is generally desireable to chose a point that lies in the
+Since it is generally desirable to chose a point that lies in the
 direction of the CoM motion we define the \emph{Immediate Capture Point}
 as:
 
@@ -1904,9 +1906,9 @@ p_{ic} := x + \sqrt{\frac{z_c}{g}} \dot{x}
 \end{equation}
 
 Placing the base of the pendulum (the ankle) there
-\emph{instentaniously} will cause an orbital energy of zero, thus the
+\emph{instantaneously} will cause an orbital energy of zero, thus the
 head of the pendulum (the CoM) will stop at $p_{ic}$. In most cases we
-will not be able to move the base of the pendulum instentaniously. So we
+will not be able to move the base of the pendulum instantaneously. So we
 are more interested in the Immediate Capture Point in $\Delta t$ seconds
 from now. This point can be obtained by \ref{eq:future-icp}. For a
 detailed derivation, we recommend the paper by Koolen et. al.
@@ -1922,17 +1924,17 @@ Immediate Capture Point as calculated by equation \ref{eq:icp}.
 
 \section{Fall detection}\label{fall-detection}
 
-The first important step to recover from a large disturbence is to
+The first important step to recover from a large disturbance is to
 detect it. That means we need to detect if we reached a unstable state,
 from which it is unlikely that we can recover only by means of the
 stabilizer. We can use the measured ZMP to obtain a heuristic for such
-states. If the ZMP is outside or on the edge of the support polygone,
-the Cart-Table model does not guarantee stability. However in normal
+states. If the ZMP is outside or on the edge of the support polygon, the
+Cart-Table model does not guarantee stability. However in normal
 operations it is likely that the ZMP will touch (or leave) the border of
-the support polygone for short periods of time. A simple methode to
-filter out this noise is to define a minium duration the ZMP as to be in
-an unstable state. Chosing a small value will let us react faster to
-disturbences, but make the methode error prone. Chosing a large value
+the support polygon for short periods of time. A simple method to filter
+out this noise is to define a minimum duration the ZMP as to be in an
+unstable state. Choosing a small value will let us react faster to
+disturbances, but make the method error prone. Choosing a large value
 will add an additional detail until we can react, but is much less prone
 to be triggered by mistake. An experimental evaluation yielded good
 results with a duration of $t = $ \fixme{add real time here}.
@@ -1944,21 +1946,20 @@ single support phase, that means we need to place the swing foot at the
 capture point. In dual support phase we try to move the support foot
 that is closest to the capture point. Recall that the base of the
 pendulum coincides with the ZMP in our model view. Thus if the resulting
-support polygone includes the capture point, the position will be
-stable. Since the motor velocities are limited, we need a minimal amount
-of time $t_{min}$ to place the foot in the desired location. Thus
-instead of using the Immediate Capture Point, we use the future
-Immediate Capture Point $p_{ic}(t_{min})$ to derive the desired
-location.
+support polygon includes the capture point, the position will be stable.
+Since the motor velocities are limited, we need a minimal amount of time
+$t_{min}$ to place the foot in the desired location. Thus instead of
+using the Immediate Capture Point, we use the future Immediate Capture
+Point $p_{ic}(t_{min})$ to derive the desired location.
 
-\section{Implementation}\label{implementation-2}
+\section{Implementation}\label{implementation-3}
 
 The stabilizer that is outlined in chapter \ref{section:stabilizer} was
-extented to call the fall detection module in each iteration of the
+extended to call the fall detection module in each iteration of the
 control loop. If an unstable state is reached, the recovery module
 overrides the normal trajectory of the stabilizer. After completing the
 recovery maneuver, the robot remains in the given position. The
-stabilizer is activted again to hold the current position. Resuming the
+stabilizer is activated again to hold the current position. Resuming the
 original pattern requires planning dynamically stable transition
 trajectory. This is left for future work.
 
@@ -1969,7 +1970,7 @@ playback, both walking straight and walking in circle where tested. To
 simulate further disturbances, the simulation shoots a football at the
 robot. In the unstabilized case, only the joint trajectory that is
 generated by the pattern generator is interpolated and replayed. In the
-stabilized case the the alternative stabiliter described in section
+stabilized case the alternative stabilizer described in section
 \ref{section:alternative-approach} is used.
 
 \section{Undisturbed walking}\label{undisturbed-walking}
@@ -1999,14 +2000,14 @@ All coordinates in the global reference frame.}
 Figure \ref{img:undisturbed-straight-x} shows the desired and realized
 CoM and ZMP trajectories in both cases. As you can see the ZMP deviates
 significantly from the desired trajectory and oscillates between both
-edges of the support polygone. We believe this is caused by the problems
+edges of the support polygon. We believe this is caused by the problems
 outlined in section \ref{section:rigid-body-simulation}. Consider figure
 \ref{img:noisy-com-acc} which shows the desired CoM acceleration in
-comparision to the realized acceleration. However the foot remains in
-full ground contact and friction forces are applied acurately. Thus
+comparison to the realized acceleration. However the foot remains in
+full ground contact and friction forces are applied accurately. Thus
 dynamically stable walking is realized for both unstabilized and
 stabilized walking. We hope that a more stable Featherstone constraint
-solver will produce more acurate contact forces and thus ZMP values.
+solver will produce more accurate contact forces and thus ZMP values.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
@@ -2028,7 +2029,7 @@ Figure \ref{img:player-undisturbed-circle-thumbs} shows the simulation
 of unstabilized walking in a circle. The robot walks in 12 steps in an
 arc of 180° and 0.5 m radius. As you can see the desired 180° turn is
 not realized completely. Due to the chest rotation following the tangent
-of the circle, a torque around the yaw-axis is excerted on the foot.
+of the circle, a torque around the yaw-axis is exerted on the foot.
 Recall that during pattern generation we assumed that this torque is
 zero. Since we do not correct this disturbance the trajectory deviates
 significantly. See figure \ref{img:undisturbed-circle} for the realized
@@ -2058,12 +2059,12 @@ compared with the performance of the unstabilized trajectory.
 \end{figure*}
 
 To simulate a push, a ball with a radius of 11cm and weight of 450g
-(FIFA football) is shoot from 1m distance at the chest. See figure
-\ref{img:disturbed-straight-x} for the realited CoM and ZMP
+(FIFA football) is shoot from 1 meter distance at the chest. See figure
+\ref{img:disturbed-straight-x} for the realized CoM and ZMP
 trajectories. The point of impact is denoted as red lines. The
 unstabilized trajectory becomes unstable and leads to a fall at
-$t = 9.5s$. The stabilized trajectory is noticable disturbed, as the yaw
-momentum is not compensated, but remains stable.
+$t = 9.5s$. The stabilized trajectory is noticeable disturbed, as the
+yaw momentum is not compensated, but remains stable.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
@@ -2075,31 +2076,31 @@ All coordinates in the global reference frame. Red lines denote the point of imp
 
 \section{Push recovery}\label{push-recovery-1}
 
-The performance of the push recovery was evaluted with a simple
+The performance of the push recovery was evaluated with a simple
 best-case scenario. The robot is balancing on the left foot and is
 pushed on the right shoulder. Most notably this scenario was used to
 demonstrate the push recovery based on the Capture Point implemented in
 the IHMC/Yobotics Biped. \cite{pratt2009video}. While the push recovery
 implemented is able to recover from any position, with the current
-methode it is not reliable in the general case. This has multiple
-reason, for one the fall detection is not very reliable. Another reason
-is that the speed limits of the leg joints impose a maximum velocity for
-the foot movement. So not only needs the target position to be
-reachable, it also needs to be reachable in a specific amount of time.
-As above a football is used as source of disturbence.
+method it is not reliable in the general case. This has multiple reason,
+for one the fall detection is not very reliable. Another reason is that
+the speed limits of the leg joints impose a maximum velocity for the
+foot movement. So not only needs the target position to be reachable, it
+also needs to be reachable in a specific amount of time. As above a
+football is used as source of disturbance.
 
 \todo{frame series of push recovery}
 
 \chapter{Conclusion and future work}\label{conclusion-and-future-work}
 
 A design and the implementation of a software framework for bipedal
-humanoid walking were presnted. Building on an implementation by Ömer
+humanoid walking were presented. Building on an implementation by Ömer
 Telemz, a generator for walking pattern using ZMP Preview Control was
 developed. To test the resulting patterns a dynamic simulation for
 walking was build. The simulation utilizes the \name{SimDynamics}
-framework contained in \name{Simox}. The simulation was extented by
-real-time controllers for stabilization and push recovery. For easiy
-integration into other software projects all methodes presented here are
+framework contained in \name{Simox}. The simulation was extended by
+real-time controllers for stabilization and push recovery. For easily
+integration into other software projects all methods presented here are
 implemented in a shared library \name{libBipedal}. \name{libBipedal} is
 independent of the dynamic simulation and only depends on
 \name{VirtualRobot} for computing forward and inverse kinematics.
@@ -2110,20 +2111,20 @@ faced with disturbances. Falling was avoided by initiating a push
 recovery mechanism based on the Capture Point.
 
 Since accuracy of the dynamic simulation suffered severely by using the
-Sequential Impulse Solver methode, it should be replaced by a solver
-based on the Featherstone methode. The imporved accuracy should make a
+Sequential Impulse Solver method, it should be replaced by a solver
+based on the Featherstone method. The improved accuracy should make a
 torque feedback more viable and enable to actually use the stabilizer
 based described and implemented in \ref{section:stabilizer}.
 
 The pattern generator and stabilizer only realize basic walking, that is
-noticable different to human walking. For one the knees remain bent at
+noticeable different to human walking. For one the knees remain bent at
 all times, the center of mass stays at the same height and the toe joint
 is not used. A follow up paper \cite{kajita2012evaluation} extends the
-methodes implemented here to include the toes. The realized walking
+methods implemented here to include the toes. The realized walking
 trajectories seem to be more natural.
 
-As the evalutation of the circular trajectory shows, the yaw moment
-excerted on the foot can cause severe disturbences. To deal better with
+As the evaluation of the circular trajectory shows, the yaw moment
+exerted on the foot can cause severe disturbances. To deal better with
 trajectories that include turns or arm movements, that torque should be
 compensated. Kim et. al \cite{kim2005humanoid} propose to move the arms
 around the roll axis to compensate for yaw momentum.

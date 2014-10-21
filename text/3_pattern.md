@@ -163,7 +163,7 @@ x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
 To control this dynamic system we need to determine an adequate control input $u_x$ to realize the
 reference ZMP trajectory. A performance index $J_x$ for a given control input $u_x$ is needed to formalize what a "good" control input would be.
 A naive performance index could be:
-\begin{equation}
+\begin{equation} \label{eq:simple-performance}
 J_x[k+1] := (p^{ref}_x[k+1] - p_x[k+1])^2
 \end{equation}
 To minimize it, we need to find $u_x$ for which $p_x = p^{ref}_x$.
@@ -174,8 +174,15 @@ u_x[k] = \frac{p^{ref}_x[k+1] - C \cdot A \cdot x[k]}{C \cdot B} = \frac{p^{ref}
 = \frac{p^{ref}_x[k+1] - p_x[k] - T \dot{c_x}[k] - \frac{1}{2} T^2 \ddot{c_x}[k]}{\frac{1}{6}T^3 - \frac{z_c}{g} T}
 \end{equation}
 
-To analyse the behaviour of this control law for $u_x$ we simulate the rapid change of reference ZMP when changing the support
-foot. \todo{insert plot}
+To analyze the behavior of this control law for $u_x$ we simulate the rapid change of reference ZMP when changing the support
+foot.
+
+\begin{figure*}[tb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/simple_zmp_control.png}
+\caption{ZMP control based on the performance index described by equation \ref{eq:simple-performance}.}
+\label{img:simple-zmp-control}
+\end{figure*}
 
 As you can see the reference ZMP is perfectly tracked. However, the CoM does not behave as expected.
 To achieve the required ZMP position the CoM will be *accelerated indefinitely* in the opposite direction.

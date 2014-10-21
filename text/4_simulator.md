@@ -144,12 +144,3 @@ Some small helper scripts are provided to make it easier to load the data into t
 \name{IPython} is used to easily run the analysis and display the results in a browser window.
 All plots of simulated patterns found in this thesis can be generated automatically for every simulation.
 
-
-<!--
-\begin{figure*}[htb]
-\vspace*{-1em}
-\includegraphics[width=\textwidth]{images/plotting_screenshot.png}
-\label{img:player-undisturbed-straight-thumbs}
-\end{figure*}
--->
-
