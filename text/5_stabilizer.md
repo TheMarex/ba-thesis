@@ -86,11 +86,11 @@ We did not implement this methode in simulation, as it is easy to obtain the exa
 To prevent rapid movements of the chest that cause large accelerations, a dampening controller is used.
 The angles $\Delta \phi$ and $\Delta \theta$ can be calculated by the following equations:
 
-\begin{equation}
+\begin{equation} \label{eq:chest-dampening-roll}
 \Delta \dot{\phi} = \frac{1}{D_c} (\phi^d - \phi) - \frac{1}{T_c} \cdot \Delta \phi
 \end{equation}
 
-\begin{equation}
+\begin{equation} \label{eq:chest-dampening-pitch}
 \Delta \dot{\theta} = \frac{1}{D_c} (\theta^d - \theta) - \frac{1}{T_c} \cdot \Delta \theta
 \end{equation}
 
@@ -428,16 +428,16 @@ had to be found.
 
 A a simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
 feedback with the pose error of pelvis and feet frames respectively.
-The chest controller Kajita et. al. proposed for controlling the body posture where adapted to
-all control frames to provide a feedback on the pose error.
+The chest controller (Equation \ref{eq:chest-dampening-roll} and \ref{eq:chest-dampening-pitch}) Kajita et. al. proposed for controlling the
+body posture where adapted to all control frames to provide a feedback on the pose error.
 
 This yields a controller that keeps the feet pose parallel to the ground, which is important when the swing foot touches the ground.
 Controlling the pelvis and chest pose to follow the reference also keeps the robot upright.
-It should be noted that it is probably not feasible to implement this stabilizer in practice. As mentioned in section \ref{section:stabilizer}
+It should be noted that it is not feasible to implement this stabilizer in practice. As mentioned in section \ref{section:stabilizer}
 precisely estimating the pose of a robot is not easy. While the dampening controllers can be configured to smoothen a noisy sensor signal,
 a high level of precision is required to ensure a correct foot posture.
 
 Since the ZMP and CoM trajectory is not adaped, the compensation of environment disturbences is only based on a fast controller reaction
-to leave the reference trajectory a little as possible and the stability margins the ZMP provides.
+to leave the reference trajectory as little as possible and the stability margins the ZMP provides.
 However as we will discuss in the evaluation section, this simple approach is already supprisingly resilient.
 

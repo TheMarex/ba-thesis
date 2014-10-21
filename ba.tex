@@ -1388,11 +1388,11 @@ the simulator. To prevent rapid movements of the chest that cause large
 accelerations, a dampening controller is used. The angles $\Delta \phi$
 and $\Delta \theta$ can be calculated by the following equations:
 
-\begin{equation}
+\begin{equation} \label{eq:chest-dampening-roll}
 \Delta \dot{\phi} = \frac{1}{D_c} (\phi^d - \phi) - \frac{1}{T_c} \cdot \Delta \phi
 \end{equation}
 
-\begin{equation}
+\begin{equation} \label{eq:chest-dampening-pitch}
 \Delta \dot{\theta} = \frac{1}{D_c} (\theta^d - \theta) - \frac{1}{T_c} \cdot \Delta \theta
 \end{equation}
 
@@ -1821,14 +1821,16 @@ alternative approach to stabilizing had to be found.
 A a simple heuristic, we used the controllers proposed by Kajita as
 inspiration and replaced the force and torque feedback with the pose
 error of pelvis and feet frames respectively. The chest controller
-Kajita et. al. proposed for controlling the body posture where adapted
-to all control frames to provide a feedback on the pose error.
+(Equation \ref{eq:chest-dampening-roll} and
+\ref{eq:chest-dampening-pitch}) Kajita et. al. proposed for controlling
+the body posture where adapted to all control frames to provide a
+feedback on the pose error.
 
 This yields a controller that keeps the feet pose parallel to the
 ground, which is important when the swing foot touches the ground.
 Controlling the pelvis and chest pose to follow the reference also keeps
-the robot upright. It should be noted that it is probably not feasible
-to implement this stabilizer in practice. As mentioned in section
+the robot upright. It should be noted that it is not feasible to
+implement this stabilizer in practice. As mentioned in section
 \ref{section:stabilizer} precisely estimating the pose of a robot is not
 easy. While the dampening controllers can be configured to smoothen a
 noisy sensor signal, a high level of precision is required to ensure a
@@ -1836,7 +1838,7 @@ correct foot posture.
 
 Since the ZMP and CoM trajectory is not adaped, the compensation of
 environment disturbences is only based on a fast controller reaction to
-leave the reference trajectory a little as possible and the stability
+leave the reference trajectory as little as possible and the stability
 margins the ZMP provides. However as we will discuss in the evaluation
 section, this simple approach is already supprisingly resilient.
 
@@ -1959,7 +1961,7 @@ trajectory. This is left for future work.
 
 \chapter{Results}\label{results}
 
-\todo{Write small introduction}
+Several scenarios where used to test the performance of the proposed
 
 \section{Undisturbed walking}\label{undisturbed-walking}
 
@@ -2055,6 +2057,27 @@ The point of impact is denoted as red lines.
 
 \todo{actual-zmp-stabilized actual-zmp-unstabilized} \todo{image-series}
 
+\subsection{Sloped ground}\label{sloped-ground}
+
+\todo{actual-zmp-stabilized actual-zmp-unstabilized} \todo{image-series}
+
+\section{Push recovery}\label{push-recovery-1}
+
+The performance of the push recovery was evaluted with a simple
+best-case scenario. The robot is balancing on the left foot and is
+pushed on the right shoulder. Most notably this scenario was used to
+demonstrate the push recovery based on the Capture Point implemented in
+the IHMC/Yobotics Biped. \cite{pratt2009video}. While the push recovery
+implemented is able to recover from any position, with the current
+methode it is not reliable in the general case. This has multiple
+reason, for one the fall detection is not very reliable. Another reason
+is that the speed limits of the leg joints impose a maximum velocity for
+the foot movement. So not only needs the target position to be
+reachable, it also needs to be reachable in a specific amount of time.
+As above a football is used as source of disturbence.
+
+\todo{frame series of push recovery}
+
 \chapter{Conclusion and future work}\label{conclusion-and-future-work}
 
 A design and the implementation of a software framework for bipedal
@@ -2097,7 +2120,14 @@ The push recovery implemented is very rudimentary. The placement of the
 foot to recover from a push does not consider collisions with the
 environment. Also, after executing a push recovery step, the original
 trajectory can not be resumed. To enable that, online planning of
-dynamically stable motions needs to be integrated.
+dynamically stable motions needs to be integrated. Also the foot is
+placed at the exact location of the future capture point. However it
+suffices to place the foot in a way to include the capture point. In
+most cases this would requires a lot less foot movement. Moving the leg
+to the target point also changes the velocity of the CoM, thus changes
+the location of the capture point. To compensate this, the capture point
+should be tracked using a controller instead of using a static future
+capture point.
 
 \chapter{TODO}\label{todo}
 

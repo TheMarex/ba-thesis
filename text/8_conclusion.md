@@ -32,6 +32,10 @@ To deal better with trajectories that include turns or arm movements, that torqu
 The push recovery implemented is very rudimentary. The placement of the foot to recover from a push does not consider collisions
 with the environment. Also, after executing a push recovery step, the original trajectory can not be resumed.
 To enable that, online planning of dynamically stable motions needs to be integrated.
+Also the foot is placed at the exact location of the future capture point. However it suffices to place
+the foot in a way to include the capture point. In most cases this would requires a lot less foot movement.
+Moving the leg to the target point also changes the velocity of the CoM, thus changes the location of the capture point.
+To compensate this, the capture point should be tracked using a controller instead of using a static future capture point.
 
 # TODO
 

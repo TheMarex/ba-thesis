@@ -1,6 +1,7 @@
 # Results
 
-\todo{Write small introduction}
+Several scenarios where used to test the performance of the proposed
+
 
 ## Undisturbed walking
 
@@ -88,3 +89,23 @@ The point of impact is denoted as red lines.
 \todo{actual-zmp-stabilized actual-zmp-unstabilized}
 \todo{image-series}
 
+### Sloped ground
+
+\todo{actual-zmp-stabilized actual-zmp-unstabilized}
+\todo{image-series}
+
+## Push recovery
+
+The performance of the push recovery was evaluted with a simple best-case scenario.
+The robot is balancing on the left foot and is pushed on the right shoulder.
+Most notably this scenario was used to demonstrate the push recovery based on the Capture Point
+implemented in the IHMC/Yobotics Biped. \cite{pratt2009video}.
+While the push recovery implemented is able to recover from any position,
+with the current methode it is not reliable in the general case.
+This has multiple reason, for one the fall detection is not very reliable.
+Another reason is that the speed limits of the leg joints impose a maximum velocity
+for the foot movement. So not only needs the target position to be reachable, it also
+needs to be reachable in a specific amount of time.
+As above a football is used as source of disturbence.
+
+\todo{frame series of push recovery}
