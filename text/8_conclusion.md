@@ -27,7 +27,7 @@ used. A follow up paper \cite{kajita2012evaluation} extends the methods implemen
 The realized walking trajectories seem to be more natural.
 
 As the evaluation of the circular trajectory shows, the yaw moment exerted on the foot can cause severe disturbances.
-To deal better with trajectories that include turns or arm movements, that torque should be compensated. Kim et. al \cite{kim2005humanoid} propose to move the arms around the roll axis to compensate for yaw momentum.
+To deal better with trajectories that include turns or arm movements, that torque should be compensated. Kim et al.\cite{kim2005humanoid} propose to move the arms around the roll axis to compensate for yaw momentum.
 
 The push recovery implemented is very rudimentary. The placement of the foot to recover from a push does not consider collisions
 with the environment. Also, after executing a push recovery step, the original trajectory can not be resumed.

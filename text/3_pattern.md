@@ -7,19 +7,19 @@ To generate a walking pattern for a bipedal robot two basic approaches are commo
 2. Generate a CoM trajectory for prescribed foot trajectories
 
 The first approach is generally used for implementing pattern generators solely based
-on the 3D-LIP model. \cite{kajita20013d} 
-The second approach is the more versatile one, since it is easy to incorporate constrains
+on the 3D-LIP model. \cite{kajita20013d}
+The second approach is more versatile, since it is easy to incorporate constraints
 of our environment (e.g. only limited foot holds) in the input of the pattern generator.
 However care must be taken while choosing adequate step width and step length parameters for the foot trajectory,
 so that they can actually be realized by the robot.
 The pattern generator proposed by Kajita et al. \cite{kajita2003biped} based on Preview Control
 realizes the second approach.
 We will discuss the theoretical background of this pattern generator here in more detail,
-since all pattern that we used where generated that way.
+since all pattern that we used were generated that way.
 
 ## Computing the CoM from a reference ZMP
 
-As we saw in the section \ref{section:table-cart} it is easy to compute the resulting
+As we saw in the section \ref{section:cart-table} it is easy to compute the resulting
 ZMP given the CoM and its acceleration. However for generating the walking
 pattern, we want to compute the CoM trajectory from a given ZMP.
 If you rearrange the equations \ref{eq:zmp-x} and \ref{eq:zmp-y} you see that we have to solve a second order differential equations:
@@ -33,7 +33,7 @@ c_y = \frac{z_c}{g} \cdot \ddot{c_y} + p_y
 \end{equation}
 
 There are several ways to solve this differential equations, for example by transforming
-them to the frequency-domain. This however would mean, the ZMP trajectory needs to be transformed
+them to the frequency-domain. This however would mean that the ZMP trajectory needs to be transformed
 to the frequency domain as well, e.g. using Fast Fourier Transformation. This has two main
 problems:
 
@@ -41,13 +41,13 @@ problems:
 
 2. We need to know the whole ZMP trajectory in advance.
 
-Instead Kajita et. al. chose to define a dynamic system in the time domain that describes the CoM movement.
+Instead Kajita et al. chose to define a dynamic system in the time domain that describes the CoM movement.
 
 ### Pattern generation as dynamic system
 
 For simplicity we will only focus on the dynamic description of one dimension, as the other one is analogous.
 To transform the equations to a strictly proper dynamical system, we need to determine the state vector of our system.
-For the table-cart model it suffices to know the position, velocity and acceleration of the cart.
+For the cart-table model it suffices to know the position, velocity and acceleration of the cart, i.e. the CoM.
 Thus the state-vector is defined as $x = (c_x, \dot{c_x}, \ddot{c_x})$. We can define the evolution of the state vector as follows:
 
 \begin{equation} \label{eq:dyn-system}
@@ -137,7 +137,7 @@ Using this solution computing the integral in \ref{eq:state-transition-discrete}
                                                           0 & 0             & t %
                                                  \end{array}\right)\right|_{0}^{T}\\
                                             =   \left(\begin{array}{ccc} %
-                                                          T & \frac{t^2}{2} & \frac{T^3}{6} \\ %
+                                                          T & \frac{T^2}{2} & \frac{T^3}{6} \\ %
                                                           0 & T             & \frac{T^2}{2} \\ %
                                                           0 & 0             & T %
                                                 \end{array}\right)
@@ -147,7 +147,7 @@ Substituting the results in \ref{eq:state-transition-discrete} yields:
 
 \begin{eqnarray} \label{eq:state-transition-result}
 x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
-                     T & \frac{t^2}{2} & \frac{T^3}{6} \\ %
+                     T & \frac{T^2}{2} & \frac{T^3}{6} \\ %
                      0 & T             & \frac{T^2}{2} \\ %
                      0 & 0             & T %
                \end{array}\right)}^{=: A} x[k]
@@ -157,6 +157,8 @@ x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
                       T %
                \end{array}\right)}^{=: B} \cdot u_x[k]
 \end{eqnarray}
+
+\todo{There is a facot $T$ too much!}
 
 ### Controlling the dynamic system
 
@@ -194,11 +196,11 @@ Thus the performance index should also try to limit the applied jerk.
 
 Another problem is caused by the very nature of a controller:
 The controller starts to act *after* we have a deviation from our reference ZMP trajectory.
-Trying make this lag as small as possible can lead to very high velocities, which might not be realizable by motors of a robot.
+Trying to reduce this lag as much as possible can lead to very high velocities, which might not be realizable by motors of a robot.
 However we have at least limited knowledge of the future reference trajectory. This knowledge can be leveraged
 by using Preview Control, which considers the next $N$ time steps for computing the performance index.
 
-Kajita et. al. use a performance index proposed by Katayama et. al. \cite{katayama1985design} to solve all of the problems above:
+Kajita et al. use a performance index proposed by Katayama et al. \cite{katayama1985design} to solve all of the problems above:
 
 \begin{equation}
 J_x[k] = \sum^{\infty}_{i=k} Q_e e[i]^2 + \Delta x[i]^T Q_x \Delta x[i] + R \Delta u_x[i]^2
@@ -286,38 +288,39 @@ Each foot trajectory starts with swing phase and a resting phase. The trajectory
 that assures the velocities and accelerations are approaching zero at the lift-off and touch-down point.
 The first and last step only have half of the normal step length, since the trajectory is starting and ending
 from a dual support stance, where both feet are placed parallel to each other.
-Each trajectory is encoded as a $6 \times N$ matrix, each column containing Cartesian coordinates and roll, pitch and yaw angles.
+Each trajectory is encoded as a $6 \times N$ matrix, where $N$ is the number of samples.
+A sample period of $T = 10ms$ was used.
+Each column contains Cartesian coordinates and roll-pitch-yaw angles.
 
 #### Walking on a circle
 
 Much of the general structure of the foot trajectory remains the same as for walking straight.
 However instead of specifying the step length, it is implicitly given by the segment of the circle that should be traversed and the number of steps.
-So extra care needs to be taken to specify enough steps so that the generated foot positions are still.
+So extra care needs to be taken to specify enough steps so that the generated foot positions are still reachable.
 Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
 The same polynomial that was previously used for the $y$-direction is now used to compute the
 angle on the corresponding circle and the $x$ and $y$ coordinates are calculated accordingly.
-The foot orientation is computed from the tangential (y-Axis) and normal (x-Axis) of circle the foot follows.
+The foot orientation is computed from the tangential ($y$-Axis) and normal ($x$-Axis) of circle the foot follows.
 
 #### Balancing on one foot
 
-To test push recovery from single support stance a special pattern was needed. To generate this
-another footstep planer was implemented that generates a trajectory for standing on one foot.
+To test push recovery from single support stance a special pattern was needed.
+Another footstep planer was implemented that generates a trajectory for standing on one foot.
 Starting from dual support stance, the swing leg is moved in vertical direction until the usual step height is achieved.
 Additionally the foot is moved in lateral direction to half the step width. This reduces the necessary upper body tilt to compensate the imbalance.
 For the last step the inverse movement is performed to get back into dual support stance.
 This method could be extended to walk by setting the next support foot in a straight line before the current support foot.
 The swing foot would need to be moved in an arc in lateral direction to avoid self-collisions.
 
-
 ### ZMP reference generation
 
 As an input for the ZMP preview control, we need a reference ZMP movement that corresponds with the foot trajectory.
 The reference generator receives a list of intervals associated with the desired support stance and foot positions as input.
 In single support phase, the reference generator places the ZMP in the center of the support polygon of the corresponding foot.
-Since the support polygon is convex, the center is the point furthest away from the border of the polygon. Thus it should guarantee a maximum
-of stability with regard to possible ZMP errors.
+Since the support polygon is convex, the center is the furthest point away from the border of the polygon. This should guarantee a maximum
+stability with regard to possible ZMP errors.
 In dual support phase, the reference generator shifts the ZMP from the previous support foot to the next support foot.
-Kajita et. al. suggest using a polynomial to interpolate the ZMP positions between the feet.
+Kajita et al. suggest using a polynomial to interpolate the ZMP positions between the feet.
 However a simple step function
 $\sigma(t) = \left\{\begin{array}{lr}p_1 & t \leq t_0 \\ p_2 & t > t_0 \end{array}\right.$
 seems to suffice as well.
@@ -326,7 +329,7 @@ This assures we do not start to move the ZMP too early.
 
 ### ZMP Preview Control
 
-This module implements the method described by Kajita et. al. and uses the method outlined by Katayama et. al. to compute the optimal control
+This module implements the method described by Kajita et al. and uses the method outlined by Katayama et al. to compute the optimal control
 input $u[k]$. Since it is computational feasible, the preview period consists of the full reference trajectory.
 For an online usage of this method, this could be reduced to a much smaller sample size, e.g. only preview one step ahead.
 Using the system dynamics described by \ref{eq:state-transition-result} the CoM trajectory, velocity and acceleration can be computed.
@@ -342,7 +345,7 @@ For walking only the joints of the legs and both the torso roll and pitch joints
 For computing the IK additional constraints where added, to make sure the robot has a sensible pose: The chest should always have an upright position
 and the pelvis should always be parallel to the floor. To support non-straight walking, the pelvis and chest orientation should also follow the walking direction. Thus the following method to compute the desired chest and pelvis orientation is used:
 
-1. Compute walking direction $y'$ as normed mean of y-Axis of both feet: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
+1. Compute walking direction $y'$ as mean of y-Axis of both feet and normalize: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
 
 2. Both should have an upright position $z' := (0, 0, 1)^T$
 

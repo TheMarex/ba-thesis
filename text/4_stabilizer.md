@@ -31,7 +31,7 @@ Luckily for most humanoid robots this is the case.
 
 ## Stabilizer {#section:stabilizer}
 
-We chose a stabilizer proposed by Kajita et. al. in their 2010 paper. \cite{kajita2010biped}
+We chose a stabilizer proposed by Kajita et al. in their 2010 paper. \cite{kajita2010biped}
 The stabilizer only needs the joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
 This allows the stabilizer to use patterns that where generated synthetically, e.g. by a pattern generator, or patterns that are
 the results of (adapted) motion capturing.
@@ -78,7 +78,7 @@ The resulting reference frame is called the *ground frame*.
 
 ### Controlling the body posture
 
-The control strategy of the chest pose is straight forward: Given the reference roll angle $\phi^d$ and reference pitch angle $\theta^d$
+The control strategy of the chest pose is straightforward: Given the reference roll angle $\phi^d$ and reference pitch angle $\theta^d$
 compute the differences to the actual angles $\phi$ and $\theta$.
 The main problem in a real robot is to obtain the actual global pose of this frame.
 The proposed method is to use a Kalman filter to estimate the pose from the joint position and accelerometers.
@@ -87,26 +87,26 @@ To prevent rapid movements of the chest that cause large accelerations, a dampen
 The angles $\Delta \phi$ and $\Delta \theta$ can be calculated by the following equations:
 
 \begin{equation} \label{eq:chest-dampening-roll}
-\Delta \dot{\phi} = \frac{1}{D_c} (\phi^d - \phi) - \frac{1}{T_c} \cdot \Delta \phi
+\Delta \dot{\phi_C} = \frac{1}{D_C} (\phi_C^d - \phi_C) - \frac{1}{T_C} \cdot \Delta \phi_C
 \end{equation}
 
 \begin{equation} \label{eq:chest-dampening-pitch}
-\Delta \dot{\theta} = \frac{1}{D_c} (\theta^d - \theta) - \frac{1}{T_c} \cdot \Delta \theta
+\Delta \dot{\theta_C} = \frac{1}{D_C} (\theta_C^d - \theta_C) - \frac{1}{T_C} \cdot \Delta \theta_C
 \end{equation}
 
-$D_c$ describes the dampening gain. $T_c$ is constant that describes how long it will take to reach the normal positions $\Delta \phi = 0$ and
+$D_C$ describes the damping gain. $T_C$ is the constant that describes how long it will take to reach the normal positions $\Delta \phi = 0$ and
 $\Delta \theta = 0$ respectively if there is no error.
 
-The modified reference frame $R^{d*}_c$ can the be calculated by rotating the reference frame by the additional angles:
+The modified reference frame $R^{d*}_C$ can the be calculated by rotating the reference frame by the additional angles:
 
 \begin{equation}
-R^{d*}_c = R^d \cdot R_{RPY}(\Delta \phi, \Delta \theta, 0)
+R^{d*}_C = R^d \cdot R_{RPY}(\Delta \phi_C, \Delta \theta_C, 0)
 \end{equation}
 
 To get an idea how this controller compensates CoM inaccuracies consider the case where the upper body is bent forward.
-Since our reference trajectory specifies an upright upper body pose we can assume that $\phi^d = 0$.
+Since our reference trajectory specifies an upright upper body pose we can assume that $\phi_C^d = 0$.
 Since the upper body is bent forward the roll angle $\phi$ will be below zero.
-Depending on $D_c$ we will eventually reach $\Delta \phi \approx |\phi|$, thus the reference frame will be modified to bent backwards
+Depending on $D_C$ we will eventually reach $\Delta \phi_C \approx |\phi_C|$, thus the reference frame will be modified to bent backwards
 to compensate the wrong pose.
 
 
@@ -114,7 +114,7 @@ to compensate the wrong pose.
 
 Since the stabilizer only has the joint trajectory and desired ZMP trajectory as input,
 we need a way to compute the desired actuation torques on the ankles.
-The canonical way to do this, would be to solve the inverse dynamics of the robot.
+The canonical way to do this would be to solve the inverse dynamics of the robot.
 However for this we need an accurate model of the robot, including correct masses and moments of inertia for each link.
 This model is not always easy to obtain and calculating the inverse dynamics of a robot with many degrees
 of freedom is rather slow.
@@ -202,7 +202,7 @@ If the torque acts in anti-clockwise direction (positive sign), we assume it wil
 \right.
 \end{equation}
 
-We can now transform the torques form our local coordinate system to the coordinate system of the corresponding foot
+We can now transform the torques from our local coordinate system to the coordinate system of the corresponding foot
 yielding $\tau^d_L$ and $\tau^d_R$.
 
 Now that we have obtained the reference torques, we can try to control the torque in each angle
@@ -241,7 +241,7 @@ in that model this means our pendulum swings backwards. This will lead to an inc
 
 For rotating the foot around the $y$-axis the same ideas hold.
 As a result we see that additional foot rotation long the $x$- and $y$-Axis have a proportional relationship with the torque
-around that axis. This motivates the definition of the controller proposed by Kajita et. al. The additional rotation angles
+around that axis. This motivates the definition of the controller proposed by Kajita et al. The additional rotation angles
 are can be calculated by the following equations:
 
 \begin{equation}
@@ -298,6 +298,8 @@ This can lead to singularities if both legs are already fully stretched, as the 
 The second method relies on an additional rotating the pelvis link. For this approach to work, the robot needs
 a joint that allows rotations around the anterior axis ($y$-Axis) to keep the upper body upright.
 Since the robot model we used does not have this DOF, we only implemented the first approach.
+To circumvent singularities we chose a CoM height that guarantees knee bending while generating
+the reference pattern.
 
 ### Interaction between controllers
 
@@ -315,11 +317,11 @@ Then the foot force controllers was enabled and tuned and finally the ankle torq
 The controllers specified in the previous sections can make sure,
 that the ZMP that is realized tracks the ZMP that would result from a perfect execution of the input pattern.
 However depending on how the reference ZMP was predicted, that prediction might have already been wrong.
-For example the ZMP Preview Control approach uses the Table-Cart model to predict the ZMP. That prediction
+For example the ZMP Preview Control approach uses the cart-table model to predict the ZMP. That prediction
 can deviate significantly from the real ZMP as the model simplifies the dynamics.
 Thus to make sure the desired ZMP is tracked accurately, the reference ZMP needs to be adapted as well.
 
-Kajita et. al. propose a dynamic system that describes the 3D-LIMP dynamics. To model mechanical lag they introduce a
+Kajita et al. propose a dynamic system that describes the 3D-LIMP dynamics. To model mechanical lag they introduce a
 parameter $T_p$ that should specify the ZMP delay. The state-space description of the dynamic system for the $x$-direction is given below.
 As before, the description of the dynamic system for the $y$-direction is analogous.
 
@@ -421,14 +423,14 @@ Subsequently the measured torques on the ankles did not follow the prediction as
 Please note that this is not merely sensor noise, these are the actual values used by the simulator.
 Even when adding mean-filters to smoothen the measured torques it was not possible to extract a meaningful control signal.
 Besides the sequential impulse solver newer versions of \name{Bullet} support a solver based on the Featherstone algorithm.
-Given the scope of this thesis, integrating that solver was out of question, thus an alternative approach to stabilizing
-had to be found.
+Given the scope of this thesis, integrating that solver was out of question. Thus an alternative approach to stabilizing
+had to be found, but the Featherstone solver should be implemented in future work.
 
 ## Alternative approach {#section:alternative-approach}
 
 A simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
 feedback with the pose error of pelvis and feet frames respectively.
-The chest controller (Equation \ref{eq:chest-dampening-roll} and \ref{eq:chest-dampening-pitch}) Kajita et. al. proposed for controlling the
+The chest controller (Equation \ref{eq:chest-dampening-roll} and \ref{eq:chest-dampening-pitch}) Kajita et al. proposed for controlling the
 body posture where adapted to all control frames to provide a feedback on the pose error.
 
 This yields a controller that keeps the feet pose parallel to the ground, which is important when the swing foot touches the ground.

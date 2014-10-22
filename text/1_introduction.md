@@ -7,7 +7,7 @@ Today we live in a world where large parts of our production circles are already
 dominated by robots. Yet, widespread adoption of humanoid robots is still nowhere in evidence.
 One core problem of humanoid robots is their inherent complexity.
 Vision, cognition, manipulation and locomotion all need to be combined in one mechanism.
-While every of these problems is under active research, one has been especially resilient: Locomotion.
+While each of these problems is under active research, one has been especially resilient: Locomotion.
 Some robots, e.g. the \name{Armar III} robots, solve it by replacing the legs
 with a stable base on wheels. While this yields convenient research platform,
 the navigation in human environments is not as natural as for full humanoid robots.
@@ -16,7 +16,7 @@ Over the last two decades a lot of progress has been made in humanoid walking.
 Every one is familiar with the famous \name{ASIMO} robot developed by Honda or the HRP
 robots developed by AIST which demonstrate stable walking.
 More recently \name{ATLAS} by Boston Dynamics shows great stability even under disturbances.
-Sadly most of these platforms are closed and it is not known exactly which models
+Sadly some of these platforms are closed and it is not known exactly which models
 are used in each robot to derive stable walking.
 
 As the goal for bipedal walking is to be as human-like as possible, research on
@@ -88,12 +88,12 @@ case and needs to be controlled for.
 Thus a stabilizer is needed to adapt the trajectory to the disturbances.
 Most stabilizer for established robotic platforms are closed source and very
 robot specific. Notably various iterations of stabilizers based on modifying
-an already dynamically stable pattern where proposed by Kajita and Miura et. al.
+an already dynamically stable pattern where proposed by Kajita and Miura et al.
 (\cite{kajita2010biped}, \cite{miura2011human} and \cite{kajita2012evaluation})
 
 While a stabilizer can deal with continuous small disturbances, a robot may
 encounter short but severe disturbances. These disturbances can be viewed
-as pushes. Pratt et. al. established the concept of a Capture Point,
+as pushes. Pratt et al. established the concept of a Capture Point,
 that can be used to recover from such disturbances.
 
 This thesis presents a software framework that implements rudimentary support

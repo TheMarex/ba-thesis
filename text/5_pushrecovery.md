@@ -12,7 +12,7 @@ The push recovery implemented here uses a simplistic method based on the Capture
 
 ## Capture Point
 
-Koolen et. al. \cite{koolen2012capturability} derive the Capture Point for multiple models based on the 3D-LIPM.
+Koolen et al. \cite{koolen2012capturability} derive the Capture Point for multiple models based on the 3D-LIPM.
 The simplest model is the 3D Linear Inverted Pendulum with a point contact and a massless
 telescopic rod.
 If we use the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with zero input torque,
@@ -21,32 +21,32 @@ As we did in the section about the pattern generator, we will derive the equatio
 only for one dimension. The other dimension follows analogous.
 
 The base of the pendulum is assumed to be at the origin of the reference
-frame in \ref{eq:lip-x}. Since we want to specify the location freely,
-we need to substitute $x$ with $x - p$ to yield:
+frame in \ref{eq:lip-x}. Since we want to specify the location of the CoM $c = (c_x, c_y, c_z)$ freely,
+we need to substitute $c_x$ with $c_x - p_x$ to yield:
 
 \begin{equation} \label{eq:lip-x-general}
-\ddot{x} = \frac{g}{z_c} (x - p)
+\ddot{c_x} = \frac{g}{z_c} (c_x - p_x)
 \end{equation}
 
-The orbital energy $E_x$ can be derived by integrating \ref{eq:lip-x-general}:
+The orbital energy $E_x$ can be derived by subtracting the potential and kineatic energy:
 
 \begin{equation} \label{eq:orbital-x}
-E_x = \frac{1}{2} \dot{x}^2 - \frac{g}{2 \cdot z_c} (x - p)^2
+E_x = \overbrace{\frac{1}{2} \dot{c_x}^2}^{\text{kinetic energy}} - \overbrace{\frac{g}{2 \cdot z_c} (c_x - p_x)^2}^{\text{potential energy}}
 \end{equation}
 
 For the CoM to come to a rest the orbital energy $E_x$ must be zero.
-Thus we can solve \ref{eq:orbital-x} to yield the point $p$ that will achieve this.
+Thus we can solve \ref{eq:orbital-x} to yield the $x$ coordinate of point $p$ that will achieve this.
 Since it is a quadratic equation there are two solutions:
 
 \begin{equation}
-p = x - \sqrt{\frac{z_c}{g}} \dot{x} \:\:\:\:\text{ or }\:\:\:\: p = x + \sqrt{\frac{z_c}{g}} \dot{x}
+p_x = x - \sqrt{\frac{z_c}{g}} \dot{c_x} \:\:\:\:\text{ or }\:\:\:\: p_x = x + \sqrt{\frac{z_c}{g}} \dot{c_x}
 \end{equation}
 
 Since it is generally desirable to chose a point that lies in the direction of the CoM motion
 we define the *Immediate Capture Point* as:
 
 \begin{equation} \label{eq:icp}
-p_{ic} := x + \sqrt{\frac{z_c}{g}} \dot{x}
+p_{ic} := c_x + \sqrt{\frac{z_c}{g}} \dot{c_x}
 \end{equation}
 
 Placing the base of the pendulum (the ankle) there *instantaneously* will cause
@@ -54,7 +54,7 @@ an orbital energy of zero, thus the head of the pendulum (the CoM) will stop at 
 In most cases we will not be able to move the base of the pendulum instantaneously.
 So we are more interested in the Immediate Capture Point in $\Delta t$ seconds from now.
 This point can be obtained by \ref{eq:future-icp}.
-For a detailed derivation, we recommend the paper by Koolen et. al. \cite{koolen2012capturability}.
+For a detailed derivation, we recommend the paper by Koolen et al. \cite{koolen2012capturability}.
 
 \begin{equation} \label{eq:future-icp}
 p_{ic}(\Delta t) = p_{ankle} + (p_{ic}(0) - p_{ankle}) \cdot e^{\frac{g}{z_c} \cdot \Delta t}
@@ -75,7 +75,7 @@ for short periods of time. A simple method to filter out this noise is to define
 as to be in an unstable state.
 Choosing a small value will let us react faster to disturbances, but make the method error prone.
 Choosing a large value will add an additional detail until we can react, but is much less prone to be triggered by
-mistake. An experimental evaluation yielded good results with a duration of $t = $ \fixme{add real time here}.
+mistake. An experimental evaluation yielded good results with a duration of $t = 0.35s$.
 
 ## Recovery
 

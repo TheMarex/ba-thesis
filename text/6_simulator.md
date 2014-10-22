@@ -9,31 +9,32 @@ For visualizing and analysing the measurement the Open Source tools \name{IPytho
 
 ## Simulating rigid body dynamics {#section:rigid-body-simulation}
 
-For physical simulation in general can be divided into discrete methods and continuous methods.
+Physical simulation in general can be divided into discrete methods and continuous methods.
 Discrete simulators only compute the state of the system at specific points in time, while
 continuous simulators are able to compute the state of the system at any point in time.
 While continuous simulation is the more flexible approach, it quickly becomes impractical
-with the number of constrains involved. Typically a large amount of differential equations
+with the number of constraints involved. Typically a large amount of differential equations
 need to be solved. Since it is hard to obtain analytical solutions for most differential equations,
 numerical methods need to be used, which often have a large runtime.
-On contrast discrete simulation methods only compute simulation values for specific time steps.
+In contrast, discrete simulation methods only compute simulation values for specific time steps.
 This exploits the observation that we will typically query the state of the physics engine only
 at a fixed rate anyway, e.g. at each iteration of our control loop).
 Rather than solving the differential equations that describe the physical system in each step,
 a solution is derived from the previous simulation state.
 
-A physical system we can typically find two kind of forces: Applied forces and constraint forces.
+In a physical system we can typically find two kind of forces: Applied forces and constraint forces.
 Applied forces are the input forces of the system. Source of applied forces are for example objects like springs or gravity.
-Constraint forces are fictional forces that arise from constrains we impose on the system:
-Non-penetration constraints, friction constraints, position constrains of joints or velocity constrains
+Constraint forces are fictional forces that arise from constraints we impose on the system:
+Non-penetration constraints, friction constraints, position constraints of joints or velocity constraints
 for motors.
-Mathematically we can express such constrains in the form: $C(x) = 0$ or $\dot{C}(x) = 0$ in the case of equality constrains,
-or as $C(x) \geq 0$ or $\dot{C(x)} \geq 0$ in the case of inequality constrains.
+Mathematically we can express such constraints in the form: $C(x) = 0$ or $\dot{C}(x) = 0$ in the case of equality constraints,
+or as $C(x) \geq 0$ or $\dot{C(x)} \geq 0$ in the case of inequality constraints.
 For example the position constraint of a joint $p$ connected to a base $p_0$ with distance $r_0 = ||p-p_0||$
 would be: $C(p) = || p - p_0 ||^2 - r_0^2$
 If $p$ is moving with a linear velocity $v$ a constraint force $F_c$ is applied to $p$ to maintain this constraint.
 We can view $C$ as a transformation from our Cartesian space to the constraint space. Thus by computing the Jacobian
-$J$ of $C$ we can relate velocities in both spaces. Furthermore we can relate constraint space forces $\lambda$ with Cartesian space forces using the transpose of the Jacobian.
+$J$ of $C$ we can relate velocities in both spaces.
+Furthermore we can relate constraint space forces $\lambda$ with Cartesian space forces using the transpose of the Jacobian.
 Thus if we can find the constraint space force $\lambda$ that is needed to maintain this constraint we can compute $F_c$ using $F_c = J^T \lambda$.
 Computing this constraint space forces is the task of the constraint solver.
 
@@ -54,12 +55,13 @@ The idea is to repeatedly loop over all constraints, so that a global solution w
 Obviously the quality of this method relies on how often this loop is executed. Consider the case of a kinematic
 chain where a movement of a link always violates at least one constraint. It is clear that this method needs a lot of iterations
 to yield good results in this case.
-It becomes even worse in the case of a parallel kinematic that is in contact with the ground, as is the case for a bipedal robot in dual support stance.
-Solving a non-penetration constrain on either end, will invalidate the position constraint of the next link.
+It becomes even worse in the case of a parallel kinematic chain that is in contact with the ground,
+as is the case for a bipedal robot in dual support stance.
+Solving a non-penetration constrain on either end will invalidate the position constraint of the next link.
 In turn, the position constraint of each link needs to be updated until the other end of the kinematic chain is reached. If the non-penetration
 constraint is violated again for this end, the whole process starts again in reverse direction. This leads to oscillations that need a lot more
 iterations to level off to an acceptable level.
-Despite these inaccuracies using enough solver iteration this still yields an overall usable systems. However the velocities still will have
+Despite these inaccuracies using enough solver iterations this still yields an overall usable systems. However the velocities will still have
 a small random error in each simulation step.
 This poses a major problem when trying to measure accelerations, as the random error causes them to accelerate wildly.
 This circumstance needs to be taken into account when dealing with values derived from the acceleration (e.g. the ZMP),
@@ -77,15 +79,15 @@ In general three classes of errors need to be eliminated to get a good simulatio
 
 3. Inherent errors of the method
 
-As outline in the section about discrete time dynamic simulation, the physics of the system
-are formulated as input forces and constrains that need to be solved for the constraint forces.
-Since \name{Bullet} uses the iterative approach described in section \ref{section:rigid-body-simulation}. Thus it is important
+As outlined in section \ref{section:rigid-body-simulation}, the physics of the system
+are formulated as input forces and constraints that need to be solved for the constraint forces.
+Since \name{Bullet} uses the iterative approach described in section \ref{section:rigid-body-simulation}, it is important
 to use a sufficient amount of iterations for each simulation step. Another important parameter is the time step of each simulation step.
-Through experimental evaluation a simulation with 2000 solver iterations and a time step size of 1ms was sufficiently stable.
+Through experimental evaluation, a simulation with 2000 solver iterations and a time step size of 1ms was sufficiently stable.
 However since the number of iterations is very high and a lot of time steps are calculated during the simulation, numeric errors become significant.
 That made is necessary to enable using double precision floating point numbers for the values used during simulation.
 
-To decide which contact constrains are active for which points, \name{Bullet} must solve for object collisions. Depending on the objects
+To decide which contact constraints are active for which points, \name{Bullet} must solve for object collisions. Depending on the objects
 involved different algorithms are used to calculate the contact points. Major gains in accuracy could be observed by replacing
 the feet and the floor with simple box shapes, instead using mesh based models.
 
@@ -115,9 +117,9 @@ Since the motor implemented in \name{Bullet} are velocity controlled,
 PID based motor controllers were added to \name{SimDynamics}.
 They control the motor velocities to compensate position errors.
 
-The motors implemented \name{Bullet} do not limit the motor velocity and acceleration.
+The motors implemented in \name{Bullet} do not limit the motor velocity and acceleration.
 This is not consistent with real motors, thus limits for velocities and acceleration where introduced to \name{SimDynamics},
-that can be configured on a per-joint basis.
+that can be configured per joint.
 
 ## Simulation analysis
 
