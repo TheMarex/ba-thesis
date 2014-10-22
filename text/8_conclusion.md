@@ -37,6 +37,9 @@ the foot in a way to include the capture point. In most cases this would require
 Moving the leg to the target point also changes the velocity of the CoM, thus changes the location of the capture point.
 To compensate this, the capture point should be tracked using a controller instead of using a static future capture point.
 
+<!--
 # TODO
 
 \listoftodos
+
+-->

@@ -107,8 +107,6 @@ a simple heuristic stabilizer (outlined in section \ref{section:alternative-appr
 and a controller that just plays back the specified walking pattern.
 Each control algorithm is invoked in the same cycle time as the reference walking pattern.
 
-\todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
-
 The resulting, possibly modified, joint angles are then interpolated using cubic splines.
 This ensures a smooth velocity profile and mitigates destabilizing oscillations caused by large velocity changes.
 

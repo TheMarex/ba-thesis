@@ -95,7 +95,7 @@ The stabilizer that is outlined in chapter \ref{section:stabilizer} was
 extended to call the fall detection module in each iteration of the control loop.
 If an unstable state is reached, the recovery module overrides the normal trajectory
 of the stabilizer. After completing the recovery maneuver, the robot remains
-in the given position. The stabilizer is activated again to hold the current position.
+in the given position.
 Resuming the original pattern requires planning dynamically stable transition trajectory.
 This is left for future work.
 

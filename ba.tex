@@ -943,13 +943,12 @@ Each foot needs to move on a circle with radius
 $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending
 which foot lies in the direction of the turn. The movement in
 $z$-direction remains unaffected. However the movement in the $xy$-plane
-is transformed to follow the circle for the specific foot.
-\todo{Current implementation does effectively that, but is actually a hack. Needs separate trajectories for left/right}
-The same polynomial that was previously used for the $y$-direction is
-now used to compute the angle on the corresponding circle and the $x$
-and $y$ coordinates are calculated accordingly. The foot orientation is
-computed from the tangential (y-Axis) and normal (x-Axis) of circle the
-foot follows.
+is transformed to follow the circle for the specific foot. The same
+polynomial that was previously used for the $y$-direction is now used to
+compute the angle on the corresponding circle and the $x$ and $y$
+coordinates are calculated accordingly. The foot orientation is computed
+from the tangential (y-Axis) and normal (x-Axis) of circle the foot
+follows.
 
 \subsubsection{Balancing on one foot}\label{balancing-on-one-foot}
 
@@ -1232,8 +1231,6 @@ stabilizer proposed by Kajita (as outlined in section
 section \ref{section:alternative-approach}) and a controller that just
 plays back the specified walking pattern. Each control algorithm is
 invoked in the same cycle time as the reference walking pattern.
-
-\todo{Make sure you can really load vanilla \name{MMM} trajectories without crashing}
 
 The resulting, possibly modified, joint angles are then interpolated
 using cubic splines. This ensures a smooth velocity profile and
@@ -1539,8 +1536,6 @@ $\tau_L$. However since we assume a position controlled robot, the
 torque differences need to be translated into pose changes. There are
 three primary cases that need to be considered if we change the
 reference pose of a foot:
-
-\todo{image with springs}
 
 \begin{description}
 \item[The foot is not in contact with the ground:]
@@ -1958,8 +1953,7 @@ The stabilizer that is outlined in chapter \ref{section:stabilizer} was
 extended to call the fall detection module in each iteration of the
 control loop. If an unstable state is reached, the recovery module
 overrides the normal trajectory of the stabilizer. After completing the
-recovery maneuver, the robot remains in the given position. The
-stabilizer is activated again to hold the current position. Resuming the
+recovery maneuver, the robot remains in the given position. Resuming the
 original pattern requires planning dynamically stable transition
 trajectory. This is left for future work.
 
@@ -2087,9 +2081,15 @@ for one the fall detection is not very reliable. Another reason is that
 the speed limits of the leg joints impose a maximum velocity for the
 foot movement. So not only needs the target position to be reachable, it
 also needs to be reachable in a specific amount of time. As above a
-football is used as source of disturbance.
+football is used as source of disturbance. See figure
+\ref{push-recovery-thumbs} for a push recovery.
 
-\todo{frame series of push recovery}
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
+\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
+\label{img:push-recovery-thumbs}
+\end{figure*}
 
 \chapter{Conclusion and future work}\label{conclusion-and-future-work}
 
@@ -2141,10 +2141,6 @@ to the target point also changes the velocity of the CoM, thus changes
 the location of the capture point. To compensate this, the capture point
 should be tracked using a controller instead of using a static future
 capture point.
-
-\chapter{TODO}\label{todo}
-
-\listoftodos
 
 \bibliographystyle{ieeetr}
 

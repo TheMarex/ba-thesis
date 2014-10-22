@@ -210,7 +210,7 @@ using the measured torques $\tau_R$ and $\tau_L$. However since we assume a posi
 the torque differences need to be translated into pose changes.
 There are three primary cases that need to be considered if we change the reference pose of a foot:
 
-\todo{image with springs}
+<!-- \todo{image with springs} -->
 
 The foot is not in contact with the ground:
   ~ Changing the reference pose will just affect the foot

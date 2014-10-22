@@ -294,7 +294,6 @@ Much of the general structure of the foot trajectory remains the same as for wal
 However instead of specifying the step length, it is implicitly given by the segment of the circle that should be traversed and the number of steps.
 So extra care needs to be taken to specify enough steps so that the generated foot positions are still.
 Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
-\todo{Current implementation does effectively that, but is actually a hack. Needs separate trajectories for left/right}
 The same polynomial that was previously used for the $y$-direction is now used to compute the
 angle on the corresponding circle and the $x$ and $y$ coordinates are calculated accordingly.
 The foot orientation is computed from the tangential (y-Axis) and normal (x-Axis) of circle the foot follows.

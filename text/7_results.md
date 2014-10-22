@@ -114,5 +114,11 @@ Another reason is that the speed limits of the leg joints impose a maximum veloc
 for the foot movement. So not only needs the target position to be reachable, it also
 needs to be reachable in a specific amount of time.
 As above a football is used as source of disturbance.
+See figure \ref{push-recovery-thumbs} for a push recovery.
 
-\todo{frame series of push recovery}
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
+\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
+\label{img:push-recovery-thumbs}
+\end{figure*}
