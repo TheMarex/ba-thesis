@@ -147,9 +147,9 @@ Substituting the results in \ref{eq:state-transition-discrete} yields:
 
 \begin{eqnarray} \label{eq:state-transition-result}
 x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
-                     T & \frac{T^2}{2} & \frac{T^3}{6} \\ %
-                     0 & T             & \frac{T^2}{2} \\ %
-                     0 & 0             & T %
+                     1 & T & \frac{T^2}{2} \\ %
+                     0 & 1             & T \\ %
+                     0 & 0             & 1 %
                \end{array}\right)}^{=: A} x[k]
              + \overbrace{\left(\begin{array}{ccc} %
                       \frac{T^3}{6} \\ %
@@ -157,8 +157,6 @@ x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
                       T %
                \end{array}\right)}^{=: B} \cdot u_x[k]
 \end{eqnarray}
-
-\todo{There is a facot $T$ too much!}
 
 ### Controlling the dynamic system
 

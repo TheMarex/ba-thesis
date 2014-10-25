@@ -34,10 +34,6 @@ in both cases. As you can see the ZMP deviates significantly from the desired tr
 and oscillates between both edges of the support polygon. We believe this is caused by the problems
 outlined in section \ref{section:rigid-body-simulation}. Consider figure \ref{img:noisy-com-acc} which shows
 the desired CoM acceleration in comparison to the realized acceleration.
-However the foot remains in full ground contact and friction forces are applied accurately.
-Thus dynamically stable walking is realized for both unstabilized and stabilized walking.
-We hope that a more stable Featherstone constraint solver will produce more accurate contact forces and
-thus ZMP values.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
@@ -45,6 +41,59 @@ thus ZMP values.
 \caption{Acceleration of the CoM in $x$-direction.}
 \label{img:noisy-com-acc}
 \end{figure*}
+
+However the foot remains in full ground contact and friction forces are applied accurately.
+Thus dynamically stable walking is realized for both unstabilized and stabilized walking.
+See figure \ref{img:contact_forces} for the contact forces that are applied to each foot while walking.
+The forces oscillate quite a bit due to simulation error. However the mean values meet the expectations
+of the gravity force vector.
+
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/contact_forces.png}
+\caption{Contact forces in $z$ direction for both feet.}
+\label{img:contact_forces}
+\end{figure*}
+
+Figure \ref{img:ankle-torques} depicts the ankle torques that are applied to each feet.
+Please note the rapid change in sign during single support. We believe this is caused
+by \name{Bullet}s method of applying contact forces. Contact forces are always applied
+to the contact point with the deepest penetration into the floor. In flat ground contact
+the penetration depth of contact points on the edge of the support polygon is almost the same.
+Small errors lead \name{Bullet} to alternate between contact points on opposite sides of
+the support polygon.
+
+\begin{figure}[H]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/ankle_torques.png}
+\caption{Ankle torques along the $x$ and $y$ axis for both feet.}
+\label{img:ankle-torques}
+\end{figure}
+
+We hope that a more stable Featherstone constraint solver will produce more accurate contact forces and ankle torques.
+
+<!--- FIXME Angular mometum shown here is in global reference frame.
+
+An interesting way to compare the trajectory executed by \name{Armar 4} to walking in humans
+is to use the angular momentum around the CoM. See figure \ref{img:sophie-angular-momentum}
+for the angular momentum trajectories as measured in test subjects by Laturnus \cite{laturnus2014} in her Bachelor's Thesis.
+Note the similarities to the angular momentum that is realized in the simulation in figure \ref{img:angular-momentum}
+
+\begin{figure}[H]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/sophie_angular_momentum.png}
+\caption{The angular momentum as measured on test subjects for straight walking by Laturnus \cite{laturnus2014}}
+\label{img:sophie-angular-momentum}
+\end{figure}
+
+\begin{figure}[H]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/angular_momentum.png}
+\caption{The angular momentum as measured in the simulation while walking straight.}
+\label{img:angular-momentum}
+\end{figure}
+
+-->
 
 ### Walking in a circle
 
@@ -92,13 +141,23 @@ See figure \ref{img:disturbed-straight-x} for the realized CoM and ZMP trajector
 The unstabilized trajectory becomes unstable and leads to a fall at $t = 9.5s$. The stabilized
 trajectory is noticeable disturbed, as the yaw momentum is not compensated, but remains stable.
 
-
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_x.png}
 \caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
 All coordinates in the global reference frame. Red lines denote the point of impact.}
 \label{img:disturbed-straight-x}
+\end{figure*}
+
+Figure \ref{img:cp-disturbance-front-y} show the impact of the push to the chest on the immediate capture point.
+The capture point shifts rapidly in the direction of the disturbance. This property
+will be utilized to derive a capture position for push recovery.
+
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/cp_disturbance_front_y.png}
+\caption{Impact of the disturbance on the immediate capture point. Red lines denote the point of impact.}
+\label{img:cp-disturbance-front-y}
 \end{figure*}
 
 ## Push recovery
