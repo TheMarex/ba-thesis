@@ -96,8 +96,8 @@ the feet and the floor with simple box shapes, instead using mesh based models.
 \begin{figure*}[htb]
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/architechture.png}
-\caption{Achitechture of the stabilizer}
-\label{img:stabilitzer-achitechture}
+\caption{Achitechture of the simulator}
+\label{img:simulator-achitechture}
 \end{figure*}
 
 The simulator was designed to load arbitrary motions in the \name{MMM} format and replay them. Additional stabilization algorithms can be applied
@@ -120,6 +120,20 @@ They control the motor velocities to compensate position errors.
 The motors implemented in \name{Bullet} do not limit the motor velocity and acceleration.
 This is not consistent with real motors, thus limits for velocities and acceleration where introduced to \name{SimDynamics},
 that can be configured per joint.
+
+The graphical user-interface supports the visualization of measured and desired values
+for CoM, Immediate Capture Point, ZMP, ankle torque, and ground reaction forces.
+The best-case trajectory can be visualized as an overlay robot ("phantom robot").
+Figure \ref{img:simulator-thumbs} shows some of the supported visualizations.
+
+\begin{figure*}[htb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/simulator_thumbs.png}
+\caption{GUI of the simulator. Top left: Before starting the physics engine. Top right: Robot with
+best-case "phantom" overlay. Bottom left: Robot standing with support polygone visualization. Bottom right:
+Close-up of the support polygone, ankle torques and ground reaction forces.}
+\label{img:simulator-thumbs}
+\end{figure*}
 
 ## Simulation analysis
 

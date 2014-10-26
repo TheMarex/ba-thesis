@@ -1,4 +1,4 @@
-# Results
+# Experimental Evaluation
 
 To test the performance of the stabilizer against simple pattern playback,
 both walking straight and walking in circle where tested.
@@ -62,6 +62,7 @@ to the contact point with the deepest penetration into the floor. In flat ground
 the penetration depth of contact points on the edge of the support polygon is almost the same.
 Small errors lead \name{Bullet} to alternate between contact points on opposite sides of
 the support polygon.
+We hope that a more stable Featherstone constraint solver will produce more accurate contact forces and ankle torques.
 
 \begin{figure}[H]
 \vspace*{-1em}
@@ -69,10 +70,6 @@ the support polygon.
 \caption{Ankle torques along the $x$ and $y$ axis for both feet.}
 \label{img:ankle-torques}
 \end{figure}
-
-We hope that a more stable Featherstone constraint solver will produce more accurate contact forces and ankle torques.
-
-<!--- FIXME Angular mometum shown here is in global reference frame.
 
 An interesting way to compare the trajectory executed by \name{Armar 4} to walking in humans
 is to use the angular momentum around the CoM. See figure \ref{img:sophie-angular-momentum}
@@ -93,7 +90,8 @@ Note the similarities to the angular momentum that is realized in the simulation
 \label{img:angular-momentum}
 \end{figure}
 
--->
+Immediately clear are the more pronounced sharp minima and maxima of the $y$-component of the angular momentum.
+This is probably caused by the missing toe/heel lift-off and strike down phases, as the foot is kept parallel to the floor at all times.
 
 ### Walking in a circle
 
@@ -128,12 +126,12 @@ The scenario used to test the performance of the stabilizer under disturbance,
 was applying a short push to the chest.
 The results are compared with the performance of the unstabilized trajectory.
 
-\begin{figure*}[hbt]
+\begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_thumbs.png}
-\caption{\name{Armar4} getting hit by a ball at chest height.}
+\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector.}
 \label{img:player-undisturbed-circle-thumbs}
-\end{figure*}
+\end{figure}
 
 To simulate a push, a ball with a radius of 11cm and weight of 450g (FIFA football) is shoot from
 1 meter distance at the chest.

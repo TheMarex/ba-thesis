@@ -30,10 +30,11 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. Mai 2014}
+\renewcommand{\timestart}{1. June 2014}
 \renewcommand{\timeend}{31. Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
+\newcommand{\referee}{Prof. Dr.-Ing. Tamim Asfour}
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
 
 \newcommand{\clr}[2]{{\color{#1}{#2}}}
@@ -1907,8 +1908,8 @@ floor with simple box shapes, instead using mesh based models.
 \begin{figure*}[htb]
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/architechture.png}
-\caption{Achitechture of the stabilizer}
-\label{img:stabilitzer-achitechture}
+\caption{Achitechture of the simulator}
+\label{img:simulator-achitechture}
 \end{figure*}
 
 The simulator was designed to load arbitrary motions in the \name{MMM}
@@ -1939,6 +1940,21 @@ The motors implemented in \name{Bullet} do not limit the motor velocity
 and acceleration. This is not consistent with real motors, thus limits
 for velocities and acceleration where introduced to \name{SimDynamics},
 that can be configured per joint.
+
+The graphical user-interface supports the visualization of measured and
+desired values for CoM, Immediate Capture Point, ZMP, ankle torque, and
+ground reaction forces. The best-case trajectory can be visualized as an
+overlay robot (``phantom robot''). Figure \ref{img:simulator-thumbs}
+shows some of the supported visualizations.
+
+\begin{figure*}[htb]
+\vspace*{-1em}
+\includegraphics[width=\textwidth]{images/simulator_thumbs.png}
+\caption{GUI of the simulator. Top left: Before starting the physics engine. Top right: Robot with
+best-case "phantom" overlay. Bottom left: Robot standing with support polygone visualization. Bottom right:
+Close-up of the support polygone, ankle torques and ground reaction forces.}
+\label{img:simulator-thumbs}
+\end{figure*}
 
 \section{Simulation analysis}\label{simulation-analysis}
 
@@ -1972,7 +1988,7 @@ is used to easily run the analysis and display the results in a browser
 window. All plots of simulated patterns found in this thesis can be
 generated automatically for every simulation.
 
-\chapter{Results}\label{results}
+\chapter{Experimental Evaluation}\label{experimental-evaluation}
 
 To test the performance of the stabilizer against simple pattern
 playback, both walking straight and walking in circle where tested. To
@@ -2042,7 +2058,9 @@ contact forces. Contact forces are always applied to the contact point
 with the deepest penetration into the floor. In flat ground contact the
 penetration depth of contact points on the edge of the support polygon
 is almost the same. Small errors lead \name{Bullet} to alternate between
-contact points on opposite sides of the support polygon.
+contact points on opposite sides of the support polygon. We hope that a
+more stable Featherstone constraint solver will produce more accurate
+contact forces and ankle torques.
 
 \begin{figure}[H]
 \vspace*{-1em}
@@ -2051,8 +2069,32 @@ contact points on opposite sides of the support polygon.
 \label{img:ankle-torques}
 \end{figure}
 
-We hope that a more stable Featherstone constraint solver will produce
-more accurate contact forces and ankle torques.
+An interesting way to compare the trajectory executed by \name{Armar 4}
+to walking in humans is to use the angular momentum around the CoM. See
+figure \ref{img:sophie-angular-momentum} for the angular momentum
+trajectories as measured in test subjects by Laturnus
+\cite{laturnus2014} in her Bachelor's Thesis. Note the similarities to
+the angular momentum that is realized in the simulation in figure
+\ref{img:angular-momentum}
+
+\begin{figure}[H]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/sophie_angular_momentum.png}
+\caption{The angular momentum as measured on test subjects for straight walking by Laturnus \cite{laturnus2014}}
+\label{img:sophie-angular-momentum}
+\end{figure}
+
+\begin{figure}[H]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/angular_momentum.png}
+\caption{The angular momentum as measured in the simulation while walking straight.}
+\label{img:angular-momentum}
+\end{figure}
+
+Immediately clear are the more pronounced sharp minima and maxima of the
+$y$-component of the angular momentum. This is probably caused by the
+missing toe/heel lift-off and strike down phases, as the foot is kept
+parallel to the floor at all times.
 
 \subsection{Walking in a circle}\label{walking-in-a-circle}
 
@@ -2089,12 +2131,12 @@ The scenario used to test the performance of the stabilizer under
 disturbance, was applying a short push to the chest. The results are
 compared with the performance of the unstabilized trajectory.
 
-\begin{figure*}[hbt]
+\begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_thumbs.png}
-\caption{\name{Armar4} getting hit by a ball at chest height.}
+\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector.}
 \label{img:player-undisturbed-circle-thumbs}
-\end{figure*}
+\end{figure}
 
 To simulate a push, a ball with a radius of 11cm and weight of 450g
 (FIFA football) is shoot from 1 meter distance at the chest. See figure

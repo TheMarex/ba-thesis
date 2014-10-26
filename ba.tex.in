@@ -30,10 +30,11 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. Mai 2014}
+\renewcommand{\timestart}{1. June 2014}
 \renewcommand{\timeend}{31. Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
+\newcommand{\referee}{Prof. Dr.-Ing. Tamim Asfour}
 %\newcommand{\advisortwo}{Nur wenn n\"otig}
 
 \newcommand{\clr}[2]{{\color{#1}{#2}}}
