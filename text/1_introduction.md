@@ -1,6 +1,6 @@
 # Introduction
 
-Nearly one hundred years of Sci-Fiction have established the firm image
+Nearly one hundred years of Science-Fiction have established the firm image
 of a mechanical humanoid servant with super human capabilities, with the term
 *Robot*.
 Today we live in a world where large parts of our production circles are already
@@ -8,13 +8,19 @@ dominated by robots. Yet, widespread adoption of humanoid robots is still nowher
 One core problem of humanoid robots is their inherent complexity.
 Vision, cognition, manipulation and locomotion all need to be combined in one mechanism.
 While each of these problems is under active research, one has been especially resilient: Locomotion.
+There are multiple reasons for this. For one, locomotion is inherently complex,
+as a large number of joints need to be controlled precisely.
+The dynamics for such complex systems are hard to control, thus severe simplifications
+need to be made to control them. And last but not least, the strategies to solve
+bipedal walking are very much tied to specific problem and not easily transferable to robots
+with other leg configurations.
 Some robots, e.g. the \name{Armar III} robots, solve it by replacing the legs
 with a stable base on wheels. While this yields convenient research platform,
 the navigation in human environments is not as natural as for full humanoid robots.
 
 Over the last two decades a lot of progress has been made in humanoid walking.
-Every one is familiar with the famous \name{ASIMO} robot developed by Honda or the HRP
-robots developed by AIST which demonstrate stable walking.
+Every one is familiar with the famous \name{ASIMO} robot developed by Honda or the \name{HRP}
+robots developed by \name{AIST} which demonstrate stable walking.
 More recently \name{ATLAS} by Boston Dynamics shows great stability even under disturbances.
 Sadly some of these platforms are closed and it is not known exactly which models
 are used in each robot to derive stable walking.
@@ -23,13 +29,13 @@ As the goal for bipedal walking is to be as human-like as possible, research on
 human walking is a great inspiration for robotic walking.
 While the human gait can be divided into many phases, of primary interest for the stability is the number of
 feet that are in contact with the ground. For walking the ground contact alternates between both feet
-and one support foot. These phases are called dual and single support respectively.
+and one foot. These phases are called dual and single support respectively.
 Each step starts with a dual support phase, that shifts the center of mass to the foot that supports the weight in the next step.
 The non-supporting foot (the *swing foot*) is then moved to the next foot hold. (See figure \ref{img:human-gait})
 The area that is in contact with the ground is not constant in each phase.
 Most notably at the end of the single support phase the heel is lifted. Consequently the contact changes
 from full sole contact to the toes.
-Also the swing foot hits the ground heel first and rotate to meet the ground while the center of mass
+The swing foot hits the ground heel first and rotates to meet the ground while the center of mass
 is shifted forward.
 \begin{figure*}[tb]
 \vspace*{-1em}
