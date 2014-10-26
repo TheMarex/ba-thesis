@@ -2174,25 +2174,41 @@ utilized to derive a capture position for push recovery.
 
 \section{Push recovery}\label{push-recovery-1}
 
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
+\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
+\label{img:push-recovery-thumbs}
+\end{figure*}
+
 The performance of the push recovery was evaluated with a simple
 best-case scenario. The robot is balancing on the left foot and is
 pushed on the right shoulder. Most notably this scenario was used to
 demonstrate the push recovery based on the Capture Point implemented in
 the IHMC/Yobotics Biped. \cite{pratt2009video}. While the push recovery
 implemented is able to recover from any position, with the current
-method it is not reliable in the general case. This has multiple reason,
-for one the fall detection is not very reliable. Another reason is that
-the speed limits of the leg joints impose a maximum velocity for the
-foot movement. So not only needs the target position to be reachable, it
-also needs to be reachable in a specific amount of time. As above a
-football is used as source of disturbance. See figure
-\ref{push-recovery-thumbs} for a push recovery.
+method it is not reliable in the general case. There are multiple
+reasons for this. For one, the fall detection is not very reliable.
+Another reason is that the speed limits of the leg joints impose a
+maximum velocity for the foot movement. So not only needs the target
+position to be reachable, it also needs to be reachable in a specific
+amount of time. As above a football is used as source of disturbance.
+See figure \ref{img:push-recovery-thumbs} shows a push recovery from
+being pushed from the left shoulder.
+
+See figure \ref{img:push-recovery-x} for a trajectory of the recovery
+maneuver. You can see that the Immediate Capture Point jumps at the
+point of impact. The push recovery is activated $0.3s$ after the impact
+as the fall detection threshold is reached. You can see that the foot do
+not reach the desired $x$-coordinate. This is caused by the capture foot
+hitting the floor earlier than planned. However the capture point is
+successfully moved back into the support polygon.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
-\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
-\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
-\label{img:push-recovery-thumbs}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_x.png}
+\caption{Recovery maneuver as executed for a push on the left shoulder while standing on the left foot.}
+\label{img:push-recovery-x}
 \end{figure*}
 
 \chapter{Conclusion and future work}\label{conclusion-and-future-work}
@@ -2227,11 +2243,20 @@ is not used. A follow up paper \cite{kajita2012evaluation} extends the
 methods implemented here to include the toes. The realized walking
 trajectories seem to be more natural.
 
+Englsberger et al. \cite{englsberger2011bipedal} propose a pattern
+generator based on the Immediate Capture Point instead of the ZMP.
+Comparing the performance of both approaches could be worthwhile.
+
 As the evaluation of the circular trajectory shows, the yaw moment
 exerted on the foot can cause severe disturbances. To deal better with
 trajectories that include turns or arm movements, that torque should be
 compensated. Kim et al.\cite{kim2005humanoid} propose to move the arms
 around the roll axis to compensate for yaw momentum.
+
+Another interesting approach is to use the angular momentum around the
+center of mass as proposed by Kajita et al. \cite{kajita2001balancing}
+and extended by Komura et al. \cite{komura2005feedback} as control
+input.
 
 The push recovery implemented is very rudimentary. The placement of the
 foot to recover from a push does not consider collisions with the

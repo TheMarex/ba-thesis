@@ -160,22 +160,35 @@ will be utilized to derive a capture position for push recovery.
 
 ## Push recovery
 
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
+\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
+\label{img:push-recovery-thumbs}
+\end{figure*}
+
 The performance of the push recovery was evaluated with a simple best-case scenario.
 The robot is balancing on the left foot and is pushed on the right shoulder.
 Most notably this scenario was used to demonstrate the push recovery based on the Capture Point
 implemented in the IHMC/Yobotics Biped. \cite{pratt2009video}.
 While the push recovery implemented is able to recover from any position,
 with the current method it is not reliable in the general case.
-This has multiple reason, for one the fall detection is not very reliable.
+There are multiple reasons for this. For one, the fall detection is not very reliable.
 Another reason is that the speed limits of the leg joints impose a maximum velocity
 for the foot movement. So not only needs the target position to be reachable, it also
 needs to be reachable in a specific amount of time.
 As above a football is used as source of disturbance.
-See figure \ref{push-recovery-thumbs} for a push recovery.
+See figure \ref{img:push-recovery-thumbs} shows a push recovery from being pushed from the left shoulder.
+
+See figure \ref{img:push-recovery-x} for a trajectory of the recovery maneuver. You can see
+that the Immediate Capture Point jumps at the point of impact. The push recovery is activated
+$0.3s$ after the impact as the fall detection threshold is reached.
+You can see that the foot does not reach the desired $x$-coordinate. This is caused by the capture foot hitting
+the floor earlier than planned. However the capture point is successfully moved back into the support polygon.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
-\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
-\caption{\name{Armar4} getting hit by two balls at the left shoulder.}
-\label{img:push-recovery-thumbs}
+\includegraphics[width=\textwidth,resolution=300]{images/push_recovery_x.png}
+\caption{Recovery maneuver as executed for a push on the left shoulder while standing on the left foot.}
+\label{img:push-recovery-x}
 \end{figure*}
