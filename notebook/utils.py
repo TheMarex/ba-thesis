@@ -58,5 +58,7 @@ class CollisionInfo:
         self._contact_times = contact_times
 
     def add_collision_info_lines(self, color="red"):
-        for t, w in zip(self._contact_times, self._line_widths):
+        for i, (t, w) in enumerate(zip(self._contact_times, self._line_widths)):
+            if i > 10:
+                break
             plt.axvline(t, linewidth=w, color=color)

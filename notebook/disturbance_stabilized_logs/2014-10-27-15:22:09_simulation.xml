@@ -1,0 +1,45 @@
+<MMM>	<Motion name='Walking Simulation'>
+		<Model>
+			<File>../../../libbipedal/data/armar4/ArmarIV-StartLeftLeg.xml</File>
+		</Model>
+		<JointOrder>
+			<Joint name='LeftLeg_Joint1'/>
+			<Joint name='LeftLeg_Joint2'/>
+			<Joint name='LeftLeg_Joint3'/>
+			<Joint name='LeftLeg_Joint4'/>
+			<Joint name='LeftLeg_Joint5'/>
+			<Joint name='LeftLeg_Joint6'/>
+			<Joint name='RightLeg_Joint1'/>
+			<Joint name='RightLeg_Joint2'/>
+			<Joint name='RightLeg_Joint3'/>
+			<Joint name='RightLeg_Joint4'/>
+			<Joint name='RightLeg_Joint5'/>
+			<Joint name='RightLeg_Joint6'/>
+			<Joint name='Torso_Joint1'/>
+			<Joint name='Torso_Joint2'/>
+			<Joint name='HeadNeck_Joint1'/>
+			<Joint name='HeadNeck_Joint2'/>
+			<Joint name='HeadNeck_Joint3'/>
+			<Joint name='HeadNeck_Joint4'/>
+			<Joint name='HeadNeck_Joint5'/>
+			<Joint name='LeftArm_Joint1'/>
+			<Joint name='LeftArm_Joint2'/>
+			<Joint name='LeftArm_Joint3'/>
+			<Joint name='LeftArm_Joint4'/>
+			<Joint name='LeftArm_Joint5'/>
+			<Joint name='LeftArm_Joint6'/>
+			<Joint name='LeftArm_Joint7'/>
+			<Joint name='LeftArm_Joint8'/>
+			<Joint name='RightArm_Joint1'/>
+			<Joint name='RightArm_Joint2'/>
+			<Joint name='RightArm_Joint3'/>
+			<Joint name='RightArm_Joint4'/>
+			<Joint name='RightArm_Joint5'/>
+			<Joint name='RightArm_Joint6'/>
+			<Joint name='RightArm_Joint7'/>
+			<Joint name='RightArm_Joint8'/>
+		</JointOrder>
+		<MotionFrames>
+		</MotionFrames>
+	</Motion>
+</MMM>

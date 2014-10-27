@@ -123,7 +123,7 @@ Each for the unstabilized and stabilized case.}
 ## Disturbed walking
 
 The scenario used to test the performance of the stabilizer under disturbance,
-was applying a short push to the chest.
+was applying a short push to the chest, back, left shoulder and right shoulder.
 The results are compared with the performance of the unstabilized trajectory.
 
 \begin{figure}[H]
@@ -135,21 +135,54 @@ The results are compared with the performance of the unstabilized trajectory.
 
 To simulate a push, a ball with a radius of 11cm and weight of 450g (FIFA football) is shoot from
 1 meter distance at the chest.
-See figure \ref{img:disturbed-straight-x} for the realized CoM and ZMP trajectories. The point of impact is denoted as red lines.
-The unstabilized trajectory becomes unstable and leads to a fall at $t = 9.5s$. The stabilized
+See figure \ref{img:disturbed-front-straight-x} for the realized CoM and ZMP trajectories. The point of impact is denoted as red lines.
+The unstabilized trajectory becomes unstable and leads to a fall at $t = 7s$. The stabilized
 trajectory is noticeable disturbed, as the yaw momentum is not compensated, but remains stable.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
-\includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_x.png}
-\caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
+\includegraphics[width=\textwidth,resolution=300]{images/disturbed_front_straight_x.png}
+\caption{The actually realized CoM and ZMP values after a ball collision in the chest.
 All coordinates in the global reference frame. Red lines denote the point of impact.}
-\label{img:disturbed-straight-x}
+\label{img:disturbed-front-straight-x}
 \end{figure*}
 
+Figure \ref{img:disturbed-back-straight-x} shows the realized ZMP and CoM after an impact in the back.
+The unstabilized trajectory does not lead to falling in this case, but the trajectory of the ZMP indicates a rather
+unstable trajectory.
+
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/disturbed_back_straight_x.png}
+\caption{The actually realized CoM and ZMP values after a ball collision in the back.
+All coordinates in the global reference frame. Red lines denote the point of impact.}
+\label{img:disturbed-back-straight-x}
+\end{figure*}
+
+Similar results can be observed for disturbances on the left (see figure \ref{img:disturbed-left-straight-x})
+and right shoulder (see figure \ref{img:disturbed-right-straight-x}). In both cases the disturbance leads to falling
+in the unstabilized case.
 Figure \ref{img:cp-disturbance-front-y} show the impact of the push to the chest on the immediate capture point.
 The capture point shifts rapidly in the direction of the disturbance. This property
 will be utilized to derive a capture position for push recovery.
+
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/disturbed_left_straight_x.png}
+\caption{The actually realized CoM and ZMP values after a ball collision in the left shoulder.
+All coordinates in the global reference frame. Red lines denote the point of impact.}
+\label{img:disturbed-left-straight-x}
+\end{figure*}
+
+
+\begin{figure*}[hbt]
+\vspace*{-1em}
+\includegraphics[width=\textwidth,resolution=300]{images/disturbed_right_straight_x.png}
+\caption{The actually realized CoM and ZMP values after a ball collision in the right shoulder.
+All coordinates in the global reference frame. Red lines denote the point of impact.}
+\label{img:disturbed-right-straight-x}
+\end{figure*}
+
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
