@@ -3,11 +3,11 @@
 ## The Linear Inverted Pendulum Model
 
 A simple model for describing the dynamics of a bipedal robot during single support phase is the 3D inverted pendulum.
-We reduce the body of the robot to a point-mass at the center of mass and replace the support leg
+We reduce the body of the robot to a point-mass at the center of mass. The support leg is replaced
 by a mass-less telescopic leg which is fixed at a point on the supporting foot.
 Initially this will yield non-linear equations that will be hard to control.
 However by constraining the movement of the inverted pendulum to a fixed plane, we can derive a linear dynamic system.
-This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
+This model is called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 
 \begin{wrapfigure}{R}{0.4\textwidth}
   \begin{center}
@@ -21,7 +21,7 @@ This model called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 To describe the dynamics of the inverted pendulum we are mainly interested in the effect a given actuator torque has on the movement of the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the origin of the current Cartesian coordinate system.
-Thus we can describe the position inverted pendulum by a vector $c = (x, y, z)$.
+Thus we can describe the position inverted pendulum by a vector $c = (c_x, c_y, c_z)$.
 We are going to introduce an appropriate (generalized) coordinate system $q = (\theta_x, \theta_y, r)$ to get an easy description of our actuator torques:
 Let $m$ be the mass of the pendulum and $r$ the length of the telescopic leg.
 $\theta_y$ and $\theta_x$ describe the corresponding roll and pitch angles of the pose of the pendulum.
@@ -31,16 +31,16 @@ Let $\Phi: \mathbb{R}^3 \longrightarrow \mathbb{R}^3, (\theta_x, \theta_y, r) \m
 Then the Jacobian $J_\Phi = \frac{\partial p}{\partial q}$ maps the *generalized velocities* to *Cartesian velocites*.
 Furthermore we know that the transpose $J_\Phi^T$ maps *Cartesian forces* $F = m (\ddot x, \ddot y, \ddot z)$ to *generalized forces* $\Gamma = (\tau_x, \tau_y, f)$.
 
-We write $x$, $y$ and $z$ in terms of our generalized coordinates to compute the corresponding Jacobian $J_\Phi$.
+We write $c_x$, $c_y$ and $c_z$ in terms of our generalized coordinates to compute the corresponding Jacobian $J_\Phi$.
 From the fact that the $\theta_y$ is the angle between the projection of $c$ onto the $xz$-plane and $c$
 and $\theta_x$ the angle between $c$ and the projection onto the $yz$ plane we can derive the following equations \cite{kajita20013d}.
 We use $s_i = sin(\Theta_i)$ and $c_i = cos(\Theta_i)$ with $i \in \{x, y\}$ as a shorthand notation.
 
 \begin{equation}
 \begin{array}{lcll} \label{eq:lip-xyz}
-x & = & r \cdot \sin \theta_y & =: r \cdot s_y\\
-y & = & -r \cdot \sin \theta_x & =: -r \cdot s_x \\
-z & = & \sqrt{r^2 - x^2 - y^2} = r \cdot \sqrt{1 - s_y^2 - s_x^2} & \\
+c_x & = & r \cdot \sin \theta_y & =: r \cdot s_y\\
+c_y & = & -r \cdot \sin \theta_x & =: -r \cdot s_x \\
+c_z & = & \sqrt{r^2 - c_x^2 - c_y^2} = r \cdot \sqrt{1 - s_y^2 - s_x^2} & \\
 \end{array}
 \end{equation}
 
@@ -61,9 +61,9 @@ Using the gravity force $f_g = (0, 0, -m \cdot g)^T$ and the equation of motion 
 F & = & (J^T)^{-1} \Gamma + f_g \\
 m \cdot
 \left(\begin{array}{c}
-\ddot x \\
-\ddot y \\
-\ddot z \\
+{\ddot c}_x \\
+{\ddot c}_y \\
+{\ddot c}_z \\
 \end{array}\right)
 & = & (J^T)^{-1}
 \left(\begin{array}{c}
@@ -83,20 +83,20 @@ f \\
 and equations \ref{eq:lip-Jacobian} and \ref{eq:lip-xyz} we can derive the following equations:
 
 \begin{equation} \label{eq:lip-dyn-y}
-m(-z\ddot{y} + y\ddot{z}) = \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x} \cdot \tau_x + m g y
+m(-z\ddot{c}_y + y\ddot{c}_z) = \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x} \cdot \tau_x + m g c_y
 \end{equation}
 
 \begin{equation} \label{eq:lip-dyn-x}
-m(z\ddot{x} - x\ddot{z}) = \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y} \cdot \tau_y + m g x
+m(z\ddot{c}_x - x\ddot{c}_z) = \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y} \cdot \tau_y + m g c_x
 \end{equation}
 
-Observe that the terms of the left-hand side are not linear. To remove that non-linearity
+The terms of the left-hand side are not linear. To remove that non-linearity
 we are going to use the *linear* inverted pendulum model.
 
 ### Linearization
 
 In a man-made environment it is fair to assume that the ground a robot will walk on
-can be approximate by a slightly sloped plane. In most cases it can even assumed that there is no slope at all.
+can be approximate by a slightly sloped plane. In most cases it can even be assumed that there is no slope at all.
 
 The basic assumption in the next section will be that the CoM will have a *constant displacement* with regard to our ground plane.
 Thus we can constrain the movement of the CoM to a plane that is parallel to the ground plane.
@@ -104,30 +104,30 @@ Note that this assumption is, depending on the walking speed, only approximately
 For slow to fast walking ($0.7$ m/s and $1.6$ m/s respectively) the average displacement in $z$-direction was found to be between $2.7cm$ and $4.81$ cm.
 While the walking patterns generated based on the LIP-model will guarantee dynamic stability, they might not look natural with regard to human walking.
 
-We are going to constrain the $z$ coordinate of our inverted pendulum to a plane
+We are going to constrain the $z$-coordinate of our inverted pendulum to a plane
 with normal vector $(k_x, k_y, -1)$ and $z$-displacement $z_c$:
 
 \begin{equation} \label{eq:lip-z-plane}
-z = k_x \cdot x + k_y \cdot y + z_c
+c_z = k_x \cdot c_x + k_y \cdot c_y + z_c
 \end{equation}
 
-Subsequently the second derivative of $z$ can be described by:
+Subsequently the second derivative of $c_z$ can be described by:
 
 \begin{equation} \label{eq:lip-z-div}
-\ddot{z} = k_x \cdot \ddot{x} + k_y \cdot \ddot{y}
+\ddot{c}_z = k_x \cdot \ddot{c}_x + k_y \cdot \ddot{c}_y
 \end{equation}
 
 Substituting \ref{eq:lip-z-plane} and \ref{eq:lip-z-div} into the equations \ref{eq:lip-dyn-y} and \ref{eq:lip-dyn-x}
 yields the following equations:
 
 \begin{equation}
-\ddot{x} = \frac{g}{z_c} x + \frac{k_y}{z_c} (x\ddot{y} - \ddot{x}y) + m z_c \cdot \tau_y \cdot \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y}
+\ddot{c}_x = \frac{g}{z_c} c_x + \frac{k_y}{z_c} (c_x \ddot{c}_y - \ddot{c}_x c_y) + m z_c \cdot \tau_y \cdot \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y}
 \end{equation}
 \begin{equation}
-\ddot{y} = \frac{g}{z_c} y - \frac{k_x}{z_c} (x\ddot{y} - \ddot{x}y) - m z_c \cdot \tau_x \cdot \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x}
+\ddot{c}_y = \frac{g}{z_c} c_y - \frac{k_x}{z_c} (c_x \ddot{c}_y - \ddot{c}_x c_y) - m z_c \cdot \tau_x \cdot \frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x}
 \end{equation}
 
-The term $x\ddot{y} - \ddot{x}y$ that is part of both equations is still causing the equations to be non-linear.
+The term $c_x \ddot{c}_y - \ddot{c}_x c_y$ that is part of both equations is still causing the equations to be non-linear.
 To make this equations linear we will assume that our ground plane has no slope, thus $k_x = k_y = 0$ and the non-linear terms will vanish.
 
 Another problem is that the actuator torques $\tau_x$ and $\tau_y$ both have non-linear factors $\frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x}$ and $\frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y}$ respectively. This can be solved by substituting with the following *virtual inputs*:
@@ -141,15 +141,15 @@ Another problem is that the actuator torques $\tau_x$ and $\tau_y$ both have non
 
 Which yields our final description of the dynamics:
 \begin{equation} \label{eq:lip-x}
-\ddot{x} = \frac{g}{z_c} x + \frac{u_x}{m z_c}
+\ddot{c}_x = \frac{g}{z_c} c_x + \frac{u_x}{m z_c}
 \end{equation}
 \begin{equation} \label{eq:lip-y}
-\ddot{y} = \frac{g}{z_c} y - \frac{u_y}{m z_c}
+\ddot{c}_y = \frac{g}{z_c} c_y - \frac{u_y}{m z_c}
 \end{equation}
 
 As outlined in \cite{kajita20013d} the inputs $u_y$ and $u_x$ are generally set to zero.
 Thus the 3D-LIMP has no input torque. This is desirable, as the torque
-that can be applied on the ankle joints is limited. Thus it makes sense to reserve the torque
+that can be applied on the ankle joints is limited and it makes sense to reserve the torque
 for correcting disturbances.
 
 ## The Zero Moment Point
@@ -203,14 +203,12 @@ Since we have flat ground contact, all contact points have the same $z$-coordina
 \tau_y = \sum^N_{i=1} - (p_{ix} - p_x) f_{iz} = \sum^N_{i=1} - (p_{ix} f_{iz}) + (\sum^N_{i=0} f_{iz}) \cdot p_x
 \end{equation}
 
-Furthermore we can use the corresponding components $p_x$ and $p_y$ from the definition of the ZMP \ref{eq:zmp-definition}
-and substitute in the equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
+Furthermore, we can use the corresponding components $p_x$ and $p_y$ from the definition of the ZMP \ref{eq:zmp-definition}
+and substitute them in the equations \ref{eq:zmp-torque-x} and \ref{eq:zmp-torque-y}.
 
-This will yield: $\tau_x = \tau_y = 0$.
+This will yield: $\tau_x = \tau_y = 0$. Please note that $\tau_z$ will in general not be zero, nonetheless in case of straight walking it is often assumed to be zero as well.
 
-Please note that $\tau_z$ will in general not be zero, nonetheless in case of straight walking it is often assumed to be zero as well.
-
-## The cart-table model {#section:cart-table}
+## The Cart-Table Model {#section:cart-table}
 
 \begin{wrapfigure}{R}{0.4\textwidth}
   \begin{center}
@@ -219,11 +217,11 @@ Please note that $\tau_z$ will in general not be zero, nonetheless in case of st
   \caption{The Cart-Table model.}
 \end{wrapfigure}
 
-The cart-table model is used to compute the resulting ZMP from an CoM motion.
+The Cart-Table model is used to compute the resulting ZMP from an CoM motion.
 The model consists of an infinitely large mass-less table of height $z_c$, while the foot of the table has the shape of the support polygon.
 Given a frictionless cart with mass $m$ at position $c = (c_x, c_y, c_z)$ that moves on the table we can compute the resulting ZMP $p = (p_x, p_y, p_z)^T$ in the support foot.
 Please note that the 3D-dimensional model is equivalent to having two independent tables
-with two carts each in the $xz$ and $yz$-plane respectively.
+with two carts each in the $xz$- and $yz$-plane respectively.
 First of all, lets compute the torque $\tau_x$ and $\tau_y$ around the x-axis and y-axis at the ZMP on the support foot.
 
 \begin{equation}
@@ -249,8 +247,8 @@ p_y = c_y - \frac{z_c}{g} \ddot{c_y}
 
 ## Multi-Body methode to calculate the ZMP {#section:multi-body-zmp}
 
-Besides the simplified cart-table model, there also exists an exact method
-to calculate the resulting ZMP from the movement from several connected rigid bodies.
+Besides the simplified Cart-Table Model, there also exists an exact method
+to calculate the resulting ZMP from the movement of several connected rigid bodies.
 
 Let $c_i$ be the CoM position and $m_i$ the mass of the $i$-th body ($i \in \{1, ..., k\}$). Then, as derived in \cite{siciliano2008springer} (p. 374),
 the total linear momentum $\mathcal{P}$ can be calculated by:
@@ -303,8 +301,8 @@ p_y = \frac{Mgy + p_z \dot{\mathcal{P}}_y - \dot{\mathcal{L}}_x}{Mg + \dot{\math
 Both equations are dependent on $p_z$. If we assume the robot walks on a flat
 floor, we can set $p_z = 0$.
 
-See figure \ref{zmp-comparison} to get an idea how much the Multi-Body ZMP
-derives from the estimation using the Cart-Table model.
+See figure \ref{img:zmp-comparison} to get an idea how much the Multi-Body ZMP
+derives from the estimation using the Cart-Table Model.
 
 \begin{figure*}[tb]
 \includegraphics[width=\textwidth,resolution=300]{images/zmp_comparison.png}

@@ -4,7 +4,7 @@ While executing a trajectory there are several sources of errors that will make 
 We can divide them in about three main classes:
 
 Disturbances of the environment:
-  ~ Pattern generator make some assumptions about the environment they operate in.
+  ~ The models pattern generators use, make some assumptions about the environment they operate in.
     Most prominently the 3D-LIMP assumes the floor is completely flat and has no slope.
     Also we assume we can navigate without colliding with other object.
     Any environment that deviates from this assumption can be seen as a disturbance.
@@ -16,15 +16,15 @@ Disturbances due to simulation errors:
 Disturbances due to errors of the method:
   ~ Often pattern generators use simplified models of the dynamics involved to derive generation scheme.
     For example the pattern generator that was used here assumes the ZMP behaves as the cart-table-model predicts.
-    However the real ZMP calculated from the multi-body dynamics can substantially deviate.
+    However, the realized ZMP can substantially deviate.
 
 ## Controlling a deviation
 
 When using a ZMP based control scheme to derive a walking pattern it seems natural to check for deviations
 of the actual ZMP from the goal ZMP. However a deviation from the reference ZMP does not necessarily mean we will see any disturbance.
 As long as the ZMP remains inside the support polygon the trajectory can be executed as planed.
-Also we saw before, it is entirely possible to realize the reference ZMP while being in an overall state that deviates significantly from the
-state we assumed while generating the pattern.
+As we saw in \ref{section:zmp-control} it is entirely possible to realize the reference ZMP
+while being in an overall state that deviates significantly from the state we assumed while generating the pattern.
 Thus we also need to check for a deviation in the trajectory of our CoM. A common approach to correct for CoM position
 is to control the pose of the chest frame of the robot. This only works if the majority of the mass of a robot is located in the upper body and arms.
 Luckily for most humanoid robots this is the case.
@@ -33,11 +33,11 @@ Luckily for most humanoid robots this is the case.
 
 We chose a stabilizer proposed by Kajita et al. in their 2010 paper. \cite{kajita2010biped}
 The stabilizer only needs the joint trajectory of the walking pattern augmented with a desired ZMP trajectory.
-This allows the stabilizer to use patterns that where generated synthetically, e.g. by a pattern generator, or patterns that are
+This allows the stabilizer to use patterns that were generated synthetically, e.g. by a pattern generator, or patterns that are
 the results of (adapted) motion capturing.
 The method proposed by Kajita does not need a torque controlled robot, but works with position control.
 This was very important for the selection of this stabilizer. The underlying simulation engine \name{Bullet} only supports velocity controlled motors,
-consequently the torque can not be controlled directly directly.
+consequently the torque can not be controlled directly.
 
 The controller works by attaching control frames to specific points on the robot.
 The reference position of this frames can be calculated from the input trajectory using forwards kinematics.
@@ -54,8 +54,8 @@ The modified reference frames are then converted to the modified joint angles by
 In the remainder of this chapter we will use the superscript $d$ to denote reference values and the subscript $*$
 to denote modified values.
 
-For this approach four control frames where selected. The chest to modify the body posture,
-the feet to modify the ankle torque, and the pelvis to modify the difference between contact forces of the two feet.
+For this approach four control frames were selected. The chest to modify the body posture,
+the feet to modify the ankle torque, and the pelvis to realize as natural hip position.
 
 ### Reference coordinate system
 
@@ -72,7 +72,7 @@ That means we place the ground frame at the TCP of the respective foot in single
 As the ground frame should be aligned with the floor, we use the projection of the foot poses
 to the floor plane.
 In dual support phase, we calculate the pose from the position by $p = \frac{1}{2} \cdot (p_{left} + p_{right})$ and
-the $y$-axis by $y = \frac{1}{2} \cdot (y_{left} + y_{right})$. The $z$-axis is the normal of the floor plane: $z = (0, 0, 1)$.
+the $y$-axis by $y = \frac{1}{2} \cdot (y_{left} + y_{right})$. The $z$-axis is the normal of the floor plane: $z = (0, 0, 1)^T$.
 See figure \ref{img:ground-frame} for an example.
 The resulting reference frame is called the *ground frame*.
 
@@ -139,7 +139,7 @@ that the torque around the ZMP is zero:
 \end{array}
 \end{equation}
 
-In dual support phase however that matter is more complicated. Since both
+In dual support phase that matter is more complicated. Since both
 feet are in contact with the ground, the weight of the robot is distributed between them.
 If we take the forces $f_R$ and $f_L$ which act on the right ankle $p_R$ and left ankle $p_L$ respectively
 we know that $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
@@ -147,8 +147,8 @@ $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$.
 A heuristic for computing this alpha is the *ZMP distributor*.
 
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from the ZMP to the support polygons of the feet.
-If the ZMP falls inside one of the support polygons set $\alpha = 1$ or $\alpha = 0$ respectively.
-If it is outside of both support polygons the ZMP is projected onto line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
+If the ZMP falls inside one of the support polygons, we set $\alpha = 1$ or $\alpha = 0$ respectively.
+If it is outside of both support polygons the ZMP is projected onto the line from $p_{L\#}$ to $p_{R\#}$ yielding the point $p_{\alpha}$.
 
 We can then set $\alpha$ to:
 
@@ -171,7 +171,7 @@ As before, we assume that $\tau_{zmp} = 0$ which lets us solve \ref{eq:ds-torque
 We now again apply a heuristic using the $\alpha$ computed before to distribute $\tau_0$ to each ankle.
 First we need to transform $\tau_0$ from the global coordinate system to a local coordinate system
 described by the *ground frame*. We mark all vectors in the local coordinate system with $'$.
-The heuristic applied is: The torque around the $x$-Axis in each ankle is approximately proportional to
+The heuristic applied is: The torque around the $x$-axis in each ankle is approximately proportional to
 the force applied at that ankle. Thus:
 
 \begin{equation} \label{eq:torque-right-x}
@@ -181,7 +181,7 @@ the force applied at that ankle. Thus:
 \tau^{d'}_{Lx} = (1-\alpha) \tau_{0x}'
 \end{equation}
 
-The torque around the $y$-Axis depends on the direction of the total torque $\tau_{0y}'$. If the total torque
+The torque around the $y$-axis depends on the direction of the total torque $\tau_{0y}'$. If the total torque
 acts in clockwise direction (negative sign), we can assume it will only be applied to the left foot.
 If the torque acts in anti-clockwise direction (positive sign), we assume it will only be applied to the right foot.
 
@@ -203,8 +203,7 @@ If the torque acts in anti-clockwise direction (positive sign), we assume it wil
 \end{equation}
 
 We can now transform the torques from our local coordinate system to the coordinate system of the corresponding foot
-yielding $\tau^d_L$ and $\tau^d_R$.
-
+yielding $\tau^d_L$ and $\tau^d_R$.  
 Now that we have obtained the reference torques, we can try to control the torque in each angle
 using the measured torques $\tau_R$ and $\tau_L$. However since we assume a position controlled robot,
 the torque differences need to be translated into pose changes.
@@ -229,7 +228,7 @@ For a foot with a rubber surface we will start with a non-solid contact and tran
 \cite{kajita2005running}
 
 To get an idea how changing the pose on such a foot with rubber surface affects the torque,
-consider the case of rotating the foot around its lateral axis ($x$-Axis) in anti-clockwise direction.
+consider the case of rotating the foot around its lateral axis ($x$-axis) in anti-clockwise direction.
 Since the contact with the ground is at first non-solid, we can employ the spring model. The springs at the front of the foot are compressed
 thus the force applied at the corresponding contact points increases.
 Accordingly the springs at the back are compressed less, thus the force applied to the corresponding contact points decreases.
@@ -237,10 +236,10 @@ Resulting we see a increase in torque around the $x$-axis.
 
 If the springs are compressed sufficiently, we can assume the contact with the floor is solid. Since the pose of the foot does not change,
 the increase in the joint angle in the ankle will rotate the upper body backwards. Recall the 3D-LIMP model for a moment,
-in that model this means our pendulum swings backwards. This will lead to an increase of the torque around the $x$-Axis in the base of the pendulum, the ankle joint.
+in that model this means our pendulum swings backwards. This will lead to an increase of the torque around the $x$-axis in the base of the pendulum, the ankle joint.
 
 For rotating the foot around the $y$-axis the same ideas hold.
-As a result we see that additional foot rotation long the $x$- and $y$-Axis have a proportional relationship with the torque
+As a result we see that additional foot rotation long the $x$- and $y$-axis have a proportional relationship with the torque
 around that axis. This motivates the definition of the controller proposed by Kajita et al. The additional rotation angles
 are can be calculated by the following equations:
 
@@ -272,7 +271,6 @@ will exactly match the force in $z$-direction $f_g$ exerted by the support foot 
 Thus in single support we can guarantee that we realize our reference force.
 In dual support we know that $f^d_L + f^d_R = M \cdot g$. If we apply the same reasoning as above we know that $f^d_L + f^d_R = f_L + f_R$.
 If we can additionally make sure that $f^d_L - f^d_R = f_L - f_R$ we can deduce that $f^d_L = f_L$ and $f^d_R = f_R$.
-Equation \ref{eq:ds-torque} can be used to calculate the ZMP position from the applied forces and torques on the foot. If both reference torques and reference forces on the feet are realized, that will guarantee the reference ZMP is also realized.
 
 Since the $x$ and $y$ components of both $f^d_L - f^d_R$ and $f_L = f_R$ are zero we only need to control the $z$
 components. As we motivated in the beginning of this section, differences in floor height are the main cause of deviation in the force.
@@ -285,7 +283,7 @@ exerted by the foot. The description of the controller again uses the concept of
 \end{equation}
 
 Two methods were proposed to realize this difference in ankle height.
-The first method is straight forward change the reference position of the feet in $z$-direction:
+The first method is to change the reference position of the feet in $z$-direction:
 
 \begin{equation}
 p^{d*}_R = p^d_R + 0.5 \cdot \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right)
@@ -296,7 +294,7 @@ p^{d*}_L = p^d_L - 0.5 \left(\begin{array}{c}0 \\ 0 \\ z_{ctl} \end{array}\right
 
 This can lead to singularities if both legs are already fully stretched, as the edge of their workspace is reached.
 The second method relies on an additional rotating the pelvis link. For this approach to work, the robot needs
-a joint that allows rotations around the anterior axis ($y$-Axis) to keep the upper body upright.
+a joint that allows rotations around the anterior axis ($y$-axis) to keep the upper body upright.
 Since the robot model we used does not have this DOF, we only implemented the first approach.
 To circumvent singularities we chose a CoM height that guarantees knee bending while generating
 the reference pattern.
@@ -305,11 +303,11 @@ the reference pattern.
 
 While each controller operate independently, their effects are highly coupled.
 The most important coupling exists between the chest posture controller and the ankle torque controller.
-Recall that in case of a solid contact with the ground the ankle torque controller will not rotate the supporting foot
+In case of a solid contact with the ground, the ankle torque controller will not rotate the supporting foot,
 but rather the body of the robot. This will however change the posture of chest frame. The chest posture controller
 compensates that and keeps the body upright.
 This tight coupling makes tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as their performance depends on the other controllers.
-Best results where observed when the chest posture controller was tuned independently first, disabling the other controllers.
+Best results were observed when the chest posture controller was tuned independently first, disabling the other controllers.
 Then the foot force controllers was enabled and tuned and finally the ankle torque controller was added and tuned.
 
 ### CoM and ZMP control
@@ -321,8 +319,8 @@ For example the ZMP Preview Control approach uses the cart-table model to predic
 can deviate significantly from the real ZMP as the model simplifies the dynamics.
 Thus to make sure the desired ZMP is tracked accurately, the reference ZMP needs to be adapted as well.
 
-Kajita et al. propose a dynamic system that describes the 3D-LIMP dynamics. To model mechanical lag they introduce a
-parameter $T_p$ that should specify the ZMP delay. The state-space description of the dynamic system for the $x$-direction is given below.
+Kajita et al. propose a dynamic system that describes the 3D-LIMP dynamics. To model the mechanical lag they introduce a
+parameter $T_p$ that specifies the ZMP delay. The state-space description of the dynamic system for the $x$-direction is given below.
 As before, the description of the dynamic system for the $y$-direction is analogous.
 
 \begin{equation} \label{eq:dyn-system-adaption}
@@ -384,13 +382,13 @@ the poles, $A$ and $B$ using predefined functions in \name{MATLAB} or similar so
 
 To implement the stabilizer above, a number of problems had to be solved.
 For one, computing the inverse kinematics is challenging. During walking the base of support
-depends on which foot is in contact with the ground. For example, if the left foot is the support foot, it is considered the base
+depends on the foot that is in contact with the ground. For example, if the left foot is the support foot, it is considered the base
 and the right foot is considered the TCP.
-The reverse is true if the right foot is the support foot.
+If the right foot is the support foot, the reverse is true.
 In dual support phase, we actually have two bases of support, which yields a parallel kinematic chain.
 \name{Simox}, the framework used to compute the inverse kinematics, describes the kinematic structure of a robot
 as a directed tree. Solving the inverse kinematics was initially only possible for sub-trees of that tree.
-Which means it was not possible to chose base and TCP freely, but it was determined by the structure in which the kinematic model
+Chosing the the base and the TCP freely was not possible, but it was determined by the structure in which the kinematic model
 was initially described.
 
 As a first approximation, a kinematic model with the left foot as root node was used.
@@ -415,27 +413,27 @@ stabilizer into the dynamic simulation.
 
 ## Problems
 
-Some problems became immediately clear when testing the stabilizer proposed by Kajita.
+When testing the stabilizer proposed by Kajita, some problems became immediately clear.
 The ground reaction forces in dual support are oscillating wildly. Instead of a continuous force at about $0.5 \cdot f_g$
 the forces on both feet oscillate between $0$ and $f_g$, the support foot changes in rapid successions.
 As outlines in section \ref{section:rigid-body-simulation} this is a result of the constraint solver method employed by \name{Bullet}.
 Subsequently the measured torques on the ankles did not follow the prediction as well.
-Please note that this is not merely sensor noise, these are the actual values used by the simulator.
+This are the actual values used by the simulator, not merely sensor noise.
 Even when adding mean-filters to smoothen the measured torques it was not possible to extract a meaningful control signal.
 Besides the sequential impulse solver newer versions of \name{Bullet} support a solver based on the Featherstone algorithm.
-Given the scope of this thesis, integrating that solver was out of question. Thus an alternative approach to stabilizing
-had to be found, but the Featherstone solver should be implemented in future work.
+Given the scope of this thesis, integrating that solver was out of question. Thus, an alternative approach to stabilizing
+had to be found. However, the Featherstone solver should be implemented in future work.
 
 ## Alternative approach {#section:alternative-approach}
 
-A simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
+As a simple heuristic, we used the controllers proposed by Kajita as inspiration and replaced the force and torque
 feedback with the pose error of pelvis and feet frames respectively.
 The chest controller (Equation \ref{eq:chest-dampening-roll} and \ref{eq:chest-dampening-pitch}) Kajita et al. proposed for controlling the
-body posture where adapted to all control frames to provide a feedback on the pose error.
+body posture were adapted to all control frames to provide a feedback on the pose error.
 
 This yields a controller that keeps the feet pose parallel to the ground, which is important when the swing foot touches the ground.
 Controlling the pelvis and chest pose to follow the reference also keeps the robot upright.
-It should be noted that it is not feasible to implement this stabilizer in practice. As mentioned in section \ref{section:stabilizer}
+It is not feasible to implement this stabilizer in practice. As mentioned in section \ref{section:stabilizer}
 precisely estimating the pose of a robot is not easy. While the dampening controllers can be configured to smoothen a noisy sensor signal,
 a high level of precision is required to ensure a correct foot posture.
 

@@ -11,13 +11,13 @@ and replayed. In the stabilized case the alternative stabilizer described in sec
 
 ### Walking in a straight line
 
-The first scenario is walking in a straight line for 10 steps.
-Figure \ref{img:player-undisturbed-straight-thumbs} shows the simulation of walking straight for 10 steps using no stabilization.
+The first scenario is walking in a straight line for 10 steps, which is shown by figure \ref{img:player-undisturbed-straight-thumbs}.
 
 \begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/undisturbed_straight_thumbs.png}
-\caption{Frames of undisturbed straight walking}
+\caption{Frames of undisturbed straight walking. The desired and realized CoM trajectory is shown as green and red
+line respectively.}
 \label{img:player-undisturbed-straight-thumbs}
 \end{figure}
 
@@ -25,7 +25,8 @@ Figure \ref{img:player-undisturbed-straight-thumbs} shows the simulation of walk
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_straight_x.png}
 \caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
-All coordinates in the global reference frame.}
+All coordinates in the global reference frame. A blue background is when the right foot is the supporting
+foot, a green background if the left foot is the supporting foot.}
 \label{img:undisturbed-straight-x}
 \end{figure}
 
@@ -45,7 +46,7 @@ the desired CoM acceleration in comparison to the realized acceleration.
 However the foot remains in full ground contact and friction forces are applied accurately.
 Thus dynamically stable walking is realized for both unstabilized and stabilized walking.
 See figure \ref{img:contact_forces} for the contact forces that are applied to each foot while walking.
-The forces oscillate quite a bit due to simulation error. However the mean values meet the expectations
+The forces oscillate due to simulation error. However the mean values meet the expectations
 of the gravity force vector.
 
 \begin{figure*}[hbt]
@@ -122,15 +123,16 @@ Each for the unstabilized and stabilized case.}
 
 ## Disturbed walking
 
-The scenario used to test the performance of the stabilizer under disturbance,
-was applying a short push to the chest, back, left shoulder and right shoulder.
+Applying a short push to the chest, back, left shoulder and right shoulder was used as scenario
+to test the performance of the stabilizer under disturbance.
 The results are compared with the performance of the unstabilized trajectory.
+Figure \ref{player-disturbed-straight-thumbs} shows the simulation for a push to the chest.
 
 \begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_thumbs.png}
 \caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector.}
-\label{img:player-undisturbed-circle-thumbs}
+\label{img:player-disturbed-straight-thumbs}
 \end{figure}
 
 To simulate a push, a ball with a radius of 11cm and weight of 450g (FIFA football) is shoot from
@@ -154,54 +156,50 @@ unstable trajectory.
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_back_straight_x.png}
-\caption{The actually realized CoM and ZMP values after a ball collision in the back.
-All coordinates in the global reference frame. Red lines denote the point of impact.}
+\caption{The actually realized CoM and ZMP values after a ball collision in the back.}
 \label{img:disturbed-back-straight-x}
 \end{figure*}
 
 Similar results can be observed for disturbances on the left (see figure \ref{img:disturbed-left-straight-x})
 and right shoulder (see figure \ref{img:disturbed-right-straight-x}). In both cases the disturbance leads to falling
 in the unstabilized case.
-Figure \ref{img:cp-disturbance-front-y} show the impact of the push to the chest on the immediate capture point.
-The capture point shifts rapidly in the direction of the disturbance. This property
-will be utilized to derive a capture position for push recovery.
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_left_straight_x.png}
-\caption{The actually realized CoM and ZMP values after a ball collision in the left shoulder.
-All coordinates in the global reference frame. Red lines denote the point of impact.}
+\caption{The actually realized CoM and ZMP values after a ball collision in the left shoulder.}
 \label{img:disturbed-left-straight-x}
 \end{figure*}
-
 
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_right_straight_x.png}
-\caption{The actually realized CoM and ZMP values after a ball collision in the right shoulder.
-All coordinates in the global reference frame. Red lines denote the point of impact.}
+\caption{The actually realized CoM and ZMP values after a ball collision in the right shoulder.}
 \label{img:disturbed-right-straight-x}
 \end{figure*}
 
+Figure \ref{img:cp-disturbance-front-y} show the impact of the push to the chest on the immediate capture point.
+The capture point shifts rapidly in the direction of the disturbance. This property
+will be utilized to derive a capture position for push recovery.
 
-\begin{figure*}[hbt]
+\begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/cp_disturbance_front_y.png}
 \caption{Impact of the disturbance on the immediate capture point. Red lines denote the point of impact.}
 \label{img:cp-disturbance-front-y}
-\end{figure*}
+\end{figure}
 
 ## Push recovery
 
-\begin{figure*}[hbt]
+\begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/push_recovery_thumbs.png}
 \caption{\name{Armar4} getting hit by two balls at the left shoulder.}
 \label{img:push-recovery-thumbs}
-\end{figure*}
+\end{figure}
 
 The performance of the push recovery was evaluated with a simple best-case scenario.
-The robot is balancing on the left foot and is pushed on the right shoulder.
+The robot is balancing on the left foot and is pushed on the left shoulder.
 Most notably this scenario was used to demonstrate the push recovery based on the Capture Point
 implemented in the IHMC/Yobotics Biped. \cite{pratt2009video}.
 While the push recovery implemented is able to recover from any position,
@@ -209,9 +207,9 @@ with the current method it is not reliable in the general case.
 There are multiple reasons for this. For one, the fall detection is not very reliable.
 Another reason is that the speed limits of the leg joints impose a maximum velocity
 for the foot movement. So not only needs the target position to be reachable, it also
-needs to be reachable in a specific amount of time.
+needs to be reachable in a short amount of time.
 As above a football is used as source of disturbance.
-See figure \ref{img:push-recovery-thumbs} shows a push recovery from being pushed from the left shoulder.
+Figure \ref{img:push-recovery-thumbs} shows a recovery maneuver from a push to the left shoulder.
 
 See figure \ref{img:push-recovery-x} for a trajectory of the recovery maneuver. You can see
 that the Immediate Capture Point jumps at the point of impact. The push recovery is activated

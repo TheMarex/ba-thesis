@@ -1,8 +1,8 @@
-# Pattern generator
+# Pattern generator {#chapter:pattern-generator}
 
 To generate a walking pattern for a bipedal robot two basic approaches are common:
 
-1. Generate (or modify) foot trajectories that realize a prescribed trajectory of the CoM
+1. Generate (or modify) foot trajectories that realizes a prescribed trajectory of the CoM
 
 2. Generate a CoM trajectory for prescribed foot trajectories
 
@@ -20,7 +20,7 @@ since all pattern that we used were generated that way.
 ## Computing the CoM from a reference ZMP
 
 As we saw in the section \ref{section:cart-table} it is easy to compute the resulting
-ZMP given the CoM and its acceleration. However for generating the walking
+ZMP given the CoM and its acceleration. However, for generating the walking
 pattern, we want to compute the CoM trajectory from a given ZMP.
 If you rearrange the equations \ref{eq:zmp-x} and \ref{eq:zmp-y} you see that we have to solve a second order differential equations:
 
@@ -47,7 +47,7 @@ Instead Kajita et al. chose to define a dynamic system in the time domain that d
 
 For simplicity we will only focus on the dynamic description of one dimension, as the other one is analogous.
 To transform the equations to a strictly proper dynamical system, we need to determine the state vector of our system.
-For the cart-table model it suffices to know the position, velocity and acceleration of the cart, i.e. the CoM.
+For the Cart-Table Model it suffices to know the position, velocity and acceleration of the cart, i.e. the CoM.
 Thus the state-vector is defined as $x = (c_x, \dot{c_x}, \ddot{c_x})$. We can define the evolution of the state vector as follows:
 
 \begin{equation} \label{eq:dyn-system}
@@ -81,7 +81,7 @@ c_x \\
 u
 \end{equation}
 
-As you can see the jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
+As you can see, the jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
 
 We use equation \ref{eq:zmp-x} to calculate the actual output of the dynamic system the resulting ZMP, that will be controlled:
 
@@ -158,7 +158,7 @@ x[k+1] & = &  \overbrace{\left(\begin{array}{ccc} %
                \end{array}\right)}^{=: B} \cdot u_x[k]
 \end{eqnarray}
 
-### Controlling the dynamic system
+### Controlling the dynamic system {#section:zmp-control}
 
 To control this dynamic system we need to determine an adequate control input $u_x$ to realize the
 reference ZMP trajectory. A performance index $J_x$ for a given control input $u_x$ is needed to formalize what a "good" control input would be.
@@ -224,17 +224,17 @@ Since the calculation is quite elaborate we refer to the cited article by Kataya
 \label{img:pattern-generator-architechture}
 \end{figure*}
 
-To generate walking patterns based on the ZMP preview control method, the approach from Kajita
-was implemented in \name{libBipedal} a shared library. A front-end was developed to easily change parameters, visualize
- and subsequently export the trajectory to the \name{MMM} format.
-The implementation was build on a previous implementation, which was refactored,
+To generate walking patterns based on the ZMP Preview Control method, the approach from Kajita
+was implemented in \name{libBipedal}, a shared library that contains all walking realted algorithms.
+A front-end was developed to easily change parameters, visualize and subsequently export the trajectory
+to the \name{MMM} format. The implementation was build on a previous implementation, which was refactored,
 extended and tuned with respect to results from the dynamics simulation.
 
 The pattern generator makes extensive usage of \name{Simox VirtualRobot}, for providing a model of the robot
 and the associated task of computing the forward- and inverse kinematics.
 
 Generating a walking pattern consists of multiple steps. First the foot positions are calculated. These are used to derive the reference ZMP
-trajectory which is feed into the ZMP preview controller. From that the CoM trajectory is computed. The CoM trajectory and feet trajectories are
+trajectory which is feed into the ZMP Preview Controller. From that the CoM trajectory is computed. The CoM trajectory and feet trajectories are
 then used to compute the inverse kinematics. The resulting joint trajectory is displayed in the visual front-end and can be exported.
 Each step is contained in dedicated modules that can be easily replaced, if needed.
 We will outline the implementation of each module separately.
@@ -243,7 +243,7 @@ We will outline the implementation of each module separately.
 
 To generate the foot trajectories several parameters are needed:
 
-\begin{figure*}[b]
+\begin{figure}[b]
 \begin{center}
   \begin{tabular}{| l | l |}
     \hline
@@ -253,10 +253,10 @@ To generate the foot trajectories several parameters are needed:
     $t_{ss}$ & 0.7 s\\ \hline
     $t_{ds}$ & 0.1 s\\ \hline
   \end{tabular}
+\end{center}
 \caption{Default parameters used for generating a walking trajectory.}
 \label{table:pattern-parameters}
-\end{center}
-\end{figure*}
+\end{figure}
 
 Step height $h$
   ~  Maximum distance between the foot sole and the floor
@@ -273,16 +273,16 @@ Single support duration $t_{ss}$
 Dual support duration $t_{ds}$
   ~ Time the weight of the robot is supported by both feet
 
-See figure \ref{table:pattern-generator} for the values used to generate the trajectories
+See figure \ref{table:pattern-parameters} for the values used to generate the trajectories
 using a model of the \name{Armar IV} robot.
 
 #### Walking straight
 
-Since the foot trajectories of a humanoid walking have a cyclic nature, we only need three different foot trajectories that can be composed
+Since the foot trajectories of humanoid walking have a cyclic nature, we only need three different foot trajectories that can be composed
 to arbitrarily long trajectories:
 Two transient trajectories for the first and last step respectively and a cyclic motion that can be repeated indefinitely.
 We can use the same trajectories for both feet, as they are geometrically identical.
-Each foot trajectory starts with swing phase and a resting phase. The trajectory in $y$ and $z$ direction is computed by a 5th order polynomial
+Each foot trajectory starts with swing phase and ends with a resting phase. The trajectory in $y$ and $z$ direction is computed by a 5th order polynomial
 that assures the velocities and accelerations are approaching zero at the lift-off and touch-down point.
 The first and last step only have half of the normal step length, since the trajectory is starting and ending
 from a dual support stance, where both feet are placed parallel to each other.
@@ -295,10 +295,10 @@ Each column contains Cartesian coordinates and roll-pitch-yaw angles.
 Much of the general structure of the foot trajectory remains the same as for walking straight.
 However instead of specifying the step length, it is implicitly given by the segment of the circle that should be traversed and the number of steps.
 So extra care needs to be taken to specify enough steps so that the generated foot positions are still reachable.
-Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$ depending which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. However the movement in the $xy$-plane is transformed to follow the circle for the specific foot.
+Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$, depending on which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. The movement in the $xy$-plane is transformed to follow the circle for the specific foot.
 The same polynomial that was previously used for the $y$-direction is now used to compute the
 angle on the corresponding circle and the $x$ and $y$ coordinates are calculated accordingly.
-The foot orientation is computed from the tangential ($y$-Axis) and normal ($x$-Axis) of circle the foot follows.
+The foot orientation is computed from the tangential ($y$-Axis) and normal ($x$-Axis) of the circle the foot follows.
 
 #### Balancing on one foot
 
@@ -307,12 +307,12 @@ Another footstep planer was implemented that generates a trajectory for standing
 Starting from dual support stance, the swing leg is moved in vertical direction until the usual step height is achieved.
 Additionally the foot is moved in lateral direction to half the step width. This reduces the necessary upper body tilt to compensate the imbalance.
 For the last step the inverse movement is performed to get back into dual support stance.
-This method could be extended to walk by setting the next support foot in a straight line before the current support foot.
+This method could be extended to walking by setting the next support foot in a straight line before the current support foot.
 The swing foot would need to be moved in an arc in lateral direction to avoid self-collisions.
 
 ### ZMP reference generation
 
-As an input for the ZMP preview control, we need a reference ZMP movement that corresponds with the foot trajectory.
+As an input for the ZMP Preview Control, we need a reference ZMP movement that corresponds with the foot trajectory.
 The reference generator receives a list of intervals associated with the desired support stance and foot positions as input.
 In single support phase, the reference generator places the ZMP in the center of the support polygon of the corresponding foot.
 Since the support polygon is convex, the center is the furthest point away from the border of the polygon. This should guarantee a maximum
@@ -327,17 +327,18 @@ This assures we do not start to move the ZMP too early.
 
 ### ZMP Preview Control
 
-This module implements the method described by Kajita et al. and uses the method outlined by Katayama et al. to compute the optimal control
-input $u[k]$. Since it is computational feasible, the preview period consists of the full reference trajectory.
+This module implements the method described by Kajita et al. \cite{kajita2003biped} and uses the
+method outlined by Katayama et al. \cite{katayama1985design} to compute the optimal control input $u[k]$.
+Since it is computational feasible, the preview period consists of the full reference trajectory.
 For an online usage of this method, this could be reduced to a much smaller sample size, e.g. only preview one step ahead.
 Using the system dynamics described by \ref{eq:state-transition-result} the CoM trajectory, velocity and acceleration can be computed.
 The implementation makes heavy use of \name{Eigen}, a high performance linear algebra framework that uses SIMD instructions to speed up calculations.
-Thus thus a calculation time of 6.2s could be achieved to calculate ten steps, including the inverse kinematics.
+Thus thus a calculation time of 6.2s could be achieved to calculate ten steps (about 1000 samples), including the inverse kinematics.
 
 ### Inverse Kinematics
 
-Using the foot trajectories and CoM trajectory the actual resulting joint angles need to be calculated.
-Since the kinematic model that is used has a total of 35 degrees of freedom, we need to reduce the number of joints that are used to
+Using the foot trajectories and CoM trajectory the resulting joint angles need to be calculated.
+Since the used kinematic model has a total of 35 degrees of freedom, we need to reduce the number of joints that are used for the IK to
 a sensible value.
 For walking only the joints of the legs and both the torso roll and pitch joints are used. All other joints are constrained to static values that will not cause self-collisions (e.g. the arms are slightly extended and do not touch the body).
 For computing the IK additional constraints where added, to make sure the robot has a sensible pose: The chest should always have an upright position
@@ -366,14 +367,12 @@ A hierarchical solver was used to solve the inverse kinematics for that goals in
 It was observed that specifying a good target height for the CoM is of utmost importance for the quality of the IK.
 For the model of \name{Armar IV} that used here, a height of $0.86$ m yielded the best results.
 
-### Trajectory Export
+### Trajectory export
 
 The trajectory was exported in open \name{MMM} trajectory format. The format was extended to export additional information
 useful for debugging and controlling the generated trajectory.
-That means besides the joint values and velocities the trajectory also includes the CoM and ZMP trajectory that was used to derive them.
-Also information about the current support phase is saved.
-For convenience the pose of chest, pelvis, left and right foot are exported as homogeneous matrices as well.
-This was done to save the additional step of computing them again from the exported joint trajectory for the stabilizer
-and also eliminate an additional error source while debugging.
-
+Besides the joint values and velocities the trajectory also includes the CoM and ZMP trajectory.
+Also, information about the current support phase is saved.
+For convenience, the pose of chest, pelvis, left and right foot are exported as homogeneous matrices as well.
+This saves the additional step of computing them again for the stabilizer and also eliminate an additional error source while debugging.
 

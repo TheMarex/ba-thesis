@@ -17,7 +17,7 @@ The simplest model is the 3D Linear Inverted Pendulum with a point contact and a
 telescopic rod.
 If we use the LIP equations \ref{eq:lip-x} and \ref{eq:lip-y} with zero input torque,
 we can derive that so called *orbital energy* of the pendulum.
-As we did in the section about the pattern generator, we will derive the equations
+As we did in chapter \ref{chapter:pattern-generator}, we will derive the equations
 only for one dimension. The other dimension follows analogous.
 
 The base of the pendulum is assumed to be at the origin of the reference
@@ -74,8 +74,8 @@ However in normal operations it is likely that the ZMP will touch (or leave) the
 for short periods of time. A simple method to filter out this noise is to define a minimum duration the ZMP
 as to be in an unstable state.
 Choosing a small value will let us react faster to disturbances, but make the method error prone.
-Choosing a large value will add an additional detail until we can react, but is much less prone to be triggered by
-mistake. An experimental evaluation yielded good results with a duration of $t = 0.35s$.
+Choosing a large value will add an additional delay until we can react, but is much less prone to be triggered by
+mistake. An experimental evaluation yielded good results with a duration of $t = 30ms$.
 
 ## Recovery
 
@@ -87,7 +87,7 @@ Thus if the resulting support polygon includes the capture point, the position w
 Since the motor velocities are limited, we need a minimal amount of time $t_{min}$ to place
 the foot in the desired location.
 Thus instead of using the Immediate Capture Point, we use the future Immediate Capture Point $p_{ic}(t_{min})$
-to derive the desired location.
+to derive the desired location. A value of $t_{min} = 0.35s$ yielded good results.
 
 ## Implementation
 
@@ -96,6 +96,6 @@ extended to call the fall detection module in each iteration of the control loop
 If an unstable state is reached, the recovery module overrides the normal trajectory
 of the stabilizer. After completing the recovery maneuver, the robot remains
 in the given position.
-Resuming the original pattern requires planning dynamically stable transition trajectory.
+Resuming the original pattern requires planning a dynamically stable transition trajectory.
 This is left for future work.
 
