@@ -21,7 +21,7 @@ This model is called the 3D *linear* inverted pendulum model (short *3D-LIPM*).
 To describe the dynamics of the inverted pendulum we are mainly interested in the effect a given actuator torque has on the movement of the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the origin of the current Cartesian coordinate system.
-Thus we can describe the position inverted pendulum by a vector $c = (c_x, c_y, c_z)$.
+Thus we can describe the position of the inverted pendulum by a vector $c = (c_x, c_y, c_z)$.
 We are going to introduce an appropriate (generalized) coordinate system $q = (\theta_x, \theta_y, r)$ to get an easy description of our actuator torques:
 Let $m$ be the mass of the pendulum and $r$ the length of the telescopic leg.
 $\theta_y$ and $\theta_x$ describe the corresponding roll and pitch angles of the pose of the pendulum.
@@ -96,11 +96,11 @@ we are going to use the *linear* inverted pendulum model.
 ### Linearization
 
 In a man-made environment it is fair to assume that the ground a robot will walk on
-can be approximate by a slightly sloped plane. In most cases it can even be assumed that there is no slope at all.
+can be approximated by a slightly sloped plane. In most cases it can even be assumed that there is no slope at all.
 
 The basic assumption in the next section will be that the CoM will have a *constant displacement* with regard to our ground plane.
 Thus we can constrain the movement of the CoM to a plane that is parallel to the ground plane.
-Note that this assumption is, depending on the walking speed, only approximately true for human walking as shown by Orendurff et al. \citep{orendurff2004effect}.
+Note that these assumption is, depending on the walking speed, only approximately true for human walking as shown by Orendurff et al. \citep{orendurff2004effect}.
 For slow to fast walking ($0.7$ m/s and $1.6$ m/s respectively) the average displacement in $z$-direction was found to be between $2.7cm$ and $4.81$ cm.
 While the walking patterns generated based on the LIP-model will guarantee dynamic stability, they might not look natural with regard to human walking.
 
@@ -128,7 +128,7 @@ yields the following equations:
 \end{equation}
 
 The term $c_x \ddot{c}_y - \ddot{c}_x c_y$ that is part of both equations is still causing the equations to be non-linear.
-To make this equations linear we will assume that our ground plane has no slope, thus $k_x = k_y = 0$ and the non-linear terms will vanish.
+To make these equations linear we will assume that our ground plane has no slope, thus $k_x = k_y = 0$ and the non-linear terms will vanish.
 
 Another problem is that the actuator torques $\tau_x$ and $\tau_y$ both have non-linear factors $\frac{\sqrt{1 - s_y^2 - s_x^2}}{c_x}$ and $\frac{\sqrt{1 - s_y^2 - s_x^2}}{c_y}$ respectively. This can be solved by substituting with the following *virtual inputs*:
 
@@ -161,7 +161,7 @@ By deriving a control scheme that constrains the ZMP to be strictly inside the s
 stable trajectories.
 
 For flat ground contact of our support foot with the floor the ZMP corresponds with the position of the center of pressure (CoP).
-Indeed, some author (notably Pratt) prefer to use the term CoP instead of ZMP. In the context of this thesis,
+Indeed, some authors (notably Pratt) prefer to use the term CoP instead of ZMP. In the context of this thesis,
 we will use the term ZMP.
 
 The CoP (and in flat ground contact the ZMP) of an object in contact with the ground can be computed as the sum of all contact points $p_1, \dots, p_n$ weighted by the forces in $z$-direction $f_{1z}, \dots, f_{nz}$ that is applied:
@@ -257,7 +257,7 @@ the total linear momentum $\mathcal{P}$ can be calculated by:
 \mathcal{P} = \sum^k_{j=1} m_j \cdot \dot{c}_j
 \end{equation}
 
-If $\omega_i$ the angular momentum and $R_i$ is the rotational part of the reference frame of the $i$-th body and $I_i$ the inertia tensor in that reference frame, the total angular momentum $\mathcal{L}$ can be calculated by:
+If $\omega_i$ is the angular momentum and $R_i$ is the rotational part of the reference frame of the $i$-th body and $I_i$ the inertia tensor in that reference frame, the total angular momentum $\mathcal{L}$ can be calculated by:
 
 \begin{equation}
 \mathcal{L} = \sum^k_{j=1} c_j \times (m_j \dot{c}_j) + R_j I_j R^T_j \omega_j
@@ -281,7 +281,7 @@ To calculate the resulting torque $\tau_{ZMP}$ around the ZMP located at $p$ we 
 \tau_{ZMP} = \tau + (0 - p) \times f = \tau - p \times f
 \end{equation}
 
-If solve equation \ref{eq:change-lin-momentum} for $f$ and \ref{eq:change-ang-momentum} for $\tau$ and substitute them in \ref{eq:multi-body-zmp}
+If we solve equation \ref{eq:change-lin-momentum} for $f$ and \ref{eq:change-ang-momentum} for $\tau$ and substitute them in \ref{eq:multi-body-zmp}
 this yields the following equation:
 
 \begin{equation}

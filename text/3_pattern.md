@@ -2,9 +2,9 @@
 
 To generate a walking pattern for a bipedal robot two basic approaches are common:
 
-1. Generate (or modify) foot trajectories that realizes a prescribed trajectory of the CoM
+1. Generate (or modify) foot trajectories that realizes a prescribed trajectory of the CoM.
 
-2. Generate a CoM trajectory for prescribed foot trajectories
+2. Generate a CoM trajectory for prescribed foot trajectories.
 
 The first approach is generally used for implementing pattern generators solely based
 on the 3D-LIP model. \cite{kajita20013d}
@@ -15,7 +15,7 @@ so that they can actually be realized by the robot.
 The pattern generator proposed by Kajita et al. \cite{kajita2003biped} based on Preview Control
 realizes the second approach.
 We will discuss the theoretical background of this pattern generator here in more detail,
-since all pattern that we used were generated that way.
+since all patterns that we used were generated that way.
 
 ## Computing the CoM from a reference ZMP
 
@@ -32,12 +32,12 @@ c_x = \frac{z_c}{g} \cdot \ddot{c_x} + p_x
 c_y = \frac{z_c}{g} \cdot \ddot{c_y} + p_y
 \end{equation}
 
-There are several ways to solve this differential equations, for example by transforming
+There are several ways to solve these differential equations, for example by transforming
 them to the frequency-domain. This however would mean that the ZMP trajectory needs to be transformed
 to the frequency domain as well, e.g. using Fast Fourier Transformation. This has two main
 problems:
 
-1. It has a significant computational overhead. (For FFT the additional runtime would be in $O(n \log n)$)
+1. It has a significant computational overhead (for FFT the additional runtime would be in $O(n \log n)$).
 
 2. We need to know the whole ZMP trajectory in advance.
 
@@ -81,8 +81,7 @@ c_x \\
 u
 \end{equation}
 
-As you can see, the jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
-
+The jerk of the CoM was introduced as an input $u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
 We use equation \ref{eq:zmp-x} to calculate the actual output of the dynamic system the resulting ZMP, that will be controlled:
 
 \begin{equation} \label{eq:zmp-x-output}
@@ -102,7 +101,7 @@ Using this formulation of the dynamic system we need to derive the evolution of 
 Since our input ZMP trajectory will consist of discrete samples at equal time intervals $T$
 we define the discrete state as $x[k] := x(k \cdot T)$.
 Please note that this system is a linear time-invariant system (LTI), and both matrices $A_0$ and $B_0$
-are constant. We can therefore use the standard approach to solve this system using the equation:
+are constant. We can therefore use the standard approach to solve these systems using the equation:
 
 \begin{equation}
 x(t) = e^{A_0 \cdot (t - \tau)} x(\tau) + \int^t_\tau e^{A_0 \cdot (t - \lambda)} B_0 u(\lambda) d\lambda
@@ -184,9 +183,9 @@ foot.
 \label{img:simple-zmp-control}
 \end{figure*}
 
-As you can see the reference ZMP is perfectly tracked. However, the CoM does not behave as expected.
+As can be seen, the reference ZMP is perfectly tracked. However, the CoM does not behave as expected.
 To achieve the required ZMP position the CoM will be *accelerated indefinitely* in the opposite direction.
-Clearly this is not desired and will lead to falling on a real robot. A more sophisticated performance index is needed.
+Clearly this is not desired and will lead to falling of a real robot. A more sophisticated performance index is needed.
 To eventually reach a stable state at which the CoM comes to rest, the performance index should include a state feedback.
 Also note the large jerk that is applied to the system when the reference ZMP position changes rapidly.
 In a real mechanical system large jerks will lead to oscillations, which will disturb the system.
@@ -225,16 +224,15 @@ Since the calculation is quite elaborate we refer to the cited article by Kataya
 \end{figure*}
 
 To generate walking patterns based on the ZMP Preview Control method, the approach from Kajita
-was implemented in \name{libBipedal}, a shared library that contains all walking realted algorithms.
+was implemented in \name{libBipedal}, a shared library that contains all walking related algorithms.
 A front-end was developed to easily change parameters, visualize and subsequently export the trajectory
 to the \name{MMM} format. The implementation was build on a previous implementation, which was refactored,
 extended and tuned with respect to results from the dynamics simulation.
-
 The pattern generator makes extensive usage of \name{Simox VirtualRobot}, for providing a model of the robot
 and the associated task of computing the forward- and inverse kinematics.
 
 Generating a walking pattern consists of multiple steps. First the foot positions are calculated. These are used to derive the reference ZMP
-trajectory which is feed into the ZMP Preview Controller. From that the CoM trajectory is computed. The CoM trajectory and feet trajectories are
+trajectory which is fed into the ZMP Preview Controller. From that the CoM trajectory is computed. The CoM trajectory and feet trajectories are
 then used to compute the inverse kinematics. The resulting joint trajectory is displayed in the visual front-end and can be exported.
 Each step is contained in dedicated modules that can be easily replaced, if needed.
 We will outline the implementation of each module separately.
@@ -262,13 +260,13 @@ Step height $h$
   ~  Maximum distance between the foot sole and the floor
 
 Step length $l$
-  ~ Distance in anterior direction ($y$-Axis) between the lift-off point and the touch-down point
+  ~ Distance in anterior direction ($y$-axis) between the lift-off point and the touch-down point
 
 Step width $w$
-  ~ Distance in lateral direction ($x$-Axis) between both TCP on the feet
+  ~ Distance in lateral direction ($x$-axis) between both TCP on the feet
 
 Single support duration $t_{ss}$
-  ~ Time the weight of the robot is only support by exactly one foot
+  ~ Time the weight of the robot is only supported by exactly one foot
 
 Dual support duration $t_{ds}$
   ~ Time the weight of the robot is supported by both feet
@@ -298,7 +296,7 @@ So extra care needs to be taken to specify enough steps so that the generated fo
 Each foot needs to move on a circle with radius $r_{inner} = r - \frac{w}{2}$ or $r_{outer} = r + \frac{w}{2}$, depending on which foot lies in the direction of the turn. The movement in $z$-direction remains unaffected. The movement in the $xy$-plane is transformed to follow the circle for the specific foot.
 The same polynomial that was previously used for the $y$-direction is now used to compute the
 angle on the corresponding circle and the $x$ and $y$ coordinates are calculated accordingly.
-The foot orientation is computed from the tangential ($y$-Axis) and normal ($x$-Axis) of the circle the foot follows.
+The foot orientation is computed from the tangential ($y$-axis) and normal ($x$-axis) of the circle the foot follows.
 
 #### Balancing on one foot
 
@@ -341,10 +339,10 @@ Using the foot trajectories and CoM trajectory the resulting joint angles need t
 Since the used kinematic model has a total of 35 degrees of freedom, we need to reduce the number of joints that are used for the IK to
 a sensible value.
 For walking only the joints of the legs and both the torso roll and pitch joints are used. All other joints are constrained to static values that will not cause self-collisions (e.g. the arms are slightly extended and do not touch the body).
-For computing the IK additional constraints where added, to make sure the robot has a sensible pose: The chest should always have an upright position
+For computing the IK additional constraints were added to make sure the robot has a sensible pose: The chest should always have an upright position
 and the pelvis should always be parallel to the floor. To support non-straight walking, the pelvis and chest orientation should also follow the walking direction. Thus the following method to compute the desired chest and pelvis orientation is used:
 
-1. Compute walking direction $y'$ as mean of y-Axis of both feet and normalize: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
+1. Compute walking direction $y'$ as mean of $y$-axis of both feet and normalize: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
 
 2. Both should have an upright position $z' := (0, 0, 1)^T$
 
@@ -353,7 +351,8 @@ and the pelvis should always be parallel to the floor. To support non-straight w
 4. Pose $R'$ is given by $R' = (x', y', z')$
 
 A special property of the model that was used for computing the inverse kinematics, is that TCP of the left leg was chosen as root node.
-Since we can specify the root position freely, that removes the need of solving for the left foot pose. Thus the following goals need to be satisfied by the inverse kinematics:
+Since we can specify the root position freely, that removes the need of solving for the left foot pose.
+Thus, the inverse kinematics needs to solves for the following goals:
 
 1. Chest orientation
 
@@ -363,9 +362,9 @@ Since we can specify the root position freely, that removes the need of solving 
 
 4. Right foot pose
 
-A hierarchical solver was used to solve the inverse kinematics for that goals in the given order.
+A hierarchical solver was used to solve the inverse kinematics for these goals in the given order.
 It was observed that specifying a good target height for the CoM is of utmost importance for the quality of the IK.
-For the model of \name{Armar IV} that used here, a height of $0.86$ m yielded the best results.
+For the \name{Armar IV} model that was used here, a height of $0.86$ m yielded the best results.
 
 ### Trajectory export
 
@@ -374,5 +373,5 @@ useful for debugging and controlling the generated trajectory.
 Besides the joint values and velocities the trajectory also includes the CoM and ZMP trajectory.
 Also, information about the current support phase is saved.
 For convenience, the pose of chest, pelvis, left and right foot are exported as homogeneous matrices as well.
-This saves the additional step of computing them again for the stabilizer and also eliminate an additional error source while debugging.
+This saves the additional step of computing them again for the stabilizer and also eliminates an additional error source while debugging.
 

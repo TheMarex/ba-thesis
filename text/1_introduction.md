@@ -94,7 +94,7 @@ case and needs to be accounted for.
 Thus a stabilizer is needed to adapt the trajectory to the disturbances.
 Most stabilizers for established robotic platforms are closed source and very
 robot specific. Notably various iterations of stabilizers based on modifying
-an already dynamically stable pattern where proposed by Kajita and Miura et al.
+an already dynamically stable pattern were proposed by Kajita and Miura et al.
 (\cite{kajita2010biped}, \cite{miura2011human} and \cite{kajita2012evaluation})
 
 While a stabilizer can deal with continuous small disturbances, a robot may

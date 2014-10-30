@@ -5,7 +5,7 @@ The simulator was build on the \name{SimDynamics} framework that is part of \nam
 \name{SimDynamics} uses \name{Bullet Physics} as underlying physics framework.
 A big part of the work on the simulator was spend on configuring the parameters and finding flaws in the physics simulation.
 Thus, the simulator includes a extensive logging and visualization framework that measures all important parameters of the simulation.
-For visualizing and analysing the measurement the Open Source tools \name{IPython}, \name{numpy} and \name{pandas} where used.
+For visualizing and analysing the measurement the Open Source tools \name{IPython}, \name{numpy} and \name{pandas} were used.
 
 ## Simulating rigid body dynamics {#section:rigid-body-simulation}
 
@@ -60,7 +60,7 @@ It becomes even worse in the case of a parallel kinematic chain, that is in cont
 This is the case for a bipedal robot in dual support stance.
 Solving a non-penetration constrain on either end will invalidate the position constraint of the next link.
 In turn, the position constraint of each link needs to be updated until the other end of the kinematic chain is reached. If the non-penetration
-constraint is violated again for this end, the whole process starts again in reverse direction. This leads to oscillations that need a high number
+constraint is violated again for the other end, the whole process starts again in reverse direction. This leads to oscillations that need a high number
  of iterations to level off to an acceptable level.
 Despite these inaccuracies, by using enough solver iterations an overall usable systems can be derived. However, the velocities will still have
 a small random error in each simulation step.
@@ -117,7 +117,7 @@ Since the motor implemented in \name{Bullet} are velocity controlled,
 PID based motor controllers were added to \name{SimDynamics}.
 They control the motor velocities to compensate position errors.
 The motors implemented in \name{Bullet} do not limit the motor velocity and acceleration.
-This is not consistent with real motors, thus limits for velocities and acceleration where introduced to \name{SimDynamics},
+This is not consistent with real motors, thus limits for velocities and acceleration were introduced to \name{SimDynamics},
 that can be configured per joint.
 
 The graphical user-interface supports the visualization of measured and desired values
@@ -146,7 +146,7 @@ Since the goal was to keep the component as simple as possible, we use existing 
 Some small helper scripts are provided to make it easier to load the data into the time series analysis framework \name{pandas}.
 \name{Pandas} interfaces with the popular plotting framework \name{matplotlib} to display plots of the data.
 \name{IPython} is used to easily run the analysis and display the results in a browser window.
-All plots of simulated patterns found in this thesis can be generated automatically for every simulation.
+Most plots of simulated patterns found in this thesis can be generated automatically for every simulation.
 
 \begin{figure}[htb]
   \begin{center}

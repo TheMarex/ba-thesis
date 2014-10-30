@@ -250,8 +250,8 @@ the pendulum.
 
 For simplicity we assume that the base of the pendulum is fixed at the
 origin of the current Cartesian coordinate system. Thus we can describe
-the position inverted pendulum by a vector $c = (c_x, c_y, c_z)$. We are
-going to introduce an appropriate (generalized) coordinate system
+the position of the inverted pendulum by a vector $c = (c_x, c_y, c_z)$.
+We are going to introduce an appropriate (generalized) coordinate system
 $q = (\theta_x, \theta_y, r)$ to get an easy description of our actuator
 torques: Let $m$ be the mass of the pendulum and $r$ the length of the
 telescopic leg. $\theta_y$ and $\theta_x$ describe the corresponding
@@ -339,13 +339,13 @@ model.
 \subsection{Linearization}\label{linearization}
 
 In a man-made environment it is fair to assume that the ground a robot
-will walk on can be approximate by a slightly sloped plane. In most
+will walk on can be approximated by a slightly sloped plane. In most
 cases it can even be assumed that there is no slope at all.
 
 The basic assumption in the next section will be that the CoM will have
 a \emph{constant displacement} with regard to our ground plane. Thus we
 can constrain the movement of the CoM to a plane that is parallel to the
-ground plane. Note that this assumption is, depending on the walking
+ground plane. Note that these assumption is, depending on the walking
 speed, only approximately true for human walking as shown by Orendurff
 et al. \citep{orendurff2004effect}. For slow to fast walking ($0.7$ m/s
 and $1.6$ m/s respectively) the average displacement in $z$-direction
@@ -425,7 +425,7 @@ dynamically stable trajectories.
 
 For flat ground contact of our support foot with the floor the ZMP
 corresponds with the position of the center of pressure (CoP). Indeed,
-some author (notably Pratt) prefer to use the term CoP instead of ZMP.
+some authors (notably Pratt) prefer to use the term CoP instead of ZMP.
 In the context of this thesis, we will use the term ZMP.
 
 The CoP (and in flat ground contact the ZMP) of an object in contact
@@ -539,9 +539,9 @@ $\mathcal{P}$ can be calculated by:
 \mathcal{P} = \sum^k_{j=1} m_j \cdot \dot{c}_j
 \end{equation}
 
-If $\omega_i$ the angular momentum and $R_i$ is the rotational part of
-the reference frame of the $i$-th body and $I_i$ the inertia tensor in
-that reference frame, the total angular momentum $\mathcal{L}$ can be
+If $\omega_i$ is the angular momentum and $R_i$ is the rotational part
+of the reference frame of the $i$-th body and $I_i$ the inertia tensor
+in that reference frame, the total angular momentum $\mathcal{L}$ can be
 calculated by:
 
 \begin{equation}
@@ -570,7 +570,7 @@ $p$ we can use:
 \tau_{ZMP} = \tau + (0 - p) \times f = \tau - p \times f
 \end{equation}
 
-If solve equation \ref{eq:change-lin-momentum} for $f$ and
+If we solve equation \ref{eq:change-lin-momentum} for $f$ and
 \ref{eq:change-ang-momentum} for $\tau$ and substitute them in
 \ref{eq:multi-body-zmp} this yields the following equation:
 
@@ -611,9 +611,9 @@ are common:
 \def\labelenumi{\arabic{enumi}.}
 \item
   Generate (or modify) foot trajectories that realizes a prescribed
-  trajectory of the CoM
+  trajectory of the CoM.
 \item
-  Generate a CoM trajectory for prescribed foot trajectories
+  Generate a CoM trajectory for prescribed foot trajectories.
 \end{enumerate}
 
 The first approach is generally used for implementing pattern generators
@@ -626,7 +626,7 @@ they can actually be realized by the robot. The pattern generator
 proposed by Kajita et al. \cite{kajita2003biped} based on Preview
 Control realizes the second approach. We will discuss the theoretical
 background of this pattern generator here in more detail, since all
-pattern that we used were generated that way.
+patterns that we used were generated that way.
 
 \section{Computing the CoM from a reference
 ZMP}\label{computing-the-com-from-a-reference-zmp}
@@ -655,8 +655,8 @@ problems:
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  It has a significant computational overhead. (For FFT the additional
-  runtime would be in $O(n \log n)$)
+  It has a significant computational overhead (for FFT the additional
+  runtime would be in $O(n \log n)$).
 \item
   We need to know the whole ZMP trajectory in advance.
 \end{enumerate}
@@ -706,11 +706,10 @@ c_x \\
 u
 \end{equation}
 
-As you can see, the jerk of the CoM was introduced as an input
-$u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system.
-
-We use equation \ref{eq:zmp-x} to calculate the actual output of the
-dynamic system the resulting ZMP, that will be controlled:
+The jerk of the CoM was introduced as an input
+$u_x = \frac{d}{dt} \ddot{c_x}$ into the dynamic system. We use equation
+\ref{eq:zmp-x} to calculate the actual output of the dynamic system the
+resulting ZMP, that will be controlled:
 
 \begin{equation} \label{eq:zmp-x-output}
 p_x =
@@ -823,10 +822,10 @@ rapid change of reference ZMP when changing the support foot.
 \label{img:simple-zmp-control}
 \end{figure*}
 
-As you can see the reference ZMP is perfectly tracked. However, the CoM
+As can be seen, the reference ZMP is perfectly tracked. However, the CoM
 does not behave as expected. To achieve the required ZMP position the
 CoM will be \emph{accelerated indefinitely} in the opposite direction.
-Clearly this is not desired and will lead to falling on a real robot. A
+Clearly this is not desired and will lead to falling of a real robot. A
 more sophisticated performance index is needed. To eventually reach a
 stable state at which the CoM comes to rest, the performance index
 should include a state feedback. Also note the large jerk that is
@@ -876,19 +875,18 @@ the cited article by Katayama p.~680 for more details.
 
 To generate walking patterns based on the ZMP Preview Control method,
 the approach from Kajita was implemented in \name{libBipedal}, a shared
-library that contains all walking realted algorithms. A front-end was
+library that contains all walking related algorithms. A front-end was
 developed to easily change parameters, visualize and subsequently export
 the trajectory to the \name{MMM} format. The implementation was build on
 a previous implementation, which was refactored, extended and tuned with
-respect to results from the dynamics simulation.
-
-The pattern generator makes extensive usage of
-\name{Simox VirtualRobot}, for providing a model of the robot and the
-associated task of computing the forward- and inverse kinematics.
+respect to results from the dynamics simulation. The pattern generator
+makes extensive usage of \name{Simox VirtualRobot}, for providing a
+model of the robot and the associated task of computing the forward- and
+inverse kinematics.
 
 Generating a walking pattern consists of multiple steps. First the foot
 positions are calculated. These are used to derive the reference ZMP
-trajectory which is feed into the ZMP Preview Controller. From that the
+trajectory which is fed into the ZMP Preview Controller. From that the
 CoM trajectory is computed. The CoM trajectory and feet trajectories are
 then used to compute the inverse kinematics. The resulting joint
 trajectory is displayed in the visual front-end and can be exported.
@@ -919,12 +917,12 @@ To generate the foot trajectories several parameters are needed:
 \item[Step height $h$]
 Maximum distance between the foot sole and the floor
 \item[Step length $l$]
-Distance in anterior direction ($y$-Axis) between the lift-off point and
+Distance in anterior direction ($y$-axis) between the lift-off point and
 the touch-down point
 \item[Step width $w$]
-Distance in lateral direction ($x$-Axis) between both TCP on the feet
+Distance in lateral direction ($x$-axis) between both TCP on the feet
 \item[Single support duration $t_{ss}$]
-Time the weight of the robot is only support by exactly one foot
+Time the weight of the robot is only supported by exactly one foot
 \item[Dual support duration $t_{ds}$]
 Time the weight of the robot is supported by both feet
 \end{description}
@@ -965,7 +963,7 @@ transformed to follow the circle for the specific foot. The same
 polynomial that was previously used for the $y$-direction is now used to
 compute the angle on the corresponding circle and the $x$ and $y$
 coordinates are calculated accordingly. The foot orientation is computed
-from the tangential ($y$-Axis) and normal ($x$-Axis) of the circle the
+from the tangential ($y$-axis) and normal ($x$-axis) of the circle the
 foot follows.
 
 \subsubsection{Balancing on one foot}\label{balancing-on-one-foot}
@@ -1026,7 +1024,7 @@ are used for the IK to a sensible value. For walking only the joints of
 the legs and both the torso roll and pitch joints are used. All other
 joints are constrained to static values that will not cause
 self-collisions (e.g.~the arms are slightly extended and do not touch
-the body). For computing the IK additional constraints where added, to
+the body). For computing the IK additional constraints where added to
 make sure the robot has a sensible pose: The chest should always have an
 upright position and the pelvis should always be parallel to the floor.
 To support non-straight walking, the pelvis and chest orientation should
@@ -1036,7 +1034,7 @@ the desired chest and pelvis orientation is used:
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Compute walking direction $y'$ as mean of y-Axis of both feet and
+  Compute walking direction $y'$ as mean of $y$-axis of both feet and
   normalize: $y' := \frac{y_{left} + y_{right}}{|y_{left} + y_{right}|}$
 \item
   Both should have an upright position $z' := (0, 0, 1)^T$
@@ -1049,8 +1047,8 @@ the desired chest and pelvis orientation is used:
 A special property of the model that was used for computing the inverse
 kinematics, is that TCP of the left leg was chosen as root node. Since
 we can specify the root position freely, that removes the need of
-solving for the left foot pose. Thus the following goals need to be
-satisfied by the inverse kinematics:
+solving for the left foot pose. Thus, the inverse kinematics needs to
+solves for the following goals:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1064,10 +1062,10 @@ satisfied by the inverse kinematics:
   Right foot pose
 \end{enumerate}
 
-A hierarchical solver was used to solve the inverse kinematics for that
+A hierarchical solver was used to solve the inverse kinematics for these
 goals in the given order. It was observed that specifying a good target
 height for the CoM is of utmost importance for the quality of the IK.
-For the model of \name{Armar IV} that used here, a height of $0.86$ m
+For the \name{Armar IV} model that was used here, a height of $0.86$ m
 yielded the best results.
 
 \subsection{Trajectory export}\label{trajectory-export}
@@ -1079,7 +1077,7 @@ values and velocities the trajectory also includes the CoM and ZMP
 trajectory. Also, information about the current support phase is saved.
 For convenience, the pose of chest, pelvis, left and right foot are
 exported as homogeneous matrices as well. This saves the additional step
-of computing them again for the stabilizer and also eliminate an
+of computing them again for the stabilizer and also eliminates an
 additional error source while debugging.
 
 \chapter{Stabilizing a trajectory}\label{stabilizing-a-trajectory}
@@ -1093,8 +1091,8 @@ about three main classes:
 The models pattern generators use, make some assumptions about the
 environment they operate in. Most prominently the 3D-LIMP assumes the
 floor is completely flat and has no slope. Also we assume we can
-navigate without colliding with other object. Any environment that
-deviates from this assumption can be seen as a disturbance.
+navigate without colliding with other objects. Any environment that
+deviates from these assumptions can be seen as a disturbance.
 \item[Disturbances due to simulation errors:]
 Physical simulations often make a trade-off between speed and simulation
 accuracy. Thus the simulation might not always behave as it was modeled
@@ -1112,15 +1110,15 @@ When using a ZMP based control scheme to derive a walking pattern it
 seems natural to check for deviations of the actual ZMP from the goal
 ZMP. However a deviation from the reference ZMP does not necessarily
 mean we will see any disturbance. As long as the ZMP remains inside the
-support polygon the trajectory can be executed as planed. As we saw in
+support polygon the trajectory can be executed as planned. As we saw in
 \ref{section:zmp-control} it is entirely possible to realize the
 reference ZMP while being in an overall state that deviates
 significantly from the state we assumed while generating the pattern.
 Thus we also need to check for a deviation in the trajectory of our CoM.
 A common approach to correct for CoM position is to control the pose of
-the chest frame of the robot. This only works if the majority of the
-mass of a robot is located in the upper body and arms. Luckily for most
-humanoid robots this is the case.
+the chest frame of the robot. This only works if a significant part of
+the mass of a robot is located in the upper body and arms. Luckily for
+most humanoid robots this is the case.
 
 \section{Stabilizer}\label{section:stabilizer}
 
@@ -1136,8 +1134,8 @@ simulation engine \name{Bullet} only supports velocity controlled
 motors, consequently the torque can not be controlled directly.
 
 The controller works by attaching control frames to specific points on
-the robot. The reference position of this frames can be calculated from
-the input trajectory using forwards kinematics. To compensate a
+the robot. The reference position of these frames can be calculated from
+the input trajectory using forward kinematics. To compensate a
 disturbance the orientation of a reference frame is modified. The
 modified reference frames are then converted to the modified joint
 angles by the inverse kinematics.
@@ -1151,9 +1149,8 @@ angles by the inverse kinematics.
 
 In the remainder of this chapter we will use the superscript $d$ to
 denote reference values and the subscript $*$ to denote modified values.
-
 For this approach four control frames were selected. The chest to modify
-the body posture, the feet to modify the ankle torque, and the pelvis to
+the body posture, the feet to modify the ankle torque and the pelvis to
 realize as natural hip position.
 
 \subsection{Reference coordinate
@@ -1170,11 +1167,11 @@ To control the ZMP and CoM it is desirable to have a reference system
 that is static with respect to the ground in each support phase. It is
 convenient to place the reference coordinate system in the center of the
 respective support polygon. That means we place the ground frame at the
-TCP of the respective foot in single support phase. As the ground frame
-should be aligned with the floor, we use the projection of the foot
-poses to the floor plane. In dual support phase, we calculate the pose
-from the position by $p = \frac{1}{2} \cdot (p_{left} + p_{right})$ and
-the $y$-axis by $y = \frac{1}{2} \cdot (y_{left} + y_{right})$. The
+TCP of the respective foot in each single support phase. As the ground
+frame should be aligned with the floor, we use the projection of the
+foot poses to the floor plane. In dual support phase, we calculate the
+pose from the position by $p = \frac{1}{2} \cdot (p_{left} + p_{right})$
+and the $y$-axis by $y = \frac{1}{2} \cdot (y_{left} + y_{right})$. The
 $z$-axis is the normal of the floor plane: $z = (0, 0, 1)^T$. See figure
 \ref{img:ground-frame} for an example. The resulting reference frame is
 called the \emph{ground frame}.
@@ -1261,7 +1258,7 @@ between them. If we take the forces $f_R$ and $f_L$ which act on the
 right ankle $p_R$ and left ankle $p_L$ respectively we know that
 $f_R + f_L = f_g$. Thus there exists $\alpha \in [0, 1]$ for which:
 $f_R = \alpha \cdot f_g$ and $f_L = (1-\alpha) \cdot f_g$. A heuristic
-for computing this alpha is the \emph{ZMP distributor}.
+method for computing this alpha is the \emph{ZMP distributor}.
 
 The idea is to calculate the nearest points $p_{L\#}$ and $p_{R\#}$ from
 the ZMP to the support polygons of the feet. If the ZMP falls inside one
@@ -1296,7 +1293,11 @@ from the global coordinate system to a local coordinate system described
 by the \emph{ground frame}. We mark all vectors in the local coordinate
 system with $'$. The heuristic applied is: The torque around the
 $x$-axis in each ankle is approximately proportional to the force
-applied at that ankle. Thus:
+applied at that ankle.
+
+\newpage
+
+From that we can derive:
 
 \begin{equation} \label{eq:torque-right-x}
 \tau^{d'}_{Rx} = \alpha \tau_{0x}'
@@ -1332,7 +1333,7 @@ assume it will only be applied to the right foot.
 
 We can now transform the torques from our local coordinate system to the
 coordinate system of the corresponding foot yielding $\tau^d_L$ and
-$\tau^d_R$.\\Now that we have obtained the reference torques, we can try
+$\tau^d_R$. Now that we have obtained the reference torques, we can try
 to control the torque in each angle using the measured torques $\tau_R$
 and $\tau_L$. However since we assume a position controlled robot, the
 torque differences need to be translated into pose changes. There are
@@ -2017,8 +2018,8 @@ line respectively.}
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_straight_x.png}
 \caption{CoM and ZMP as specified by the pattern (top) and actual realized values (middle and bottom).
-All coordinates in the global reference frame. A blue background is when the right foot is the supporting
-foot, a green background if the left foot is the supporting foot.}
+All coordinates in the global reference frame. The background indicates the supporting foot. Blue corresponds
+with the right foot and green with the left foot.}
 \label{img:undisturbed-straight-x}
 \end{figure}
 
