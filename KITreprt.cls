@@ -112,7 +112,7 @@ breaklines=true,
 
 \newcommand{\termpaper}{\iflanguage{english}{Term Paper}{Seminararbeit}}
 \newcommand{\mastersthesis}{\iflanguage{english}{Master's Thesis}{Masterarbeit}}
-\newcommand{\bachelorsthesis}{\iflanguage{english}{Bachelors's Thesis}{Bachelorarbeit}}
+\newcommand{\bachelorsthesis}{\iflanguage{english}{Bachelor's Thesis}{Bachelorarbeit}}
 \newcommand{\protocol}{\iflanguage{english}{Protocol}{Protokoll}}
 \newcommand{\studienarbeit}{\iflanguage{english}{Student Research Project}{Studienarbeit}}
 \newcommand{\diplomarbeit}{\iflanguage{english}{Diploma Thesis}{Diplomarbeit}}

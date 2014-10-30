@@ -13,7 +13,7 @@
 %% -------------------------------
 \hypersetup{
  pdfauthor={Patrick Niklaus},
- pdftitle={Bachelor Thesis: Walking pattern generation for humanoid bipedal robots},
+ pdftitle={Bachelor Thesis: Dynamically Stable Walking For Humanoid Bipedal Robots Based On Walking Patterns},
  pdfsubject={Not set},
  pdfkeywords={Not set}
 }
@@ -30,8 +30,8 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. June 2014}
-\renewcommand{\timeend}{31. Oktober 2014}
+\renewcommand{\timestart}{1\textsuperscript{st} July 2014}
+\renewcommand{\timeend}{31\textsuperscript{st} Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
 \newcommand{\referee}{Prof. Dr.-Ing. Tamim Asfour}
@@ -205,7 +205,7 @@ rarely the case and needs to be accounted for. Thus a stabilizer is
 needed to adapt the trajectory to the disturbances. Most stabilizers for
 established robotic platforms are closed source and very robot specific.
 Notably various iterations of stabilizers based on modifying an already
-dynamically stable pattern where proposed by Kajita and Miura et al.
+dynamically stable pattern were proposed by Kajita and Miura et al.
 (\cite{kajita2010biped}, \cite{miura2011human} and
 \cite{kajita2012evaluation})
 
@@ -379,7 +379,7 @@ equations:
 \end{equation}
 
 The term $c_x \ddot{c}_y - \ddot{c}_x c_y$ that is part of both
-equations is still causing the equations to be non-linear. To make this
+equations is still causing the equations to be non-linear. To make these
 equations linear we will assume that our ground plane has no slope, thus
 $k_x = k_y = 0$ and the non-linear terms will vanish.
 
@@ -646,11 +646,11 @@ c_x = \frac{z_c}{g} \cdot \ddot{c_x} + p_x
 c_y = \frac{z_c}{g} \cdot \ddot{c_y} + p_y
 \end{equation}
 
-There are several ways to solve this differential equations, for example
-by transforming them to the frequency-domain. This however would mean
-that the ZMP trajectory needs to be transformed to the frequency domain
-as well, e.g.~using Fast Fourier Transformation. This has two main
-problems:
+There are several ways to solve these differential equations, for
+example by transforming them to the frequency-domain. This however would
+mean that the ZMP trajectory needs to be transformed to the frequency
+domain as well, e.g.~using Fast Fourier Transformation. This has two
+main problems:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -730,7 +730,7 @@ our input ZMP trajectory will consist of discrete samples at equal time
 intervals $T$ we define the discrete state as $x[k] := x(k \cdot T)$.
 Please note that this system is a linear time-invariant system (LTI),
 and both matrices $A_0$ and $B_0$ are constant. We can therefore use the
-standard approach to solve this system using the equation:
+standard approach to solve these systems using the equation:
 
 \begin{equation}
 x(t) = e^{A_0 \cdot (t - \tau)} x(\tau) + \int^t_\tau e^{A_0 \cdot (t - \lambda)} B_0 u(\lambda) d\lambda
@@ -1024,7 +1024,7 @@ are used for the IK to a sensible value. For walking only the joints of
 the legs and both the torso roll and pitch joints are used. All other
 joints are constrained to static values that will not cause
 self-collisions (e.g.~the arms are slightly extended and do not touch
-the body). For computing the IK additional constraints where added to
+the body). For computing the IK additional constraints were added to
 make sure the robot has a sensible pose: The chest should always have an
 upright position and the pelvis should always be parallel to the floor.
 To support non-straight walking, the pelvis and chest orientation should
@@ -1223,9 +1223,9 @@ torques}\label{controlling-the-ankle-torques}
 Since the stabilizer only has the joint trajectory and desired ZMP
 trajectory as input, we need a way to compute the desired actuation
 torques on the ankles. The canonical way to do this would be to solve
-the inverse dynamics of the robot. However for this we need an accurate
-model of the robot, including correct masses and moments of inertia for
-each link. This model is not always easy to obtain and calculating the
+the inverse dynamics of the robot. However an accurate robot model,
+including correct masses and moments of inertia for each link, is needed
+for this. This model is not always easy to obtain and calculating the
 inverse dynamics of a robot with many degrees of freedom is rather slow.
 For this reason a simple heuristic is proposed to yield approximate
 torques given a reference ZMP position. However in the single support
@@ -1469,9 +1469,9 @@ While each controller operate independently, their effects are highly
 coupled. The most important coupling exists between the chest posture
 controller and the ankle torque controller. In case of a solid contact
 with the ground, the ankle torque controller will not rotate the
-supporting foot, but rather the body of the robot. This will however
+supporting foot, but rather the body of the robot. However, this will
 change the posture of chest frame. The chest posture controller
-compensates that and keeps the body upright. This tight coupling makes
+compensates that and keeps the body upright. The tight coupling makes
 tuning the parameters $D_i$ and $T_i$ of the controllers difficult, as
 their performance depends on the other controllers. Best results were
 observed when the chest posture controller was tuned independently
@@ -1609,7 +1609,7 @@ $0.5 \cdot f_g$ the forces on both feet oscillate between $0$ and $f_g$,
 the support foot changes in rapid successions. As outlines in section
 \ref{section:rigid-body-simulation} this is a result of the constraint
 solver method employed by \name{Bullet}. Subsequently the measured
-torques on the ankles did not follow the prediction as well. This are
+torques on the ankles did not follow the prediction as well. These are
 the actual values used by the simulator, not merely sensor noise. Even
 when adding mean-filters to smoothen the measured torques it was not
 possible to extract a meaningful control signal. Besides the sequential
@@ -1773,7 +1773,7 @@ finding flaws in the physics simulation. Thus, the simulator includes a
 extensive logging and visualization framework that measures all
 important parameters of the simulation. For visualizing and analysing
 the measurement the Open Source tools \name{IPython}, \name{numpy} and
-\name{pandas} where used.
+\name{pandas} were used.
 
 \section{Simulating rigid body
 dynamics}\label{section:rigid-body-simulation}
@@ -1856,11 +1856,11 @@ This is the case for a bipedal robot in dual support stance. Solving a
 non-penetration constrain on either end will invalidate the position
 constraint of the next link. In turn, the position constraint of each
 link needs to be updated until the other end of the kinematic chain is
-reached. If the non-penetration constraint is violated again for this
-end, the whole process starts again in reverse direction. This leads to
-oscillations that need a high number of iterations to level off to an
-acceptable level. Despite these inaccuracies, by using enough solver
-iterations an overall usable systems can be derived. However, the
+reached. If the non-penetration constraint is violated again for the
+other end, the whole process starts again in reverse direction. This
+leads to oscillations that need a high number of iterations to level off
+to an acceptable level. Despite these inaccuracies, by using enough
+solver iterations an overall usable systems can be derived. However, the
 velocities will still have a small random error in each simulation step.
 This poses a major problem when trying to measure accelerations, as the
 random error causes them to accelerate wildly. This circumstance needs
@@ -1940,7 +1940,7 @@ velocity controlled, PID based motor controllers were added to
 \name{SimDynamics}. They control the motor velocities to compensate
 position errors. The motors implemented in \name{Bullet} do not limit
 the motor velocity and acceleration. This is not consistent with real
-motors, thus limits for velocities and acceleration where introduced to
+motors, thus limits for velocities and acceleration were introduced to
 \name{SimDynamics}, that can be configured per joint.
 
 The graphical user-interface supports the visualization of measured and
@@ -1978,7 +1978,7 @@ easier to load the data into the time series analysis framework
 \name{pandas}. \name{Pandas} interfaces with the popular plotting
 framework \name{matplotlib} to display plots of the data. \name{IPython}
 is used to easily run the analysis and display the results in a browser
-window. All plots of simulated patterns found in this thesis can be
+window. Most plots of simulated patterns found in this thesis can be
 generated automatically for every simulation.
 
 \begin{figure}[htb]
@@ -1991,7 +1991,7 @@ generated automatically for every simulation.
 \chapter{Experimental Evaluation}\label{experimental-evaluation}
 
 To test the performance of the stabilizer against simple pattern
-playback, both walking straight and walking in circle where tested. To
+playback, both walking straight and walking in circle were tested. To
 simulate further disturbances, the simulation shoots a football at the
 robot. In the unstabilized case, only the joint trajectory that is
 generated by the pattern generator is interpolated and replayed. In the
@@ -2024,7 +2024,7 @@ with the right foot and green with the left foot.}
 \end{figure}
 
 Figure \ref{img:undisturbed-straight-x} shows the desired and realized
-CoM and ZMP trajectories in both cases. As you can see the ZMP deviates
+CoM and ZMP trajectories in both cases. As can be seen, the ZMP deviates
 significantly from the desired trajectory and oscillates between both
 edges of the support polygon. We believe this is caused by the problems
 outlined in section \ref{section:rigid-body-simulation}. Consider figure
@@ -2108,15 +2108,16 @@ parallel to the floor at all times.
 
 Figure \ref{img:player-undisturbed-circle-thumbs} shows the simulation
 of unstabilized walking in a circle. The robot walks in 12 steps in an
-arc of 180° and 0.5 m radius. As you can see the desired 180° turn is
-not realized completely. Due to the chest rotation following the tangent
-of the circle, a torque around the yaw-axis is exerted on the foot.
-Recall that during pattern generation we assumed that this torque is
-zero. Since we do not correct this disturbance the trajectory deviates
-significantly. See figure \ref{img:undisturbed-circle} for the realized
-ZMP distribution and CoM trajectory for both unstabilized and stabilized
-walking. The unstabilized trajectory will get unstable towards the end
-of the trajectory. However the stabilized trajectory remains stable.
+arc of 180° and 0.5 m radius. As you can be seen, the desired 180° turn
+is not realized completely. Due to the chest rotation following the
+tangent of the circle, a torque around the yaw-axis is exerted on the
+foot. Recall that during pattern generation we assumed that this torque
+is zero. Since we do not correct this disturbance the trajectory
+deviates significantly. See figure \ref{img:undisturbed-circle} for the
+realized ZMP distribution and CoM trajectory for both unstabilized and
+stabilized walking. The unstabilized trajectory will get unstable
+towards the end of the trajectory. However the stabilized trajectory
+remains stable.
 
 \begin{figure}[hbt]
 \vspace*{-1em}

@@ -13,7 +13,7 @@
 %% -------------------------------
 \hypersetup{
  pdfauthor={Patrick Niklaus},
- pdftitle={Bachelor Thesis: Walking pattern generation for humanoid bipedal robots},
+ pdftitle={Bachelor Thesis: Dynamically Stable Walking For Humanoid Bipedal Robots Based On Walking Patterns},
  pdfsubject={Not set},
  pdfkeywords={Not set}
 }
@@ -30,8 +30,8 @@
 \renewcommand{\myshorttitle}{}
 \cfoot{\mytitle}
 
-\renewcommand{\timestart}{1. June 2014}
-\renewcommand{\timeend}{31. Oktober 2014}
+\renewcommand{\timestart}{1\textsuperscript{st} July 2014}
+\renewcommand{\timeend}{31\textsuperscript{st} Oktober 2014}
 %\renewcommand{\timeend}{\iflanguage{english}{February 7\textsuperscript{th},}{7. Februar} 2010}
 \newcommand{\advisor}{Dr. Júlia Borràs Sol}
 \newcommand{\referee}{Prof. Dr.-Ing. Tamim Asfour}
