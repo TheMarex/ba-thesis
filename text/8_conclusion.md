@@ -35,7 +35,7 @@ To better deal with trajectories that include turns or arm movements, the result
 Another interesting approach is to use the angular momentum around the center of mass as proposed by Kajita et al. \cite{kajita2001balancing}
 and extended by Komura et al. \cite{komura2005feedback} as control input.
 
-The push recovery implemented is very rudimentary. The placement of the foot to recover from a push does not consider collisions
+The push recovery implemented is very basic. The placement of the foot to recover from a push does not consider collisions
 with the environment. Also, after executing a push recovery step, the original trajectory can not be resumed.
 To enable that, online planning of dynamically stable motions needs to be integrated.
 Also the foot is placed at the exact location of the future capture point. However it suffices to place
