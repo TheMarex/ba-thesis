@@ -17,7 +17,7 @@ The first scenario is walking in a straight line for 10 steps, which is shown by
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/undisturbed_straight_thumbs.png}
 \caption{Frames of undisturbed straight walking. The desired and realized CoM trajectory is shown as green and red
-line respectively.}
+line respectively. \cite{niklaus2014videostraight}}
 \label{img:player-undisturbed-straight-thumbs}
 \end{figure}
 
@@ -99,7 +99,7 @@ This is probably caused by the missing toe/heel lift-off and strike down phases,
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_circle_thumbs.png}
-\caption{\name{Armar4} walking in a half circle in 12 steps.}
+\caption{\name{Armar4} walking in a half circle in 12 steps. \cite{niklaus2014videocircle}}
 \label{img:player-undisturbed-circle-thumbs}
 \end{figure*}
 
@@ -131,7 +131,7 @@ Figure \ref{player-disturbed-straight-thumbs} shows the simulation for a push to
 \begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_thumbs.png}
-\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector.}
+\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector. \cite{niklaus2014videostabilizedpush}}
 \label{img:player-disturbed-straight-thumbs}
 \end{figure}
 

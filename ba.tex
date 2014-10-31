@@ -2010,7 +2010,7 @@ shown by figure \ref{img:player-undisturbed-straight-thumbs}.
 \vspace*{-1em}
 \includegraphics[width=\textwidth]{images/undisturbed_straight_thumbs.png}
 \caption{Frames of undisturbed straight walking. The desired and realized CoM trajectory is shown as green and red
-line respectively.}
+line respectively. \cite{niklaus2014videostraight}}
 \label{img:player-undisturbed-straight-thumbs}
 \end{figure}
 
@@ -2102,7 +2102,7 @@ parallel to the floor at all times.
 \begin{figure*}[hbt]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/undisturbed_circle_thumbs.png}
-\caption{\name{Armar4} walking in a half circle in 12 steps.}
+\caption{\name{Armar4} walking in a half circle in 12 steps. \cite{niklaus2014videocircle}}
 \label{img:player-undisturbed-circle-thumbs}
 \end{figure*}
 
@@ -2138,7 +2138,7 @@ shows the simulation for a push to the chest.
 \begin{figure}[H]
 \vspace*{-1em}
 \includegraphics[width=\textwidth,resolution=300]{images/disturbed_straight_thumbs.png}
-\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector.}
+\caption{\name{Armar4} getting hit by a ball at chest height. Red arrows show approximate direction of the ball velocity vector. \cite{niklaus2014videostabilizedpush}}
 \label{img:player-disturbed-straight-thumbs}
 \end{figure}
 
@@ -2287,8 +2287,8 @@ center of mass as proposed by Kajita et al. \cite{kajita2001balancing}
 and extended by Komura et al. \cite{komura2005feedback} as control
 input.
 
-The push recovery implemented is very rudimentary. The placement of the
-foot to recover from a push does not consider collisions with the
+The push recovery implemented is very basic. The placement of the foot
+to recover from a push does not consider collisions with the
 environment. Also, after executing a push recovery step, the original
 trajectory can not be resumed. To enable that, online planning of
 dynamically stable motions needs to be integrated. Also the foot is
