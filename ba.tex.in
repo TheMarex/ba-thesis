@@ -91,6 +91,21 @@
 
 \maketitle
 
+\vspace*{36\baselineskip}
+\hbox to \textwidth{\hrulefill}
+\par
+\hfill \newline
+\iflanguage{english}{
+I declare that I have developed and written the enclosed \mythesis \\ completely by myself, and have not used sources or means
+without declaration in the text.}
+{
+Ich erkl\"are hiermit, dass ich die vorliegende Arbeit selbst\"andig verfasst und
+keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.}
+\hfill \newline 
+Karlsruhe, \timeend
+
+\cleardoublepage
+
 \tableofcontents
 
 $body$
