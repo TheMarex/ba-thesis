@@ -83,11 +83,11 @@
 
 \begin{document}
 
+\pagenumbering{Roman}
 
 \selectlanguage{english}
 
 %\selectlanguage{ngerman}
-
 
 \maketitle
 
@@ -103,10 +103,9 @@ Ich erkl\"are hiermit, dass ich die vorliegende Arbeit selbst\"andig verfasst un
 keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.}
 \hfill \newline 
 Karlsruhe, \timeend
+\thispagestyle{empty}
 
 \cleardoublepage
-
-\tableofcontents
 
 $body$
 

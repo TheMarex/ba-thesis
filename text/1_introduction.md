@@ -1,4 +1,60 @@
+\chapter*{Zusammenfassung}
+\thispagestyle{empty}
+
+Fast hundert Jahre Science-Fiction haben den Begriff Roboter mit
+dem Bild eines mechanischen menschen-ähnlichen Dieners eng verbunden.
+In unserer modernen Welt, sind bereits große Teile unserer Produktionsketten
+von Robotern bestimmt.
+Trotzdem haben humanoide Roboter noch keinen weiterverbreiten Einzug in unseren Alltag
+gehalten. Ein Hauptproblem ist die Komplexität solcher Systeme.
+Bildverarbeitung, maschinelles Lernen, Greifen und Fortbewegung müssen in einer Maschine
+kombiniert werden. Jede dieser Komponenten ist für sich genommen bereits hoch komplex und ein aktuelles Forschungsthema.
+Eine besondere Herausforderung stellt jedoch die Fortbewegung da.
+Zum einen bedarf es der präzisen Koordination vieler Gelenke um zweibeiniges Laufen umzusetzen.
+Zum anderen ist die dynamische Beschreibung eines solchen System hoch komplex und muss deshalb stark simplifiziert werden
+um überhaupt handhabbar zu sein.
+Während andere Komponenten eines humanoiden Roboters durchaus unabhängig vom Gesamtsystem
+Verwendung finden, ist zweibeiniges Laufen sehr spezifisch.
+So können die Strategien, die für zweibeiniges Laufen entwickelt wurden,
+nur schwer auf andere Beinkonfigurationen übertragen werden.
+Einige Roboter, wie z.B. \name{ARMAR III} umgehen das Problem der zweibeinigen Fortbewegung,
+indem sie die Beine durch eine Plattform auf Rädern ersetzen.
+Das Resultat ist eine stabile Forschungsplattform. Allerdings ist die Navigation
+in menschlichen Umgebungen, im Vergleich zu zweibeiniger Fortbewegung, deutlich weniger
+flexibel.
+
+In den letzten 20 Jahren wurden große Erfolge im Bereich es zweibeinigen Laufens erzielt.
+Jeder kennt die Erfolge des von \name{Honda} entwickelten Roboters \name{ASIMO} oder
+die von \name{AIST} entwickelten \name{HRP} Roboter.
+
+Frühe zweibeinige Roboter hatten einen sehr charakteristische Laufstil.
+Beide Füße waren immer parallel zum Boden und der Fuß wurde immer flach aufgesetzt.
+Damit einhergehend ist eine durchgehende Beugung der Kniegelenke. Aktuelle Robotergenerationen,
+z.B. \name{HRP-4C} oder \name{WABIAN}, können ein deutlich natürlicheren Laufstil
+umsetzen, indem sie diese Einschränkungen aufweichen und auch die Ferse und Zehen zum Laufen benutzen.
+
+In dieser Arbeit werden die theoretischen Grundlagen zum zweibeinigen Laufen, gängige Modelle und Vereinfachungen beleuchtet.
+Grundlegend für hier Vorgestellten Verfahren sind sog. *Walking Patterns* (wörtlich "Laufmuster").
+Aufbauend auf einer vorherigen Implementierung werden *Walking Patterns* für gerades Laufen, Laufen im Kreis
+und Balancieren auf einem Bein abgeleitet.
+
+Diese *Walking Patterns* werden in einem eigens entwickelten Physiksimulator getestet.
+Weiter werden Stabilisatoren besprochen um Störungen auszugleichen und um *Walking Patterns* umzusetzen, die von den Annahmen
+der zugrunde liegenden Modellen abweichen. Zwei Verfahren werden implementiert und die Resultate vorgestellt.
+
+Zuletzt wird ein Verfahren zum Ausgleichen von plötzliche Störungen (Stößen) vorgestellt und die Implementierung
+beschrieben.
+
+Alle Komponenten wurden in einer Software Bibliothek \name{libBipedal} implementiert, um sie einfach
+in andere Softwareprojekte einbauen zu können.
+
+\cleardoublepage
+
+\tableofcontents
+
 # Introduction
+
+\pagenumbering{arabic}
 
 Nearly one hundred years of Science-Fiction have established the firm image
 of a mechanical humanoid servant with super human capabilities, with the term
@@ -19,7 +75,7 @@ with a stable base on wheels. While this yields convenient research platform,
 the navigation in human environments is not as natural as for full humanoid robots.
 
 Over the last two decades a lot of progress has been made in humanoid walking.
-Everyone is familiar with the famous \name{ASIMO} robot developed by Honda or the \name{HRP}
+Everyone is familiar with the famous \name{ASIMO} robot developed by \name{Honda} or the \name{HRP}
 robots developed by \name{AIST} which demonstrate stable walking.
 More recently \name{ATLAS} by Boston Dynamics shows great stability even under disturbances.
 Sadly, some of these platforms are closed and it is not known exactly which models
